@@ -6,19 +6,24 @@ inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.c
 > Everyone wants to know what's in _Area 51_. But no one asks about _Area 52_.
 
 ## Features
-- Input compatibile wirh _Seq_ ([CLEF](https://docs.datalust.co/docs/posting-raw-events) logs format)
-- Custom query language (inspired by Rosktar language and SQL)
+- Log input endpoint compatibile wirh _Seq_ ([CLEF](https://docs.datalust.co/docs/posting-raw-events) logs format)
+- Custom query language (inspired by Rockstar language and SQL), supports:
+  - fulltext serach,
+  - search by match property, comparison,
+  - serach by time,
+  - logical operator,
+  - and more...
 
 ![Area 51 Screen](doc/Scrrn_0.jpg)
 
 ## Technology
 - Dotnet 6.0
-- [Piglet](https://www.nuget.org/packages/Piglet/) as query parser
 - Blazor server
+- [Piglet](https://www.nuget.org/packages/Piglet/) as query parser
 - RavenDb as primary storage and indexing engine
 - Bootstrap 5 and [OpenIcon](https://useiconic.com/open/)
 
-## Feature work
+## Future work
 - [ ] More efective read CLEF log from request
 - [ ] Autehntification
   - [ ] Predefined queries
@@ -26,7 +31,6 @@ inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.c
 - [ ] API keys for log input with management
 - [ ] Log archiving using background workers
 - [ ] Try implement using MongoDb
-
 
 ## Use from another project
 
@@ -41,7 +45,6 @@ Log.Logger = new LoggerConfiguration()
    .MinimumLevel.Verbose()
    .WriteTo.Seq("http://localhost:7142")
    .CreateLogger();
-
 ```
 
 ## Copyright
