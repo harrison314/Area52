@@ -58,10 +58,13 @@ public static class ClefParser
 
                         case "@r":
                             System.Text.Json.Nodes.JsonArray? array = System.Text.Json.Nodes.JsonNode.Parse(ref jsonReader) as System.Text.Json.Nodes.JsonArray;
-                            renderings = new string[array.Count];
-                            for (int i = 0; i < array.Count; i++)
+                            if (array != null)
                             {
-                                renderings[i] = ((string?)array[i])!;
+                                renderings = new string[array.Count];
+                                for (int i = 0; i < array.Count; i++)
+                                {
+                                    renderings[i] = ((string?)array[i])!;
+                                }
                             }
                             break;
                         default:

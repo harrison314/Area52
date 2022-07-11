@@ -42,6 +42,11 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
             init;
         }
 
+        public Result()
+        {
+            this.Level = string.Empty;
+            this.Message = string.Empty;
+        }
     }
 
     public LogMainIndex()
@@ -62,7 +67,7 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                                    log.Message,
                                    log.Exception),
 
-                               _ = log.Properties.Select(t => CreateField(t.Name, (object)t.Values ?? (object)t.Valued.Value, new CreateFieldOptions()
+                               _ = log.Properties.Select(t => this.CreateField(t.Name, (object)t.Values ?? (object)t.Valued.Value, new CreateFieldOptions()
                                {
                                    Indexing = FieldIndexing.Exact,
                                    Storage = FieldStorage.Yes,

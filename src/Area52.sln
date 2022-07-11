@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Area52", "src\Area52\Area52
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4E98BDE6-3D36-4510-9B66-7AE2C930631A}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		..\Readme.md = ..\Readme.md
 	EndProjectSection
 EndProject

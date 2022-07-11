@@ -28,6 +28,8 @@ public class LogInfo
 
     public LogInfo()
     {
-
+        this.Id = string.Empty;
+        this.Level = string.Empty;
+        this.Message = string.Empty;
     }
 }
