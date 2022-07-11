@@ -32,7 +32,9 @@ inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.c
 - [ ] Log archiving using background workers
 - [ ] Try implement using MongoDb
 
-## Use from another project
+## Getting logs into Area 52
+It is possible to use libraries for SEQ.
+For example for _Serilog_:
 
 ```
 dotnet package add Serilog.Sinks.Seq
