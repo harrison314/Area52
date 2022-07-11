@@ -1,0 +1,180 @@
+﻿@page "/Logs"
+@using Area52.Services.Contracts
+@using Area52.Shared.Logs
+@implements IDisposable
+@inject ILogReader LogReader
+
+<PageTitle>Logs</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <LogQueryInput @bind-Value="query" OnSearch="@(_=>this.ReadLogs(false))" />
+
+        <div class="input-group mb-3">
+            <button class="btn btn-outline-primary col-2" @onclick="ChangeTail">
+                @if (timer != null)
+                {
+                    <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+                }
+                else
+                {
+                    <span class="oi oi-infinity"></span>
+                }
+                Auto-refresh
+
+            </button>
+
+            @*TODO: fix link *@
+            <a class="btn btn-outline-primary ms-1" href="@("/events/download?q="+Uri.EscapeDataString(this.query))" download="download">
+                <span class="oi oi-data-transfer-download"></span>
+            </a>
+
+            <div class="col-4">
+            </div>
+
+            <div class="col-5 small">
+                @if (!string.IsNullOrEmpty(this.lastUpdate))
+                {
+                    <span><b>Last query:</b> @this.lastUpdate</span>
+                    <span><b>Duration:</b> @this.queryTime</span>
+                    <span><b>Total count:</b> @this.totalCount</span>
+                }
+            </div>
+        </div>
+
+        <div class="text-danger">
+            @errorMessage
+        </div>
+
+        <hr />
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col">
+        @if (this.isInLoading && timer == null)
+        {
+            <LoadingIndicator />
+        }
+        @if (infos != null)
+        {
+            <div class="container">
+                <CascadingValue Value="@context">
+                    @foreach (LogInfo info in infos)
+                    {
+                    <LogRow LogInfo="@info" @key="info.Id" />
+                    }
+            </CascadingValue>
+        </div>
+        }
+    </div>
+</div>
+
+
+@code {
+
+    @code {
+        private string errorMessage = string.Empty;
+        private string query = string.Empty;
+        private IReadOnlyList<LogInfo>? infos = null;
+        private SerachControlContext context = new SerachControlContext();
+        private System.Threading.Timer? timer = null;
+        private string lastUpdate = string.Empty;
+        private string queryTime = string.Empty;
+        private long totalCount = 0;
+        private bool isInLoading = false;
+
+        protected override async Task OnInitializedAsync()
+        {
+            context.OnQueryChange += this.Handler;
+            await Task.Yield();
+        }
+
+        private async Task ReadLogs(bool clearBefore)
+        {
+            this.isInLoading = true;
+            try
+            {
+                this.errorMessage = string.Empty;
+                if (clearBefore)
+                {
+                    this.infos = null;
+                    await Task.Yield();
+                }
+
+                DateTime before = DateTime.UtcNow;
+                var result = await this.LogReader.ReadLastLogs(this.query);
+                this.infos = result.Logs;
+                this.totalCount = result.TotalResults;
+                DateTime after = DateTime.UtcNow;
+
+                this.lastUpdate = DateTimeOffset.Now.ToString("s");
+                TimeSpan queryDuration = (after - before);
+                if (queryDuration.TotalSeconds > 1.0)
+                {
+                    this.queryTime = $"{queryDuration.TotalSeconds:N2} s";
+                }
+                else
+                {
+                    this.queryTime = $"{queryDuration.TotalMilliseconds:N2} ms";
+                }
+            }
+            catch (Exception ex)
+            {
+                this.errorMessage = ex.Message;
+            }
+            finally
+            {
+                this.isInLoading = false;
+            }
+        }
+
+        private async void Handler(string queryApendix, bool replace, bool exceute)
+        {
+            if (replace)
+            {
+                this.query = queryApendix;
+            }
+            else
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(this.query ?? string.Empty);
+                if (!string.IsNullOrWhiteSpace(this.query))
+                {
+                    sb.Append(" and ");
+                }
+
+                sb.Append(queryApendix);
+                this.query = sb.ToString();
+            }
+
+            this.StateHasChanged();
+
+            if (exceute)
+            {
+                await this.ReadLogs(false);
+                this.StateHasChanged();
+            }
+        }
+
+        private void ChangeTail()
+        {
+            //TODO: https://stackoverflow.com/questions/63060065/blazor-timer-call-async-api-task-to-update-ui
+            if (this.timer == null)
+            {
+                this.timer = new Timer(_ => ReadLogs(false).ContinueWith(_ => this.InvokeAsync(() => this.StateHasChanged())), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+            }
+            else
+
+            {
+                this.timer.Dispose();
+                this.timer = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            this.timer?.Dispose();
+        }
+    }
+}

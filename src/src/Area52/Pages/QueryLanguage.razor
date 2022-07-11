@@ -1,0 +1,120 @@
+﻿@page "/QueryLanguage"
+
+<PageTitle>Query Language</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <h1>Query Language</h1>
+        <p>A short description of the custom query language.</p>
+
+        <p>Property expressions:</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Expression</th>
+                    <th scope="col">Alternative</th>
+                    <th scope="col">Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Property is &quot;value&quot;</code></td>
+                    <td><code>Property == 'value'</code></td>
+                    <td>Serach by match property value.</td>
+                </tr>
+                <tr>
+                    <td><code>Property is not &quot;value&quot;</code></td>
+                    <td><code>Property != 'value'</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property is eg &quot;value&quot;</code></td>
+                    <td></td>
+                    <td>Fuzzy serach.</td>
+                </tr>
+                <tr>
+                    <td><code>Property &lt; &quot;value&quot;</code></td>
+                    <td><code>Property &lt; 12.52</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property &lt;= &quot;value&quot;</code></td>
+                    <td><code>Property &lt;= 12.52</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property &gt; &quot;value&quot;</code></td>
+                    <td><code>Property &gt; 12.53</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property &gt;= &quot;value&quot;</code></td>
+                    <td><code>Property &gt;= 12.53</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property exists any</code></td>
+                    <td><code>Property is not null</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property between value1 and value2</code></td>
+                    <td><code>Property &gt; value1 and Property &lt; value2</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>&quot;value&quot;</code></td>
+                    <td><code>'value'</code></td>
+                    <td>Fulltext serach.</td>
+                </tr>
+                <tr>
+                    <td><code>Property startsWith &quot;value&quot;</code></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property endsWith &quot;value&quot;</code></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            Special properties:
+        </p>
+        <ul>
+            <li>Timestamp</li>
+            <li>Message</li>
+            <li>MessageTemplate</li>
+            <li>Level</li>
+            <li>LevelNumeric</li>
+            <li>Exception</li>
+        </ul>
+
+        <p>
+            Logic operators:
+        </p>
+        <ul>
+            <li>and (&amp;&amp;)</li>
+            <li>or (||)</li>
+        </ul>
+
+        <h2>Examples</h2>
+        <p>
+            <code>Application is 'Area51' and Timestamp between '2022-06-01' and '2022-06-02' and Level startsWith 'error'</code>
+        </p>
+        <p>
+            <code>RequestId is '0HMJ3E0UJPORG:00000007'</code>
+        </p>
+        <p>
+            <code>RequestId is '0HMJ3E0UJPORG:00000007' and (Exception is not null or Level is 'Error')</code>
+        </p>
+        <p>
+            <code>Application is 'Area51' and Exception is not null</code>
+        </p>
+        <p>
+            <code> Application is 'Area51' and SourceContext startsWith 'Area51.Services.'</code>
+        </p>
+    </div>
+</div>
