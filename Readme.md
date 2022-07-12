@@ -3,6 +3,8 @@
 Experimental structured log collector with logs visualization
 inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.co/what-is/elk-stack).
 
+This project uses [RavenDb](https://ravendb.net/) as a log store and serach engine.
+
 > Everyone wants to know what's in _Area 51_. But no one asks about _Area 52_.
 
 ## Features
@@ -20,7 +22,7 @@ inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.c
 - Dotnet 6.0
 - Blazor server
 - [Piglet](https://www.nuget.org/packages/Piglet/) as query parser
-- RavenDb as primary storage and indexing engine
+- [RavenDb](https://ravendb.net/) as primary storage and indexing engine
 - Bootstrap 5 and [OpenIcon](https://useiconic.com/open/)
 
 ## Future work
