@@ -4,12 +4,14 @@
            value="@this.Value"
            @onchange="@OnValueChanged"
            placeholder="Log query"
+           readonly=@this.IsReadonly
            @onkeyup="@Enter"
            @onkeyup:preventDefault="true" 
            @onkeydown:preventDefault="true" 
     />
     <button class="btn btn-outline-secondary"
             type="button"
+            disabled=@this.IsReadonly
             @onclick="@OnSerachInvoke"
             id="button-addon2">
         <span class="oi oi-magnifying-glass"></span>
@@ -27,6 +29,13 @@
 
     [Parameter]
     public EventCallback<string> ValueChanged
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public bool IsReadonly
     {
         get;
         set;
