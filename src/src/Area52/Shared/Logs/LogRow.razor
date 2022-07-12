@@ -1,0 +1,100 @@
+﻿@using Area52.Services.Contracts
+@inject ILogReader LogReader
+
+<div class="row @(this.showDetails? "bg-light":string.Empty)">
+    <div class="col-2 pointer-cursor" @onclick="@ToggleShowDetails">@this.LogInfo.Timestamp.ToString("s")</div>
+    <div class="col-1 pointer-cursor" @onclick="@ToggleShowDetails"><LogLevelBadge Level="@this.LogInfo.Level" /></div>
+    <div class="col-9">@this.LogInfo.Message</div>
+</div>
+
+@if (this.showDetails)
+{
+    <div class="row bg-light">
+
+        <div class="col-11" style="margin-left: 3em;">
+            @if (this.entity == null)
+            {
+                <LoadingIndicator />
+            }
+            else
+            {
+                <h6><span class="oi oi-folder"></span> Template</h6>
+                <p>@this.entity.MessageTemplate</p>
+                @if (this.entity.Exception != null)
+                {
+                    <h6><span class="oi oi-folder"></span> Exception</h6>
+                    <p><pre>@this.entity.Exception</pre></p>
+                }
+                <h6><span class="oi oi-folder"></span> Properties</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Propery name</th>
+                            <th>Value</th>
+                            <th>Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var attr in this.entity.Properties)
+                        {
+                            <tr @key="@attr.Name">
+                                <td>@attr.Name</td>
+                                <td>@attr.GetValueString()</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch(attr))">
+                                            <span class="oi oi-plus"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow(attr))">
+                                            <span class="oi oi-loop-square"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private bool showDetails = false;
+    private LogEntity? entity = null;
+
+    [Parameter]
+    [EditorRequired]
+    public LogInfo LogInfo
+    {
+        get;
+        set;
+    }
+
+    [CascadingParameter]
+    public SerachControlContext Context
+    {
+        get;
+        set;
+    }
+
+    private async Task ToggleShowDetails()
+    {
+        this.showDetails = !this.showDetails;
+        if (this.showDetails && this.entity == null)
+        {
+            //TODO: fix if not log info does not exists
+            this.entity = await this.LogReader.LoadLogInfo(this.LogInfo.Id);
+        }
+    }
+
+    private void AddToSearch(LogEntityProperty property)
+    {
+        this.Context?.AddToQuery(property);
+    }
+
+    private void SerachNow(LogEntityProperty property)
+    {
+        this.Context?.SearchNow(property);
+    }
+}

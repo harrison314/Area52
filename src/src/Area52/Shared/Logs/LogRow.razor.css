@@ -1,0 +1,10 @@
+﻿.pointer-cursor {
+    cursor: pointer;
+}
+
+.table .btn {
+    padding: .20rem .4rem;
+}
+.table .oi {
+    font-size: .70rem;
+}

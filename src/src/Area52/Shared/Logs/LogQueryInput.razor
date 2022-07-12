@@ -1,0 +1,61 @@
+﻿<div class="input-group mb-3">
+    <input type="text"
+           class="form-control"
+           value="@this.Value"
+           @onchange="@OnValueChanged"
+           placeholder="Log query"
+           @onkeyup="@Enter"
+           @onkeyup:preventDefault="true" 
+           @onkeydown:preventDefault="true" 
+    />
+    <button class="btn btn-outline-secondary"
+            type="button"
+            @onclick="@OnSerachInvoke"
+            id="button-addon2">
+        <span class="oi oi-magnifying-glass"></span>
+        Search
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public string Value
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<string> OnSearch
+    {
+        get;
+        set;
+    }
+
+    private Task OnValueChanged(ChangeEventArgs e)
+    {
+        return this.ValueChanged.InvokeAsync(e.Value as string);
+    }
+
+    private Task OnSerachInvoke()
+    {
+        return this.OnSearch.InvokeAsync(this.Value);
+    }
+
+    private Task Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            return this.OnSearch.InvokeAsync(this.Value);
+        }
+
+        return Task.CompletedTask;
+    }
+}

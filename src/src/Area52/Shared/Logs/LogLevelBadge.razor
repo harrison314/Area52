@@ -1,0 +1,30 @@
+﻿<span class="@GetLogLevelBaggeStyle()">@this.Level</span>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string Level
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    private string GetLogLevelBaggeStyle()
+    {
+        if (string.IsNullOrEmpty(this.Level))
+        {
+            return "badge bg-light text-dark";
+        }
+
+        return char.ToLower(this.Level[0]) switch
+        {
+            'd' => "badge bg-secondary", //Debug
+            'v' or 't' => "badge bg-light text-dark", //trace
+            'e' => "badge bg-danger", //error
+            'i' => "badge bg-success", // info
+            'w' => "badge bg-warning text-dark", // warning
+            'f' or 'c' => "badge bg-dark", // critical
+            _ => "badge bg-light text-dark"
+        };
+    }
+}
