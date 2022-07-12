@@ -32,31 +32,39 @@ public class LogReader : ILogReader
     {
         this.logger.LogTrace("Entering to ReadLastLogs with query {query}", query);
 
-        DynamicIndexQueryBuilder builder = new DynamicIndexQueryBuilder();
-        if (!string.IsNullOrWhiteSpace(query))
+        try
         {
-            IAstNode ast = Parser.SimpleParse(query);
-            builder.Add(ast);
+            DynamicIndexQueryBuilder builder = new DynamicIndexQueryBuilder();
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                IAstNode ast = Parser.SimpleParse(query);
+                builder.Add(ast);
+            }
+
+            QueryWithParameters reqlQuery = builder.BuildQuery();
+            this.logger.LogDebug("Translate input query {query} to RQL {rql}.", query, reqlQuery.Query);
+
+            using var session = this.documentStore.OpenAsyncSession();
+
+            IAsyncRawDocumentQuery<LogInfo> request = session.Advanced.AsyncRawQuery<LogInfo>(reqlQuery.Query);
+            reqlQuery.SetParameters(request);
+            request.NoTracking();
+            request.Take(150);
+            request.Statistics(out QueryStatistics stats);
+            List<LogInfo> result = await request.ToListAsync();
+
+            this.logger.LogDebug("Executed query {query} with {resultsCount} results and {executionTimeMs} ms.",
+                query,
+                stats.LongTotalResults,
+                stats.DurationInMs);
+
+            return new ReadLastLogResult(result, stats.LongTotalResults);
         }
-
-        QueryWithParameters reqlQuery = builder.BuildQuery();
-        this.logger.LogDebug("Translate input query {query} to RQL {rql}.", query, reqlQuery.Query);
-
-        using var session = this.documentStore.OpenAsyncSession();
-
-        IAsyncRawDocumentQuery<LogInfo> request = session.Advanced.AsyncRawQuery<LogInfo>(reqlQuery.Query);
-        reqlQuery.SetParameters(request);
-        request.NoTracking();
-        request.Take(150);
-        request.Statistics(out QueryStatistics stats);
-        List<LogInfo> result = await request.ToListAsync();
-
-        this.logger.LogDebug("Executed query {query} with {resultsCount} results and {executionTimeMs} ms.",
-            query,
-            stats.LongTotalResults,
-            stats.DurationInMs);
-
-        return new ReadLastLogResult(result, stats.LongTotalResults);
+        catch (Exception ex)
+        {
+            this.logger.LogWarning(ex, "Error during ReadLastLogs with query {query}.", query);
+            throw;
+        }
     }
 
     public async IAsyncEnumerable<LogEntity> ReadLogs(string query, int? limit)
@@ -92,5 +100,6 @@ public class LogReader : ILogReader
         }
 
         this.logger.LogDebug("Finishing downloading logs for query {query}.", query);
+
     }
 }
