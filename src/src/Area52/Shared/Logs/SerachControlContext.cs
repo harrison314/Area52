@@ -18,30 +18,38 @@ public class SerachControlContext
 
     }
 
-    public void AddToQuery(LogEntityProperty property)
+    public void AddToQuery(LogEntityProperty property, string? binOperator = null)
     {
-        this.OnQueryChange?.Invoke(this.ToQuery(property), false, false);
+        this.OnQueryChange?.Invoke(this.ToQuery(property, binOperator), false, false);
     }
 
-    public void SearchNow(LogEntityProperty property)
+    public void SearchNow(LogEntityProperty property, string? binOperator = null)
     {
-        this.OnQueryChange?.Invoke(this.ToQuery(property), true, true);
+        this.OnQueryChange?.Invoke(this.ToQuery(property, binOperator), true, true);
     }
 
-    private string ToQuery(LogEntityProperty property)
+    private string ToQuery(LogEntityProperty property, string? binOperator)
     {
+        if (binOperator == null)
+        {
+            binOperator = "is";
+        }
+
         if (property.Valued.HasValue)
         {
             return string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                "{0} is {1}",
+                "{0} {1} {2}",
                 property.Name,
+                binOperator,
                 property.Valued.Value);
         }
 
         if (property.Values != null)
         {
             return string.Concat(property.Name,
-                " is '",
+                " ",
+                binOperator,
+                " '",
                 property.Values.Replace("'", "\\'").Replace("\n", "\\n"),
                 "'");
         }

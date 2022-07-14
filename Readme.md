@@ -16,7 +16,9 @@ This project uses [RavenDb](https://ravendb.net/) as a log store and serach engi
   - logical operator,
   - and more...
 
-![Area 51 Screen](doc/Scrrn_0.jpg)
+![Area 51 Screen](doc/Screen1.jpg)
+
+![Area 51 Screen](doc/Screen2.jpg)
 
 ## Technology
 - Dotnet 6.0

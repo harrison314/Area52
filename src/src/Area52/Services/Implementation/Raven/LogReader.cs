@@ -42,7 +42,7 @@ public class LogReader : ILogReader
             }
 
             QueryWithParameters reqlQuery = builder.BuildQuery();
-            this.logger.LogDebug("Translate input query {query} to RQL {rql}.", query, reqlQuery.Query);
+            this.logger.LogDebug("Translate input query {query} to RQL {rql} with parameters {parameters}.", query, reqlQuery.Query, reqlQuery.Parameters);
 
             using var session = this.documentStore.OpenAsyncSession();
 
@@ -80,7 +80,7 @@ public class LogReader : ILogReader
         }
 
         QueryWithParameters rqlQuery = builder.BuildQuery();
-        this.logger.LogDebug("Translate input query {query} to RQL {rql}.", query, rqlQuery.Query);
+        this.logger.LogDebug("Translate input query {query} to RQL {rql} with parameters {parameters}.", query, rqlQuery.Query, rqlQuery.Parameters);
 
         using var session = this.documentStore.OpenAsyncSession();
 

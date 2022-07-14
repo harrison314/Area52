@@ -54,7 +54,12 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
         this.Map = logs => from log in logs
                            select new
                            {
-                               Level = log.Level,
+                               Level = this.CreateField("Level", log.Level, new CreateFieldOptions()
+                               {
+                                   Indexing = FieldIndexing.Exact,
+                                   Storage = FieldStorage.Yes,
+                                   TermVector = FieldTermVector.No
+                               }),
                                LevelNumeric = log.LevelNumeric,
                                Timestamp = log.Timestamp,
                                Message = log.Message,

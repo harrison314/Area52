@@ -18,14 +18,14 @@
             }
             else
             {
-                <h6><span class="oi oi-folder"></span> Template</h6>
+                <h6 class="fw-bold">Template</h6>
                 <p>@this.entity.MessageTemplate</p>
                 @if (this.entity.Exception != null)
                 {
-                    <h6><span class="oi oi-folder"></span> Exception</h6>
+                    <h6 class="fw-bold">Exception</h6>
                     <p><pre>@this.entity.Exception</pre></p>
                 }
-                <h6><span class="oi oi-folder"></span> Properties</h6>
+
                 <table class="table table-sm">
                     <thead>
                         <tr>
@@ -35,6 +35,27 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr @key="@("Level")">
+                            <td>Level</td>
+                            <td><LogLevelBadge Level="@this.LogInfo.Level" /></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch("Level", entity.Level, "is eg"))">
+                                        <span class="oi oi-plus"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow("Level", entity.Level, "is eg"))">
+                                        <span class="oi oi-loop-square"></span>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch("LevelNumeric", entity.LevelNumeric, ">="))">
+                                        <span class="oi oi-chevron-right"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow("LevelNumeric", entity.LevelNumeric, ">="))">
+                                        <span class="oi oi-caret-right"></span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                         @foreach (var attr in this.entity.Properties)
                         {
                             <tr @key="@attr.Name">
@@ -93,8 +114,44 @@
         this.Context?.AddToQuery(property);
     }
 
+    private void AddToSearch(string name, string value, string? op = null)
+    {
+        this.Context?.AddToQuery(new LogEntityProperty()
+            {
+                Name = name,
+                Values = value
+            });
+    }
+
+    private void AddToSearch(string name, double value, string? op = null)
+    {
+        this.Context?.AddToQuery(new LogEntityProperty()
+            {
+                Name = name,
+                Valued = value
+            }, op);
+    }
+
     private void SerachNow(LogEntityProperty property)
     {
         this.Context?.SearchNow(property);
+    }
+
+    private void SerachNow(string name, string value, string? op = null)
+    {
+        this.Context?.SearchNow(new LogEntityProperty()
+            {
+                Name = name,
+                Values = value
+            }, op);
+    }
+
+    private void SerachNow(string name, double value, string? op = null)
+    {
+        this.Context?.SearchNow(new LogEntityProperty()
+            {
+                Name = name,
+                Valued = value
+            }, op);
     }
 }
