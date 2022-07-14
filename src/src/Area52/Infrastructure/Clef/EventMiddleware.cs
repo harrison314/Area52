@@ -1,17 +1,18 @@
 ﻿using Area52.Services.Contracts;
+using System.Buffers;
 using System.Text;
 
 namespace Area52.Infrastructure.Clef;
 
 public class EventMiddleware
 {
-    private readonly RequestDelegate _next;
+    private readonly RequestDelegate next;
     private readonly ILogWriter logWriter;
     private readonly ILogger<EventMiddleware> logger;
 
     public EventMiddleware(RequestDelegate next, ILogWriter logWriter, ILogger<EventMiddleware> logger)
     {
-        _next = next;
+        this.next = next;
         this.logWriter = logWriter;
         this.logger = logger;
     }
@@ -21,6 +22,7 @@ public class EventMiddleware
         if (httpContext.Request.Method == "POST" && httpContext.Request.Path == "/api/events/raw")
         {
             string? line = null;
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
             try
             {
                 // TODO: Optimalize
@@ -28,7 +30,17 @@ public class EventMiddleware
                 List<LogEntity> list = new List<LogEntity>();
                 while ((line = await tr.ReadLineAsync()) != null)
                 {
-                    list.Add(ClefParser.Read(Encoding.UTF8.GetBytes(line)));
+                    int encodedLen = Encoding.UTF8.GetByteCount(line);
+                    if (encodedLen >= buffer.Length)
+                    {
+                        ArrayPool<byte>.Shared.Return(buffer, false);
+                        int reuested = Encoding.UTF8.GetByteCount(line);
+                        buffer = ArrayPool<byte>.Shared.Rent(reuested);
+                        encodedLen = Encoding.UTF8.GetBytes(line, buffer);
+                    }
+
+                    encodedLen = Encoding.UTF8.GetBytes(line, buffer);
+                    list.Add(ClefParser.Read(buffer.AsSpan(0, encodedLen)));
                 }
 
                 await this.logWriter.Write(list);
@@ -39,9 +51,13 @@ public class EventMiddleware
                 this.logger.LogError(ex, "Problem with line {line}", line);
                 httpContext.Response.StatusCode = 500;
             }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer, false);
+            }
             return;
         }
 
-        await _next(httpContext);
+        await this.next(httpContext);
     }
 }
