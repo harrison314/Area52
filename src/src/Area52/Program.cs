@@ -1,4 +1,4 @@
-using Area52.Infrastructure.Clef;
+﻿using Area52.Infrastructure.Clef;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Serilog;
@@ -35,6 +35,9 @@ namespace Area52
             {
                 builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.ArchivationHostedService>();
             }
+
+            builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
+
 
             var app = builder.Build();
 

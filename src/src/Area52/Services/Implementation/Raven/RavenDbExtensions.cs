@@ -33,17 +33,6 @@ public static class RavenDbExtensions
 
         store.Initialize();
 
-        //TODO: moove to startup tasks
-        try
-        {
-            global::Raven.Client.Documents.Indexes.IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
-
-        }
-        catch (global::Raven.Client.Exceptions.RavenException)
-        {
-            //throw;
-        }
-
 
         builder.Services.AddSingleton<IDocumentStore>(store);
 
@@ -53,6 +42,8 @@ public static class RavenDbExtensions
                 .GetRequiredService<IDocumentStore>()
                 .OpenAsyncSession();
         });
+
+        builder.Services.AddTransient<Contracts.IStartupJob, RavenDbIndexJob>();
 
         RegisvicesInternal(builder.Services);
     }
