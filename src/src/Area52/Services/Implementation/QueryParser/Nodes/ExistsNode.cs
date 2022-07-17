@@ -4,6 +4,11 @@ internal class ExistsNode : IAstNode
 {
     private readonly IAstNode node;
 
+    public IAstNode Nested
+    {
+        get => this.node;
+    }
+
     public ExistsNode(IAstNode node)
     {
         this.node = node;

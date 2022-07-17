@@ -3,6 +3,12 @@
 internal class ArrayNode : IAstNode
 {
     private List<IAstNode> nodes;
+
+    public IReadOnlyList<IAstNode> Nodes
+    {
+        get => this.nodes;
+    }
+
     public ArrayNode()
     {
         this.nodes = new List<IAstNode>();
