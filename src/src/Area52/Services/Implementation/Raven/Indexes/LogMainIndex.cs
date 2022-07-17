@@ -51,6 +51,7 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
 
     public LogMainIndex()
     {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         this.Map = logs => from log in logs
                            select new
                            {
@@ -72,13 +73,14 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                                    log.Message,
                                    log.Exception),
 
-                               _ = log.Properties.Select(t => this.CreateField(t.Name, (object)t.Values ?? (object)t.Valued.Value, new CreateFieldOptions()
+                               _ = log.Properties.Select(t => this.CreateField(t.Name, (object)t.Values ?? (object)t.Valued!.Value, new CreateFieldOptions()
                                {
                                    Indexing = FieldIndexing.Exact,
                                    Storage = FieldStorage.Yes,
                                    TermVector = FieldTermVector.No
                                }))
                            };
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         this.Index("LevelNumeric", FieldIndexing.Exact);
         this.Index("LogFullText", FieldIndexing.Search);

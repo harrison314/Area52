@@ -32,7 +32,7 @@ internal class SearchNode : BinaryOpNode
     {
         if (this.Left is NullValueNode)
         {
-            return this.Righht.ToString();
+            return this.Righht.ToString()!;
         }
 
         return this.ToString("serach");
