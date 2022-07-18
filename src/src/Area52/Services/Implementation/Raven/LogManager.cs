@@ -25,7 +25,7 @@ public class LogManager : ILogManager
     {
         this.logger.LogTrace("Entering to RemoveOldLogs with timeAtDeteledLogs={timeAtDeteledLogs}", timeAtDeteledLogs);
 
-        DeleteByQueryOperation<LogMainIndex.Result, LogMainIndex>? operation = new DeleteByQueryOperation<LogMainIndex.Result, LogMainIndex>(
+        DeleteByQueryOperation<LogMainIndex.Result, LogMainIndex> operation = new DeleteByQueryOperation<LogMainIndex.Result, LogMainIndex>(
          t => t.Timestamp < timeAtDeteledLogs);
 
         this.logger.LogDebug("Staring removing logs");

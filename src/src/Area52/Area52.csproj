@@ -7,6 +7,12 @@
     <Version>0.0.1</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0' And '$(Configuration)' == 'Release'">
+    <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <PublishReadyToRun>false</PublishReadyToRun>
+  </PropertyGroup>
+
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\About.razor" />
   </ItemGroup>
@@ -17,6 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.16.1" />
+    <PackageReference Include="MongoDB.Driver.GridFS" Version="2.16.1" />
     <PackageReference Include="Piglet" Version="1.5.0" />
     <PackageReference Include="RavenDB.Client" Version="5.3.103" />
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />

@@ -23,13 +23,32 @@ namespace Area52
                     .Enrich.FromLogContext()
                     .WriteTo.Console());
 
+
             builder.Services.Configure<Area52.Services.Configuration.ArchiveSettings>(builder.Configuration.GetSection("ArchiveSettings"));
+
+
+            Services.Configuration.LogStorageType storageType = builder.Configuration.GetValue<Services.Configuration.LogStorageType>("StorageType");
+
+            switch (storageType)
+            {
+                case Services.Configuration.LogStorageType.RavenDb:
+                    Area52.Services.Implementation.Raven.RavenDbExtensions.AddRavenDb(builder);
+                    break;
+
+                case Services.Configuration.LogStorageType.MongoDb:
+                    Area52.Services.Implementation.Mongo.MongoDbExtensions.AddMongoDb(builder);
+                    break;
+
+                default:
+                    throw new InvalidProgramException($"Enum value {storageType} is not supported.");
+            }
+
+
 
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
 
-            Area52.Services.Implementation.Raven.RavenDbExtensions.AddRavenDb(builder);
 
             if (builder.Configuration.GetValue<bool>("ArchiveSettings:Enabled"))
             {

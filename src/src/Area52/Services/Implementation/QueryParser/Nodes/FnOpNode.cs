@@ -2,16 +2,25 @@
 
 internal class FnOpNode : BinaryOpNode
 {
-    private readonly string functionName;
+    public static class FnNames
+    {
+        public const string StartsWith = "startsWith";
+        public const string EndsWith = "endsWith";
+    }
+
+    public string FnName
+    {
+        get;
+    }
 
     public FnOpNode(IAstNode left, IAstNode righht, string functionName) : base(left, righht)
     {
-        this.functionName = functionName;
+        this.FnName = functionName;
     }
 
     public override void ToRql(RqlQueryBuilderContext context)
     {
-        if (this.functionName == "startsWith")
+        if (this.FnName == FnNames.StartsWith)
         {
             context.Append("startsWith(");
             this.Left.ToRql(context);
@@ -21,7 +30,7 @@ internal class FnOpNode : BinaryOpNode
             return;
         }
 
-        if (this.functionName == "endsWith")
+        if (this.FnName == FnNames.EndsWith)
         {
             context.Append("endsWith(");
             this.Left.ToRql(context);
@@ -31,11 +40,11 @@ internal class FnOpNode : BinaryOpNode
             return;
         }
 
-        throw new InvalidProgramException($"Inavlid function name {this.functionName}.");
+        throw new InvalidProgramException($"Inavlid function name {this.FnName}.");
     }
 
     public override string ToString()
     {
-        return this.ToString(this.functionName);
+        return this.ToString(this.FnName);
     }
 }

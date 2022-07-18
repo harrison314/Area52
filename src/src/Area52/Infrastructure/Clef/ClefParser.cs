@@ -149,7 +149,7 @@ public static class ClefParser
             }
             else
             {
-                throw new InvalidProgramException();
+                throw new InvalidProgramException("LogEntityProperty has invalid value.");
             }
         }
 
@@ -184,12 +184,7 @@ public static class ClefParser
     {
         if (jsonReader.TokenType == System.Text.Json.JsonTokenType.String)
         {
-            return new LogEntityProperty()
-            {
-                Name = name,
-                Values = jsonReader.GetString()!,
-                Valued = null
-            };
+            return new LogEntityProperty(name, jsonReader.GetString()!);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.Number)
         {
@@ -203,35 +198,29 @@ public static class ClefParser
                 valueNumber = jsonReader.GetDouble();
             }
 
-            return new LogEntityProperty()
-            {
-                Name = name,
-                Values = null,
-                Valued = valueNumber
-            };
+            return new LogEntityProperty(name, valueNumber);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.Null)
         {
-            return new LogEntityProperty()
-            {
-                Name = name,
-                Values = string.Empty,
-                Valued = null
-            };
+            return new LogEntityProperty(name, string.Empty);
+        }
+        else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.True)
+        {
+            return new LogEntityProperty(name, "true");
+        }
+        else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.False)
+        {
+            return new LogEntityProperty(name, "false");
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.StartObject
             || jsonReader.TokenType == System.Text.Json.JsonTokenType.StartArray)
         {
             string? json = System.Text.Json.Nodes.JsonNode.Parse(ref jsonReader)?.ToJsonString();
 
-            return new LogEntityProperty()
-            {
-                Name = name,
-                Values = json
-            };
+            return new LogEntityProperty(name, json ?? string.Empty);
         }
 
-        throw new InvalidProgramException();
+        throw new InvalidProgramException($"Invalid token for read property {jsonReader.TokenType}.");
     }
 
     private static void RenderMessage(LogEntity entry, string[]? renderes)

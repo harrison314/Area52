@@ -1,5 +1,7 @@
 ﻿@using Area52.Services.Contracts
+@using Microsoft.Extensions.Logging
 @inject ILogReader LogReader
+@inject ILogger<LogRow> Logger
 
 <div class="row @(this.showDetails? "bg-light":string.Empty)">
     <div class="col-2 pointer-cursor" @onclick="@ToggleShowDetails">@this.LogInfo.Timestamp.ToString("s")</div>
@@ -12,7 +14,11 @@
     <div class="row bg-light">
 
         <div class="col-11" style="margin-left: 3em;">
-            @if (this.entity == null)
+            @if (this.errorMessage != null)
+            {
+                <p class="text-danger">@this.errorMessage</p>
+            }
+            else if (this.entity == null)
             {
                 <LoadingIndicator />
             }
@@ -83,6 +89,7 @@
 @code {
     private bool showDetails = false;
     private LogEntity? entity = null;
+    private string? errorMessage = null;
 
     [Parameter]
     [EditorRequired]
@@ -102,10 +109,18 @@
     private async Task ToggleShowDetails()
     {
         this.showDetails = !this.showDetails;
+        this.errorMessage = null;
         if (this.showDetails && this.entity == null)
         {
-            //TODO: fix if not log info does not exists
-            this.entity = await this.LogReader.LoadLogInfo(this.LogInfo.Id);
+            try
+            {
+                this.entity = await this.LogReader.LoadLogInfo(this.LogInfo.Id);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(ex, "Unexcepted error during call ToggleShowDetails (LoadLogInfo).");
+                this.errorMessage = ex.Message;
+            }
         }
     }
 

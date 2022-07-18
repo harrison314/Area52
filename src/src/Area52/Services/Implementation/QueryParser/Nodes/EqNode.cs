@@ -2,16 +2,19 @@
 
 internal class EqNode : BinaryOpNode
 {
-    private readonly bool isExact;
+    public bool IsExact
+    {
+        get;
+    }
 
     public EqNode(IAstNode left, IAstNode righht, bool isExact) : base(left, righht)
     {
-        this.isExact = isExact;
+        this.IsExact = isExact;
     }
 
     public override void ToRql(RqlQueryBuilderContext context)
     {
-        if (this.isExact)
+        if (this.IsExact)
         {
             context.Append("exact(");
             this.Left.ToRql(context);
@@ -29,6 +32,6 @@ internal class EqNode : BinaryOpNode
 
     public override string ToString()
     {
-        return this.ToString(this.isExact ? "is exact" : "is");
+        return this.ToString(this.IsExact ? "is exact" : "is");
     }
 }

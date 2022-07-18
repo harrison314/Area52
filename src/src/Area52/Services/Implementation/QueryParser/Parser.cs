@@ -81,7 +81,17 @@ public class Parser
 
     public static IAstNode SimpleParse(string input)
     {
-        return nodeParser.Parse(input.Trim());
+        if (input == null) throw new ArgumentNullException(nameof(input));
+        if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Input value can not by only whitespaces.", nameof(input));
+        
+        try
+        {
+            return nodeParser.Parse(input.Trim());
+        }
+        catch (Exception ex)
+        {
+            throw new Contracts.Area52QueryException(ex.Message, ex);
+        }
     }
 
     private static StringValueNode ParseString(string value)
@@ -92,8 +102,8 @@ public class Parser
             return StringValueNode.FromLiteral(value);
         }
 
-       
-        throw new ArgumentException("valie is not string");
+
+        throw new InvalidProgramException("valie is not string");
     }
 
     private static IValueNode ParseNumber(string value)

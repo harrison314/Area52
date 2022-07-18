@@ -3,7 +3,7 @@
 Experimental structured log collector with logs visualization
 inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.co/what-is/elk-stack).
 
-This project uses [RavenDb](https://ravendb.net/) as a log store and serach engine.
+This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and serach engine.
 
 > Everyone wants to know what's in _Area 51_. But no one asks about _Area 52_.
 
@@ -31,10 +31,12 @@ This project uses [RavenDb](https://ravendb.net/) as a log store and serach engi
 - [ ] More efective read CLEF log from request
 - [ ] Autehntification
   - [ ] Predefined queries
+  - [ ] Distributed data protection provider
+  - [ ] API keys for log input with management
 - [ ] Graph and alerts as subsriptions and timeseries
-- [ ] API keys for log input with management
 - [ ] Log archiving using background workers
-- [ ] Try implement using MongoDb
+- [ ] Implements healthchecks
+- [x] Try implement using MongoDb
 
 ## Getting logs into Area 52
 It is possible to use libraries for SEQ.

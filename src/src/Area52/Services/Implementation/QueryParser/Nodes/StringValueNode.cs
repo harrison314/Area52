@@ -16,7 +16,6 @@ internal class StringValueNode : IValueNode
 
     public void ToRql(RqlQueryBuilderContext context)
     {
-        // context.Append($"\"{this.Value.Replace("\"", "\\\"")}\"");
         string paramName = context.AddParameterWithValue(this.Value);
         context.Append('$');
         context.Append(paramName);

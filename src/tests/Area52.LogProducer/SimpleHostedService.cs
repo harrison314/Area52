@@ -26,9 +26,17 @@ public class SimpleHostedService : BackgroundService
             this.logger.LogDebug("Start sleep to: {sleepTime} ms", delay);
             await Task.Delay(delay);
 
+            this.logger.LogTrace("Starting log trace with guid {logId}.", Guid.NewGuid());
+            await Task.Delay(25);
+            this.logger.LogDebug("Example debug log with {RunNumber}.", run);
+
             this.logger.LogInformation("Used memory: {workingSet} with user: {user}.",
                 Environment.WorkingSet,
                 Environment.UserName);
+
+            this.logger.LogWarning("Any warning log. ThreadID {ThreadId}.", Environment.CurrentManagedThreadId);
+            this.logger.LogError(new InvalidDataException("Random invalid exacption."), "Example error log.");
+            this.logger.LogCritical("Example critical log.");
         }
     }
 }

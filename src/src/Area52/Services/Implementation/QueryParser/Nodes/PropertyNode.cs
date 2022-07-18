@@ -2,20 +2,23 @@
 
 internal class PropertyNode : IAstNode
 {
-    private readonly string name;
+    public string Name
+    {
+        get;
+    }
 
     public PropertyNode(string name)
     {
-        this.name = name;
+        this.Name = name;
     }
 
     public void ToRql(RqlQueryBuilderContext context)
     {
-        context.Append(this.name);
+        context.Append(this.Name);
     }
 
     public override string ToString()
     {
-        return this.name;
+        return this.Name;
     }
 }

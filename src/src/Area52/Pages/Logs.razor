@@ -1,8 +1,10 @@
 ﻿@page "/Logs"
 @using Area52.Services.Contracts
 @using Area52.Shared.Logs
+@using Microsoft.Extensions.Logging
 @implements IDisposable
 @inject ILogReader LogReader
+@inject ILogger<Logs> Logger
 
 <PageTitle>Logs</PageTitle>
 
@@ -122,6 +124,7 @@
             }
             catch (Exception ex)
             {
+                this.Logger.LogDebug(ex, "Exception during processing query {query}.", this.query);
                 this.errorMessage = ex.Message;
             }
             finally
@@ -165,7 +168,6 @@
                 this.timer = new Timer(_ => ReadLogs(false).ContinueWith(_ => this.InvokeAsync(() => this.StateHasChanged())), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
             }
             else
-
             {
                 this.timer.Dispose();
                 this.timer = null;
