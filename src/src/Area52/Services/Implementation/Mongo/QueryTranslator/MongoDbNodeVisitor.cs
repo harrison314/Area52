@@ -227,11 +227,11 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
 
         BsonDocument expressionFrom = this.ConstructPropertyOperation(propertyNode.Name,
             useNumeric,
-            new BsonDocument() { { "$gt", this.ConvertValue(fromValueNode) } });
+            new BsonDocument() { { "$gte", this.ConvertValue(fromValueNode) } });
 
         BsonDocument expressionTo = this.ConstructPropertyOperation(propertyNode.Name,
            useNumeric,
-           new BsonDocument() { { "$lt", this.ConvertValue(toValueNode) } });
+           new BsonDocument() { { "$lte", this.ConvertValue(toValueNode) } });
 
         BsonDocument expression = new BsonDocument("$and", new BsonArray() { expressionFrom, expressionTo });
         this.ctxStack.Push(new BsonCtxNode(expression, QueryNodeType.And));
