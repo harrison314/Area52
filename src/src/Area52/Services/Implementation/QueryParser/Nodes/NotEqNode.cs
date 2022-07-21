@@ -2,13 +2,13 @@
 
 internal class NotEqNode : BinaryOpNode
 {
-    public NotEqNode(IAstNode left, IAstNode righht) : base(left, righht)
+    public NotEqNode(IAstNode left, IAstNode right) : base(left, right)
     {
     }
 
     public override void ToRql(RqlQueryBuilderContext context)
     {
-        if (this.Left is PropertyNode && this.Righht is NullValueNode)
+        if (this.Left is PropertyNode && this.Right is NullValueNode)
         {
             context.Append("(exists(");
             this.Left.ToRql(context);
@@ -21,7 +21,7 @@ internal class NotEqNode : BinaryOpNode
 
         this.Left.ToRql(context);
         context.Append(" != ");
-        this.Righht.ToRql(context);
+        this.Right.ToRql(context);
     }
 
     public override string ToString()

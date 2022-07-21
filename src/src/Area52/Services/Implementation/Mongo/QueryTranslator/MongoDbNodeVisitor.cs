@@ -33,14 +33,14 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
 
     protected override void VisitInternal(EqNode node)
     {
-        if (node.IsExact || node.Righht is not StringValueNode)
+        if (node.IsExact || node.Right is not StringValueNode)
         {
             this.PushBinaryOperation(node, "$eq");
         }
         else
         {
             PropertyNode propertyNode = (PropertyNode)node.Left;
-            StringValueNode strNode = (StringValueNode)node.Righht;
+            StringValueNode strNode = (StringValueNode)node.Right;
             string regexExpr = string.Concat("^",
                 System.Text.RegularExpressions.Regex.Escape(strNode.Value),
                 "$");
@@ -80,10 +80,10 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     protected override void VisitInternal(InNode node)
     {
         System.Diagnostics.Debug.Assert(node.Left is PropertyNode);
-        System.Diagnostics.Debug.Assert(node.Righht is ArrayNode);
+        System.Diagnostics.Debug.Assert(node.Right is ArrayNode);
 
         PropertyNode propertyNode = (PropertyNode)node.Left;
-        ArrayNode valueNode = (ArrayNode)node.Righht;
+        ArrayNode valueNode = (ArrayNode)node.Right;
 
         BsonArray array = new BsonArray(valueNode.Nodes.Select(t => this.ConvertValue((IValueNode)t)));
 
@@ -98,7 +98,7 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     {
         System.Diagnostics.Debug.Assert(node.Left is PropertyNode);
 
-        if (node.Righht is NullValueNode)
+        if (node.Right is NullValueNode)
         {
             this.PushExists((PropertyNode)node.Left);
             this.PushBinaryOperation(node, "$ne");
@@ -120,9 +120,9 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     protected override void VisitInternal(SearchNode node)
     {
         System.Diagnostics.Debug.Assert(node.Left is PropertyNode or NullValueNode);
-        System.Diagnostics.Debug.Assert(node.Righht is StringValueNode);
+        System.Diagnostics.Debug.Assert(node.Right is StringValueNode);
 
-        StringValueNode stringNode = (StringValueNode)node.Righht;
+        StringValueNode stringNode = (StringValueNode)node.Right;
 
         if (node.Left is PropertyNode propertyNode && propertyNode.Name != "LogFullText")
         {
@@ -178,7 +178,7 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     protected override void VisitInternal(AndNode node)
     {
         base.Visit(node.Left);
-        base.Visit(node.Righht);
+        base.Visit(node.Right);
 
         BsonCtxNode rightCtx = this.ctxStack.Pop();
         BsonCtxNode leftCtx = this.ctxStack.Pop();
@@ -197,7 +197,7 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     protected override void VisitInternal(OrNode node)
     {
         base.Visit(node.Left);
-        base.Visit(node.Righht);
+        base.Visit(node.Right);
 
         BsonCtxNode rightCtx = this.ctxStack.Pop();
         BsonCtxNode leftCtx = this.ctxStack.Pop();
@@ -240,10 +240,10 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     protected override void VisitInternal(FnOpNode node)
     {
         System.Diagnostics.Debug.Assert(node.Left is PropertyNode);
-        System.Diagnostics.Debug.Assert(node.Righht is StringValueNode);
+        System.Diagnostics.Debug.Assert(node.Right is StringValueNode);
 
         PropertyNode propertyNode = (PropertyNode)node.Left;
-        StringValueNode valueNode = (StringValueNode)node.Righht;
+        StringValueNode valueNode = (StringValueNode)node.Right;
 
         string regexExpr = node.FnName switch
         {
@@ -339,10 +339,10 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
     private void PushBinaryOperation(BinaryOpNode binaryOpNode, string op)
     {
         System.Diagnostics.Debug.Assert(binaryOpNode.Left is PropertyNode);
-        System.Diagnostics.Debug.Assert(binaryOpNode.Righht is IValueNode);
+        System.Diagnostics.Debug.Assert(binaryOpNode.Right is IValueNode);
 
         PropertyNode propertyNode = (PropertyNode)binaryOpNode.Left;
-        IValueNode valueNode = (IValueNode)binaryOpNode.Righht;
+        IValueNode valueNode = (IValueNode)binaryOpNode.Right;
 
         BsonDocument expression = this.ConstructPropertyOperation(propertyNode.Name,
             (valueNode is NumberValueNode),

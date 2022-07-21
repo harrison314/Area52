@@ -2,7 +2,7 @@
 
 internal class GtNode : BinaryOpNode
 {
-    public GtNode(IAstNode left, IAstNode righht) : base(left, righht)
+    public GtNode(IAstNode left, IAstNode right) : base(left, right)
     {
     }
 
@@ -10,7 +10,7 @@ internal class GtNode : BinaryOpNode
     {
         this.Left.ToRql(context);
         context.Append(" > ");
-        this.Righht.ToRql(context);
+        this.Right.ToRql(context);
     }
 
     public override string ToString()

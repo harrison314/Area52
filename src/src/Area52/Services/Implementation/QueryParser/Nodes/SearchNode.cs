@@ -2,7 +2,7 @@
 
 internal class SearchNode : BinaryOpNode
 {
-    public SearchNode(IAstNode left, IAstNode righht) : base(left, righht)
+    public SearchNode(IAstNode left, IAstNode right) : base(left, right)
     {
     }
 
@@ -24,7 +24,7 @@ internal class SearchNode : BinaryOpNode
         }
 
         context.Append(", ");
-        this.Righht.ToRql(context);
+        this.Right.ToRql(context);
         context.Append(")");
     }
 
@@ -32,7 +32,7 @@ internal class SearchNode : BinaryOpNode
     {
         if (this.Left is NullValueNode)
         {
-            return this.Righht.ToString()!;
+            return this.Right.ToString()!;
         }
 
         return this.ToString("serach");

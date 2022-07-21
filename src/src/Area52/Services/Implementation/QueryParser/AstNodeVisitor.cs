@@ -83,7 +83,7 @@ internal abstract class AstNodeVisitor
     protected virtual void VisitInternal(AndNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(ArrayNode node)
@@ -104,7 +104,7 @@ internal abstract class AstNodeVisitor
     protected virtual void VisitInternal(EqNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(ExistsNode node)
@@ -115,43 +115,43 @@ internal abstract class AstNodeVisitor
     protected virtual void VisitInternal(FnOpNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(GtNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(GtOrEqNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(InNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(LtNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(LtOrEqNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(NotEqNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(NullValueNode node)
@@ -167,7 +167,7 @@ internal abstract class AstNodeVisitor
     protected virtual void VisitInternal(OrNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(PropertyNode node)
@@ -178,7 +178,7 @@ internal abstract class AstNodeVisitor
     protected virtual void VisitInternal(SearchNode node)
     {
         this.Visit(node.Left);
-        this.Visit(node.Righht);
+        this.Visit(node.Right);
     }
 
     protected virtual void VisitInternal(StringValueNode node)

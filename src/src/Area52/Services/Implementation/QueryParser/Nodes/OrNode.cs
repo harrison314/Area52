@@ -2,7 +2,7 @@
 
 internal class OrNode : BinaryOpNode
 {
-    public OrNode(IAstNode left, IAstNode righht) : base(left, righht)
+    public OrNode(IAstNode left, IAstNode right) : base(left, right)
     {
     }
 
@@ -11,7 +11,7 @@ internal class OrNode : BinaryOpNode
         context.Append('(');
         this.Left.ToRql(context);
         context.Append(") or (");
-        this.Righht.ToRql(context);
+        this.Right.ToRql(context);
         context.Append(')');
     }
 

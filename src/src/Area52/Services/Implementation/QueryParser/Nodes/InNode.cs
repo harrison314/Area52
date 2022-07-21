@@ -2,7 +2,7 @@
 
 internal class InNode : BinaryOpNode
 {
-    public InNode(IAstNode left, IAstNode righht) : base(left, righht)
+    public InNode(IAstNode left, IAstNode right) : base(left, right)
     {
     }
 
@@ -10,7 +10,7 @@ internal class InNode : BinaryOpNode
     {
         this.Left.ToRql(context);
         context.Append(" IN (");
-        this.Righht.ToRql(context);
+        this.Right.ToRql(context);
         context.Append(")");
     }
 

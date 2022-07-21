@@ -7,7 +7,7 @@ internal class EqNode : BinaryOpNode
         get;
     }
 
-    public EqNode(IAstNode left, IAstNode righht, bool isExact) : base(left, righht)
+    public EqNode(IAstNode left, IAstNode right, bool isExact) : base(left, right)
     {
         this.IsExact = isExact;
     }
@@ -19,14 +19,14 @@ internal class EqNode : BinaryOpNode
             context.Append("exact(");
             this.Left.ToRql(context);
             context.Append(" == ");
-            this.Righht.ToRql(context);
+            this.Right.ToRql(context);
             context.Append(")");
         }
         else
         {
             this.Left.ToRql(context);
             context.Append(" == ");
-            this.Righht.ToRql(context);
+            this.Right.ToRql(context);
         }
     }
 

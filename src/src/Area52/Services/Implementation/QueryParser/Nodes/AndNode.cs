@@ -2,7 +2,7 @@
 
 internal class AndNode : BinaryOpNode
 {
-    public AndNode(IAstNode left, IAstNode righht) : base(left, righht)
+    public AndNode(IAstNode left, IAstNode right) : base(left, right)
     {
     }
 
@@ -11,7 +11,7 @@ internal class AndNode : BinaryOpNode
         context.Append('(');
         this.Left.ToRql(context);
         context.Append(") and (");
-        this.Righht.ToRql(context);
+        this.Right.ToRql(context);
         context.Append(')');
     }
 

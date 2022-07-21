@@ -13,7 +13,7 @@ internal class FnOpNode : BinaryOpNode
         get;
     }
 
-    public FnOpNode(IAstNode left, IAstNode righht, string functionName) : base(left, righht)
+    public FnOpNode(IAstNode left, IAstNode right, string functionName) : base(left, right)
     {
         this.FnName = functionName;
     }
@@ -25,7 +25,7 @@ internal class FnOpNode : BinaryOpNode
             context.Append("startsWith(");
             this.Left.ToRql(context);
             context.Append(", ");
-            this.Righht.ToRql(context);
+            this.Right.ToRql(context);
             context.Append(") ");
             return;
         }
@@ -35,7 +35,7 @@ internal class FnOpNode : BinaryOpNode
             context.Append("endsWith(");
             this.Left.ToRql(context);
             context.Append(", ");
-            this.Righht.ToRql(context);
+            this.Right.ToRql(context);
             context.Append(") ");
             return;
         }

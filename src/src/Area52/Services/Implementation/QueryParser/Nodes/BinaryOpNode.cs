@@ -9,15 +9,15 @@ internal abstract class BinaryOpNode : IAstNode
         get; 
     }
 
-    public IAstNode Righht 
+    public IAstNode Right 
     { 
         get;
     }
 
-    public BinaryOpNode(IAstNode left, IAstNode righht)
+    public BinaryOpNode(IAstNode left, IAstNode right)
     {
         this.Left = left;
-        this.Righht = righht;
+        this.Right = right;
     }
 
     public abstract void ToRql(RqlQueryBuilderContext context);
@@ -27,7 +27,7 @@ internal abstract class BinaryOpNode : IAstNode
         StringBuilder sb = new StringBuilder();
         this.FormatNode(this.Left, sb);
         sb.Append(' ').Append(op).Append(' ');
-        this.FormatNode(this.Righht, sb);
+        this.FormatNode(this.Right, sb);
 
         return sb.ToString();
     }
