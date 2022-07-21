@@ -133,7 +133,9 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
         {
             {"$text", new BsonDocument()
                 {
-                    { "$search", stringNode.Value }
+                    { "$search", stringNode.Value },
+                    { "$caseSensitive", false },
+                    { "$diacriticSensitive", false }
                 }
             }
         };
