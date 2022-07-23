@@ -28,7 +28,7 @@ public abstract class GenericUserServices<TUser, TRole> : IUserServices
     {
         this.logger.LogTrace("Entering to TryCreateDefaultLogin with email {email}, userName {userName}.", email, userName);
 
-        bool anyUser = this.userManager.Users.Any();
+        bool anyUser = await this.DbAnyAsync(this.userManager.Users);
         if (anyUser)
         {
             return false;
@@ -53,7 +53,7 @@ public abstract class GenericUserServices<TUser, TRole> : IUserServices
     {
         this.logger.LogTrace("Enshures roles");
 
-        if (!this.roleManager.Roles.Any())
+        if (!await this.DbAnyAsync(this.roleManager.Roles))
         {
             TRole roleUser = this.CreateRoleObject();
             roleUser.Name = RoleNames.User;
@@ -72,6 +72,8 @@ public abstract class GenericUserServices<TUser, TRole> : IUserServices
     protected abstract TUser CreateUserObject();
 
     protected abstract TRole CreateRoleObject();
+
+    protected abstract Task<bool> DbAnyAsync<T>(IQueryable<T> querable);
 
     private IdentityResult CheckIdentityResult(IdentityResult identityResult)
     {
