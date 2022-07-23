@@ -20,7 +20,10 @@ public class StartupJobHostingService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("entering to StartAsync.");
+        this.logger.LogTrace("Entering to StartAsync.");
+        //await this.WaitForAppStartup(cancellationToken);
+        await Task.Delay(200);
+
         using IServiceScope scope = this.serviceProvider.CreateScope();
 
         IEnumerable<IStartupJob> jobs = scope.ServiceProvider.GetRequiredService<IEnumerable<IStartupJob>>();
@@ -29,6 +32,11 @@ public class StartupJobHostingService : IHostedService
         {
             foreach (IStartupJob job in jobs)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 jobTypeName = job.GetType().FullName!;
                 this.logger.LogTrace("Starting executing job {jobName}.", jobTypeName);
                 await job.Execute(cancellationToken);
@@ -45,5 +53,27 @@ public class StartupJobHostingService : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+
+    private async Task<bool> WaitForAppStartup(IHostApplicationLifetime lifetime, CancellationToken stoppingToken)
+    {
+        var startedSource = new TaskCompletionSource();
+        var cancelledSource = new TaskCompletionSource();
+
+        using var reg1 = lifetime.ApplicationStarted.Register(() => startedSource.SetResult());
+        using var reg2 = stoppingToken.Register(() => cancelledSource.SetResult());
+
+        Task completedTask = await Task.WhenAny(
+            startedSource.Task,
+            cancelledSource.Task).ConfigureAwait(false);
+
+        // If the completed tasks was the "app started" task, return true, otherwise false
+        return completedTask == startedSource.Task;
+    }
+
+    private Task<bool> WaitForAppStartup(CancellationToken stoppingToken)
+    {
+        IHostApplicationLifetime lifetime = this.serviceProvider.GetRequiredService<IHostApplicationLifetime>();
+        return this.WaitForAppStartup(lifetime, stoppingToken);
     }
 }

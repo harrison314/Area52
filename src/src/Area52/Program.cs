@@ -2,6 +2,7 @@
 using Area52.Infrastructure.Clef;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Identity;
 using Serilog;
 
 namespace Area52
@@ -42,6 +43,15 @@ namespace Area52
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
 
 
+            configurator.ConfigureIdentity(builder, options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            });
+
+            builder.Services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, Infrastructure.Auth.RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            builder.Services.AddTransient<Services.Contracts.IStartupJob, Infrastructure.Auth.AuthStartupJob>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -58,6 +68,8 @@ namespace Area52
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
