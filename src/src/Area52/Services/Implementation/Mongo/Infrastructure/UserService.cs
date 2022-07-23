@@ -30,4 +30,10 @@ public class UserService : GenericUserServices<MongoUser<string>, MongoRole<stri
             Id = Guid.NewGuid().ToString()
         };
     }
+
+    protected override Task<bool> DbAnyAsync<T>(IQueryable<T> querable)
+    {
+        bool result = querable.Any();
+        return Task.FromResult(result);
+    }
 }

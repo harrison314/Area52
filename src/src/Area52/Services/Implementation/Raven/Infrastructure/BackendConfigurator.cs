@@ -13,6 +13,8 @@ using Microsoft.Extensions.Options;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Microsoft.AspNetCore.Identity;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Session;
 
 namespace Area52.Services.Implementation.Raven.Infrastructure;
 
@@ -111,6 +113,22 @@ public class BackendConfigurator : IBackendConfigurator
 
     public void ConfigureIdentity(WebApplicationBuilder builder, Action<IdentityOptions> identityOptions)
     {
-        throw new NotImplementedException();
+        builder.Services.AddIdentity<RavenIdentityUser, RavenIdentityRole>(identityOptions)
+            .AddRavenDbStores<RavenUserStore, RavenRoleStore, RavenIdentityUser, RavenIdentityRole>(
+        // define how IAsyncDocumentSession is resolved from DI
+        // as library does NOT directly inject IAsyncDocumentSession
+        provider => provider.GetRequiredService<IAsyncDocumentSession>()
+    )
+    .AddDefaultTokenProviders();
+
+        builder.Services.AddTransient<Services.Contracts.IUserServices, UserService>();
+    }
+
+    private void RegisvicesInternal(IServiceCollection services)
+    {
+        services.AddTransient<Contracts.ILogReader, LogReader>();
+        services.AddSingleton<Contracts.ILogWriter, LogWriter>();
+        services.AddSingleton<Contracts.ILogManager, LogManager>();
+        services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
     }
 }

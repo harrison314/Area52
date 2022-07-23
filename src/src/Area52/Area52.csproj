@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mcrio.AspNetCore.Identity.On.RavenDb" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.7" />
     <PackageReference Include="AspNetCore.Identity.Mongo" Version="8.3.3" />
     <PackageReference Include="MongoDB.Driver" Version="2.17.1" />
