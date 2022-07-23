@@ -49,7 +49,7 @@ namespace Area52
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             });
 
-            builder.Services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, Infrastructure.Auth.RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            builder.Services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, Infrastructure.Auth.RevalidatingIdentityAuthenticationStateProvider>();
             builder.Services.AddTransient<Services.Contracts.IStartupJob, Infrastructure.Auth.AuthStartupJob>();
 
             var app = builder.Build();

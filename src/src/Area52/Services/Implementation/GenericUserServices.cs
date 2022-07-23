@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.Auth;
@@ -84,5 +85,28 @@ public abstract class GenericUserServices<TUser, TRole> : IUserServices
         }
 
         return identityResult;
+    }
+
+    public async Task<IdentityUser<string>?> GetCurrentUser(ClaimsPrincipal principal)
+    {
+        TUser? user = await this.userManager.GetUserAsync(principal);
+        if (user == null)
+        {
+            return null;
+        }
+
+        if (!this.userManager.SupportsUserSecurityStamp)
+        {
+            return user;
+        }
+
+        string? principalStamp = principal.FindFirstValue(this.userManager.Options.ClaimsIdentity.SecurityStampClaimType);
+        string? userStamp = await this.userManager.GetSecurityStampAsync(user);
+        if (string.Equals(principalStamp, userStamp, StringComparison.Ordinal))
+        {
+            return user;
+        }
+
+        return null;
     }
 }
