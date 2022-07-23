@@ -1,7 +1,17 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <CascadingAuthenticationState>
+            <AuthorizeRouteView RouteData="@routeData"
+                                DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <h1>Authentication in progress</h1>
+                    <p>You can only see this content while authentication is in progress.</p>
+                </Authorizing>
+                <NotAuthorized>
+                    <AuthorizationPage />
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </CascadingAuthenticationState>
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>

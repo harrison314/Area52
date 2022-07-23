@@ -3,6 +3,7 @@
 @using Area52.Shared.ForLogs
 @using Microsoft.Extensions.Logging
 @implements IDisposable
+@attribute [Authorize]
 @inject ILogReader LogReader
 @inject ILogger<Logs> Logger
 @inject NavigationManager Navigation

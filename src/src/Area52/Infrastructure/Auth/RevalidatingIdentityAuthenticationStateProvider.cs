@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Area52.Services.Contracts;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
@@ -11,12 +12,10 @@ using Microsoft.Extensions.Options;
 
 namespace Area52.Infrastructure.Auth;
 
-//TODO: fix problem with user manager - use custom user srevice
-public class RevalidatingIdentityAuthenticationStateProvider<TUser>
-    : RevalidatingServerAuthenticationStateProvider where TUser : class
+public class RevalidatingIdentityAuthenticationStateProvider
+    : RevalidatingServerAuthenticationStateProvider
 {
     private readonly IServiceScopeFactory scopeFactory;
-    private readonly IdentityOptions options;
 
     protected override TimeSpan RevalidationInterval
     {
@@ -25,12 +24,10 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
 
     public RevalidatingIdentityAuthenticationStateProvider(
         ILoggerFactory loggerFactory,
-        IServiceScopeFactory scopeFactory,
-        IOptions<IdentityOptions> optionsAccessor)
+        IServiceScopeFactory scopeFactory)
         : base(loggerFactory)
     {
         this.scopeFactory = scopeFactory;
-        this.options = optionsAccessor.Value;
     }
 
     protected override async Task<bool> ValidateAuthenticationStateAsync(AuthenticationState authenticationState, CancellationToken cancellationToken)
@@ -38,8 +35,8 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
         using IServiceScope scope = this.scopeFactory.CreateScope();
         try
         {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TUser>>();
-            return await this.ValidateSecurityStampAsync(userManager, authenticationState.User);
+            IUserServices userServices = scope.ServiceProvider.GetRequiredService<IUserServices>();
+            return await this.ValidateSecurityStampAsync(userServices, authenticationState.User);
         }
         finally
         {
@@ -54,22 +51,9 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
         }
     }
 
-    private async Task<bool> ValidateSecurityStampAsync(UserManager<TUser> userManager, ClaimsPrincipal principal)
+    private async Task<bool> ValidateSecurityStampAsync(IUserServices userManager, ClaimsPrincipal principal)
     {
-        TUser user = await userManager.GetUserAsync(principal);
-        if (user == null)
-        {
-            return false;
-        }
-        else if (!userManager.SupportsUserSecurityStamp)
-        {
-            return true;
-        }
-        else
-        {
-            var principalStamp = principal.FindFirstValue(this.options.ClaimsIdentity.SecurityStampClaimType);
-            var userStamp = await userManager.GetSecurityStampAsync(user);
-            return principalStamp == userStamp;
-        }
+        IdentityUser<string>? user = await userManager.GetCurrentUser(principal);
+        return user != null;
     }
 }
