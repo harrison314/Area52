@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
+using Microsoft.AspNetCore.Identity;
 
 namespace Area52.Services.Implementation.Raven.Infrastructure;
 
@@ -106,5 +107,10 @@ public class BackendConfigurator : IBackendConfigurator
 
         Statistics.FastStatisticsServices fss = new Statistics.FastStatisticsServices(documentStore, logger);
         return new FastStatisticsServicesCache(fss, memoryCache);
+    }
+
+    public void ConfigureIdentity(WebApplicationBuilder builder, Action<IdentityOptions> identityOptions)
+    {
+        throw new NotImplementedException();
     }
 }
