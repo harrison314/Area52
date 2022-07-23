@@ -1,4 +1,5 @@
-﻿using Area52.Infrastructure.Clef;
+﻿using Area52.Infrastructure.App;
+using Area52.Infrastructure.Clef;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Serilog;
@@ -24,26 +25,9 @@ namespace Area52
                     .WriteTo.Console());
 
 
-            builder.Services.Configure<Area52.Services.Configuration.ArchiveSettings>(builder.Configuration.GetSection("ArchiveSettings"));
-
-
-            Services.Configuration.LogStorageType storageType = builder.Configuration.GetValue<Services.Configuration.LogStorageType>("StorageType");
-
-            switch (storageType)
-            {
-                case Services.Configuration.LogStorageType.RavenDb:
-                    Area52.Services.Implementation.Raven.RavenDbExtensions.AddRavenDb(builder);
-                    break;
-
-                case Services.Configuration.LogStorageType.MongoDb:
-                    Area52.Services.Implementation.Mongo.MongoDbExtensions.AddMongoDb(builder);
-                    break;
-
-                default:
-                    throw new InvalidProgramException($"Enum value {storageType} is not supported.");
-            }
-
-
+            IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration);
+            configurator.GlobalSetup();
+            configurator.ConfigureServices(builder);
 
             // Add services to the container.
             builder.Services.AddRazorPages();

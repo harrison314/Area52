@@ -11,11 +11,8 @@ namespace Area52.Services.Implementation.Mongo;
 
 public static class MongoDbExtensions
 {
-    public static void AddMongoDb(WebApplicationBuilder builder)
+    public static void AddMongoDb(this WebApplicationBuilder builder)
     {
-
-        Models.ModelHelpers.RegisterMappings();
-
         builder.Services.Configure<MongoDbSetup>(builder.Configuration.GetSection("MongoDbSetup"));
         builder.Services.AddSingleton<IMongoClient>(sp =>
         {
