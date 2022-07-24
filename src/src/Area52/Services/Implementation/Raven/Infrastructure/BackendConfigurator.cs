@@ -13,6 +13,7 @@ using Mcrio.AspNetCore.Identity.On.RavenDb.Stores;
 using Microsoft.AspNetCore.Identity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
+using Microsoft.Extensions.Options;
 
 namespace Area52.Services.Implementation.Raven.Infrastructure;
 
@@ -30,25 +31,28 @@ public class BackendConfigurator : IBackendConfigurator
 
     public void ConfigureServices(WebApplicationBuilder builder)
     {
-        RavenDbSetup settings = new RavenDbSetup();
-        builder.Configuration.Bind("RavenDbSetup", settings);
-
-        DocumentStore store = new DocumentStore()
+        builder.Services.Configure<RavenDbSetup>(builder.Configuration.GetSection("RavenDbSetup"));
+        builder.Services.AddSingleton<IDocumentStore>(sp =>
         {
-            Urls = settings.Database.Urls,
-            Database = settings.Database.DatabaseName,
+            IOptions<RavenDbSetup> ravenDbSetup = sp.GetRequiredService<IOptions<RavenDbSetup>>();
+            RavenDbSetup settings = ravenDbSetup.Value;
 
-        };
+            DocumentStore store = new DocumentStore()
+            {
+                Urls = settings.Database.Urls,
+                Database = settings.Database.DatabaseName,
 
-        if (!string.IsNullOrEmpty(settings.Database.CertPath))
-        {
-            store.Certificate = new X509Certificate2(settings.Database.CertPath, settings.Database.CertPass);
-        }
+            };
 
-        store.Initialize();
+            if (!string.IsNullOrEmpty(settings.Database.CertPath))
+            {
+                store.Certificate = new X509Certificate2(settings.Database.CertPath, settings.Database.CertPass);
+            }
 
+            store.Initialize();
 
-        builder.Services.AddSingleton<IDocumentStore>(store);
+            return store;
+        });
 
         builder.Services.AddScoped<IAsyncDocumentSession>(serviceProvider =>
         {
@@ -58,8 +62,23 @@ public class BackendConfigurator : IBackendConfigurator
         });
 
         builder.Services.AddTransient<Contracts.IStartupJob, RavenDbIndexJob>();
-
         this.RegisvicesInternal(builder.Services);
+    }
+
+    private void RegisvicesInternal(IServiceCollection services)
+    {
+        services.AddTransient<Contracts.ILogReader, LogReader>();
+        services.AddSingleton<Contracts.ILogWriter, LogWriter>();
+        services.AddSingleton<Contracts.ILogManager, LogManager>();
+        services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
+    }
+
+    public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
+    {
+        healthChecksBuilder.AddCheck<HealthCheck.RavenDbHealthCheck>("RavenDb",
+             Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+             null,
+             TimeSpan.FromSeconds(10.0));
     }
 
     public void ConfigureIdentity(WebApplicationBuilder builder, Action<IdentityOptions> identityOptions)
@@ -75,11 +94,4 @@ public class BackendConfigurator : IBackendConfigurator
         builder.Services.AddTransient<Services.Contracts.IUserServices, UserService>();
     }
 
-    private void RegisvicesInternal(IServiceCollection services)
-    {
-        services.AddTransient<Contracts.ILogReader, LogReader>();
-        services.AddSingleton<Contracts.ILogWriter, LogWriter>();
-        services.AddSingleton<Contracts.ILogManager, LogManager>();
-        services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
-    }
 }

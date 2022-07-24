@@ -13,5 +13,7 @@ public interface IBackendConfigurator
 
     void ConfigureServices(WebApplicationBuilder builder);
 
+    void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder);
+
     void ConfigureIdentity(WebApplicationBuilder builder, Action<IdentityOptions> identityOptions);
 }

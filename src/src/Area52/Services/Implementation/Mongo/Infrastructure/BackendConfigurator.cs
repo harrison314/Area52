@@ -77,5 +77,13 @@ public class BackendConfigurator : IBackendConfigurator
         string baseAdress = setup.Database.ConnectionString.TrimEnd('/');
         return string.Concat(baseAdress, "/", setup.Database.DatabaseName);
     }
+
+    public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
+    {
+        healthChecksBuilder.AddCheck<HealthCheck.MongoDbHealthCheck>("MongoDb",
+            Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+            null,
+            TimeSpan.FromSeconds(10.0));
+    }
 }
 
