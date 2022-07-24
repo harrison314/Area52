@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.App;
+using Area52.Services.Configuration;
+using Microsoft.Extensions.Options;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Session;
 
 namespace Area52.Services.Implementation.Raven.Infrastructure;
 
@@ -21,6 +26,45 @@ public class BackendConfigurator : IBackendConfigurator
 
     public void ConfigureServices(WebApplicationBuilder builder)
     {
-        builder.AddRavenDb();
+        builder.Services.Configure<RavenDbSetup>(builder.Configuration.GetSection("RavenDbSetup"));
+        builder.Services.AddSingleton<IDocumentStore>(sp =>
+        {
+            IOptions<RavenDbSetup> ravenDbSetup = sp.GetRequiredService<IOptions<RavenDbSetup>>();
+            RavenDbSetup settings = ravenDbSetup.Value;
+
+            DocumentStore store = new DocumentStore()
+            {
+                Urls = settings.Database.Urls,
+                Database = settings.Database.DatabaseName,
+
+            };
+
+            if (!string.IsNullOrEmpty(settings.Database.CertPath))
+            {
+                store.Certificate = new X509Certificate2(settings.Database.CertPath, settings.Database.CertPass);
+            }
+
+            store.Initialize();
+
+            return store;
+        });
+
+        builder.Services.AddScoped<IAsyncDocumentSession>(serviceProvider =>
+        {
+            return serviceProvider
+                .GetRequiredService<IDocumentStore>()
+                .OpenAsyncSession();
+        });
+
+        builder.Services.AddTransient<Contracts.IStartupJob, RavenDbIndexJob>();
+        this.RegisvicesInternal(builder.Services);
+    }
+
+    private void RegisvicesInternal(IServiceCollection services)
+    {
+        services.AddTransient<Contracts.ILogReader, LogReader>();
+        services.AddSingleton<Contracts.ILogWriter, LogWriter>();
+        services.AddSingleton<Contracts.ILogManager, LogManager>();
+        services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
     }
 }
