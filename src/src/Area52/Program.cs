@@ -2,6 +2,7 @@
 using Area52.Infrastructure.Clef;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 
 namespace Area52
@@ -28,6 +29,10 @@ namespace Area52
             IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration);
             configurator.GlobalSetup();
             configurator.ConfigureServices(builder);
+
+            builder.Services.AddDataProtection()
+               // .ProtectKeysWithCertificate() TODO: implemet protection
+               .ConfigureDataProtectionStorage(configurator);
 
             // Add services to the container.
             builder.Services.AddRazorPages();

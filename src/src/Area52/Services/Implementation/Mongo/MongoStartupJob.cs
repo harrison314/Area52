@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Area52.Services.Contracts;
+using Area52.Services.Implementation.Mongo.Models;
 using MongoDB.Driver;
 
 namespace Area52.Services.Implementation.Mongo;
@@ -59,9 +60,9 @@ public class MongoStartupJob : IStartupJob
 
     private async Task Migration_Initial(CancellationToken cancellationToken)
     {
-        await this.mongoDatabase.CreateCollectionAsync("LogEntitys", null, cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.LogEntitys, null, cancellationToken);
 
-        var collection = this.mongoDatabase.GetCollection<Models.MongoLogEntity>("LogEntitys");
+        var collection = this.mongoDatabase.GetCollection<Models.MongoLogEntity>(CollectionNames.LogEntitys);
 
         await collection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoLogEntity>(
              new BsonDocumentIndexKeysDefinition<Models.MongoLogEntity>(new MongoDB.Bson.BsonDocument()
@@ -132,6 +133,7 @@ public class MongoStartupJob : IStartupJob
                 TextIndexVersion = 3
             }));
 
-        await this.mongoDatabase.CreateCollectionAsync("LockAcquires", null, cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.LockAcquires, null, cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.DataProtectionKeys, null, cancellationToken);
     }
 }

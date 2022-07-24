@@ -19,7 +19,7 @@ public class MongoDbDistributedLocker : IDistributedLocker
     public MongoDbDistributedLocker(IMongoDatabase mongoDatabase)
     {
         this.mongoDatabase = mongoDatabase;
-        this.locks = mongoDatabase.GetCollection<LockAcquire>("LockAcquires");
+        this.locks = mongoDatabase.GetCollection<LockAcquire>(CollectionNames.LockAcquires);
         this.failed = new FailedDistributedLock();
     }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.App;
 using Area52.Services.Configuration;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -56,6 +57,11 @@ public class BackendConfigurator : IBackendConfigurator
             Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
             null,
             TimeSpan.FromSeconds(10.0));
+    }
+
+    public void AddDataProtectionStorage(IDataProtectionBuilder dataProtectionBuilder)
+    {
+        DataProtection.MongoDbXmlRepositoryHelper.Register(dataProtectionBuilder);
     }
 }
 

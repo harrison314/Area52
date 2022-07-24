@@ -24,7 +24,7 @@ public class LogManager : ILogManager
     {
         this.logger.LogTrace("Entering to RemoveOldLogs with timeAtDeteledLogs={timeAtDeteledLogs}", timeAtDeteledLogs);
 
-        IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>("LogEntitys");
+        IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntitys);
         DateTime urcTimeToDelete = timeAtDeteledLogs.UtcDateTime;
 
         _ = await collection.DeleteManyAsync(t => t.TimestampIndex.Utc < urcTimeToDelete, cancellationToken);
