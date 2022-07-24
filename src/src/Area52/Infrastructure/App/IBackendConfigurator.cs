@@ -11,4 +11,6 @@ public interface IBackendConfigurator
     void GlobalSetup();
 
     void ConfigureServices(WebApplicationBuilder builder);
+
+    void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder);
 }

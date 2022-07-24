@@ -41,6 +41,7 @@ namespace Area52
 
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
 
+            builder.Services.AddHealthChecks().ConfigureHealthChecks(configurator);
 
             var app = builder.Build();
 
@@ -52,6 +53,7 @@ namespace Area52
                 app.UseHsts();
             }
 
+            app.UseHealthChecks("/health");
             app.UseEventMiddleware();
             app.UseHttpsRedirection();
 

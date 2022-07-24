@@ -67,4 +67,12 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<Contracts.ILogManager, LogManager>();
         services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
     }
+
+    public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
+    {
+        healthChecksBuilder.AddCheck<HealthCheck.RavenDbHealthCheck>("RavenDb",
+             Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+             null,
+             TimeSpan.FromSeconds(10.0));
+    }
 }

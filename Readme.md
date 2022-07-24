@@ -36,7 +36,7 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
   - [ ] API keys for log input with management
 - [ ] Graph and alerts as subsriptions and timeseries
 - [ ] Log archiving using background workers
-- [ ] Implements healthchecks
+- [x] Implements healthchecks
 - [x] Try implement using MongoDb
 
 ## Getting logs into Area 52

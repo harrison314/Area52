@@ -49,5 +49,13 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddTransient<Contracts.ILogManager, LogManager>();
         services.AddTransient<Contracts.IDistributedLocker, MongoDbDistributedLocker>();
     }
+
+    public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
+    {
+        healthChecksBuilder.AddCheck<HealthCheck.MongoDbHealthCheck>("MongoDb",
+            Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+            null,
+            TimeSpan.FromSeconds(10.0));
+    }
 }
 
