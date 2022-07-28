@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Area52.Services.Contracts;
 using Raven.Client.Documents;
 
-namespace Area52.Services.Implementation.Raven;
+namespace Area52.Services.Implementation.Raven.TimeSeries;
 
 public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
 {
@@ -23,7 +23,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
     {
         this.logger.LogTrace("Entering to Create.");
 
-        using global::Raven.Client.Documents.Session.IAsyncDocumentSession session = this.documentStore.OpenAsyncSession();
+        using var session = this.documentStore.OpenAsyncSession();
 
         await session.StoreAsync(timeSerieDefinition);
         await session.SaveChangesAsync();
@@ -35,7 +35,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
     {
         this.logger.LogTrace("Entering to FindById with id {id}.", id);
 
-        using global::Raven.Client.Documents.Session.IAsyncDocumentSession session = this.documentStore.OpenAsyncSession();
+        using var session = this.documentStore.OpenAsyncSession();
         return await session.LoadAsync<TimeSerieDefinition>(id);
     }
 
@@ -43,7 +43,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
     {
         this.logger.LogTrace("Entering to Create.");
 
-        using global::Raven.Client.Documents.Session.IAsyncDocumentSession session = this.documentStore.OpenAsyncSession();
+        using var session = this.documentStore.OpenAsyncSession();
         return await session.Query<TimeSerieDefinition>().Select(t => new TimeSerieDefinitionInfo()
         {
             Id = t.Id,

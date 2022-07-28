@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.App;
 using Area52.Services.Configuration;
+using Area52.Services.Implementation.Raven.TimeSeries;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Raven.Client.Documents;

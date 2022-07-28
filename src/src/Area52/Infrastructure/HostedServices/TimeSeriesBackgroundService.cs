@@ -68,15 +68,10 @@ public class TimeSeriesBackgroundService : BackgroundService
         IAstNode astTree = Parser.SimpleParse(tsUnit.Query);
         IAstNode restrictedAstTree = this.AddTimestampToQuery(astTree, tsUnit.LastExecuted, timeTo);
 
-
-        await using (ITimeSeriesWriter writer = await this.timeSeriesService.CreateWriter(tsUnit.Id,
-                    tsUnit.Name,
-                    stoppingToken))
+        await using (ITimeSeriesWriter writer = await this.timeSeriesService.CreateWriter(tsUnit.Id, stoppingToken))
         {
             await foreach (LogEntity logEntity in this.logReader.ReadLogs(restrictedAstTree, null).WithCancellation(stoppingToken))
             {
-
-
                 double numericValue = this.GetNumericValue(tsUnit.ValueFieldName, logEntity);
                 string? tagValue = this.GetTagValue(tsUnit.TagFieldName, logEntity);
                 await writer.Write(logEntity.Timestamp, numericValue, tagValue);

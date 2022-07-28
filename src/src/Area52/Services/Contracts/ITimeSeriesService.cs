@@ -11,7 +11,7 @@ public interface ITimeSeriesService
     Task<IReadOnlyList<TimeSeriesDefinitionId>> GetDefinitionForExecute(DateTime executeBefore, CancellationToken cancellationToken);
     Task<TimeSeriesDefinitionUnit> GetDefinitionUnit(string id, CancellationToken cancellationToken);
 
-    Task<ITimeSeriesWriter> CreateWriter(string definitionId, string definitionName, CancellationToken cancellationToken);
+    Task<ITimeSeriesWriter> CreateWriter(string definitionId, CancellationToken cancellationToken);
 
     Task ConfirmWriting(string definitionId, LastExecutionInfo lastExecutionInfo, CancellationToken cancellationToken);
 }
