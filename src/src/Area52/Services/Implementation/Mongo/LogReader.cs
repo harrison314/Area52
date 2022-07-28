@@ -81,16 +81,26 @@ public class LogReader : ILogReader
         }
     }
 
-    public async IAsyncEnumerable<LogEntity> ReadLogs(string query, int? limit)
+    public IAsyncEnumerable<LogEntity> ReadLogs(string query, int? limit)
     {
         this.logger.LogTrace("Entering to ReadLogs with query {query}, limit {limit}.", query, limit);
 
-        MongoDbNodeVisitor visitor = new MongoDbNodeVisitor();
+        IAstNode? node = string.IsNullOrWhiteSpace(query) ? null : Parser.SimpleParse(query);
+        return this.ReadLogsInternal(node, limit);
+    }
 
-        if (!string.IsNullOrEmpty(query))
+    public IAsyncEnumerable<LogEntity> ReadLogs(IAstNode query, int? limit)
+    {
+        this.logger.LogTrace("Entering to ReadLogs with ast nodes, limit {limit}.", limit);
+        return this.ReadLogsInternal(query, limit);
+    }
+
+    private async IAsyncEnumerable<LogEntity> ReadLogsInternal(IAstNode? query, int? limit)
+    {
+        MongoDbNodeVisitor visitor = new MongoDbNodeVisitor();
+        if (query!=null)
         {
-            IAstNode astNode = Parser.SimpleParse(query);
-            visitor.Visit(astNode);
+            visitor.Visit(query);
         }
 
         BsonDocument findCriteria = visitor.ToBsonFindCriteria();

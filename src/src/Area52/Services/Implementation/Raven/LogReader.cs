@@ -67,20 +67,34 @@ public class LogReader : ILogReader
         }
     }
 
-    public async IAsyncEnumerable<LogEntity> ReadLogs(string query, int? limit)
+    public IAsyncEnumerable<LogEntity> ReadLogs(string query, int? limit)
     {
         this.logger.LogTrace("Entering to ReadLogs with query {query} limit {limit}", query, limit);
 
+        IAstNode? ast = string.IsNullOrWhiteSpace(query) ? null : Parser.SimpleParse(query);
+        return this.ReadLogsInternals(ast, limit);
+    }
+
+    public IAsyncEnumerable<LogEntity> ReadLogs(IAstNode query, int? limit)
+    {
+        this.logger.LogTrace("Entering to ReadLogs with ast nodes, limit {limit}.", limit);
+        return this.ReadLogsInternals(query, limit);
+    }
+
+    public async IAsyncEnumerable<LogEntity> ReadLogsInternals(IAstNode astNodes, int? limit)
+    {
         DynamicIndexQueryBuilder builder = new DynamicIndexQueryBuilder();
         builder.SetSelectClausule(null);
-        if (!string.IsNullOrWhiteSpace(query))
+        if (astNodes != null)
         {
-            IAstNode ast = Parser.SimpleParse(query);
-            builder.Add(ast);
+            builder.Add(astNodes);
         }
 
         QueryWithParameters rqlQuery = builder.BuildQuery();
-        this.logger.LogDebug("Translate input query {query} to RQL {rql} with parameters {parameters}.", query, rqlQuery.Query, rqlQuery.Parameters);
+        if (this.logger.IsEnabled(LogLevel.Debug))
+        {
+            this.logger.LogDebug("Translate input query {query} to RQL {rql} with parameters {parameters}.", astNodes, rqlQuery.Query, rqlQuery.Parameters);
+        }
 
         using var session = this.documentStore.OpenAsyncSession();
 
@@ -98,8 +112,5 @@ public class LogReader : ILogReader
         {
             yield return asyncStream.Current.Document;
         }
-
-        this.logger.LogDebug("Finishing downloading logs for query {query}.", query);
-
     }
 }
