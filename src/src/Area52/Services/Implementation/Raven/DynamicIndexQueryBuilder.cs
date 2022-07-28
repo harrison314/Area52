@@ -37,12 +37,12 @@ internal class DynamicIndexQueryBuilder
         {
             this.whereClausule.AppendLine();
             this.whereClausule.Append("and (");
-            context.IntoStringBuilder(whereClausule, this.parameters);
+            context.IntoStringBuilder(this.whereClausule, this.parameters);
             this.whereClausule.AppendLine(")");
         }
         else
         {
-            context.IntoStringBuilder(whereClausule, this.parameters);
+            context.IntoStringBuilder(this.whereClausule, this.parameters);
         }
     }
 
