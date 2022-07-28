@@ -19,6 +19,7 @@ internal class TimeSeriesWriter : ITimeSeriesWriter
         this.documentId = documentId;
         this.logger = logger;
     }
+
     public ValueTask Write(DateTimeOffset timestamp, double value, string? tag)
     {
         this.buffer.Add(new TsEntity(timestamp, value, tag));
