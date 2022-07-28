@@ -63,10 +63,14 @@ public class BackendConfigurator : IBackendConfigurator
 
     private void RegisvicesInternal(IServiceCollection services)
     {
-        services.AddTransient<Contracts.ILogReader, LogReader>();
+        services.AddSingleton<Contracts.ILogReader, LogReader>();
         services.AddSingleton<Contracts.ILogWriter, LogWriter>();
         services.AddSingleton<Contracts.ILogManager, LogManager>();
         services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
+
+        services.AddSingleton<Contracts.ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
+        services.AddSingleton<Contracts.ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
+        services.AddSingleton<Contracts.ITimeSeriesService, TimeSeriesService>();
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)

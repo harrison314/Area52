@@ -45,6 +45,10 @@ namespace Area52
             }
 
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
+            builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.TimeSeriesBackgroundService>();
+
+            // Services
+            builder.Services.AddTransient<Services.Contracts.ITimeSerieDefinitionsService, Services.Implementation.TimeSerieDefinitionsService>();
 
             builder.Services.AddHealthChecks().ConfigureHealthChecks(configurator);
 

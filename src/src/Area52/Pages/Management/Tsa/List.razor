@@ -1,0 +1,74 @@
+﻿@page "/Management/Tsa/List"
+@using Area52.Services.Contracts
+@using Area52.Shared.ForManaement
+@inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
+
+<PageTitle>List of timeseries definitions</PageTitle>
+
+<LeftMenu Title="List of timeseries definitions">
+    <div>
+        <NavLink class="btn btn-outline-primary btn-sm float-end"
+                 href="Management/Tsa/Create">
+            Create
+        </NavLink>
+
+    </div>
+
+    @if (this.items == null)
+    {
+        <LoadingIndicator />
+    }
+    else
+    {
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (TimeSerieDefinitionInfo info in this.items)
+                {
+                    <tr @key="info.Id">
+                        <td>@info.Name</td>
+                        <td>@this.FormatDescription(info.Description)</td>
+                        <td>
+                            <NavLink class="btn btn-outline-primary btn-sm"
+                             href="@($"/Management/Tsa/Detail?id={Uri.EscapeDataString(info.Id)}")">Detail</NavLink>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</LeftMenu>
+
+@code {
+    private IReadOnlyList<TimeSerieDefinitionInfo>? items = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await this.LoadItems();
+    }
+
+    private async Task LoadItems()
+    {
+        this.items = null;
+        this.StateHasChanged();
+        await Task.Yield();
+        this.items = await this.TimeSerieDefinitionsService.FindDefinictions();
+    }
+
+    private string FormatDescription(string text)
+    {
+        const int maxLen = 32;
+        if (text.Length < maxLen)
+        {
+            return text;
+        }
+
+        return string.Concat(text[..(maxLen - 1)], "…");
+    }
+}

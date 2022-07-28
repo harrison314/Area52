@@ -1,0 +1,72 @@
+﻿@page "/Management/Tsa/Detail"
+@using Area52.Services.Contracts
+@using Area52.Shared.ForManaement
+@inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
+
+<PageTitle>Detail of timeseries definition</PageTitle>
+
+<LeftMenu Title="Detail of timeseries definition">
+    @if (this.model == null)
+    {
+        <LoadingIndicator />
+    }
+    else
+    {
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-2">Name</th>
+                    <td class="text-break col-10">@model.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-2">Description</th>
+                    <td class="text-break col-10">@model.Description</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-2">Query</th>
+                    <td class="text-break col-10">
+                        <pre>@model.Query</pre>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-2">Value Field Name</th>
+                    <td class="text-break col-10">@(model.ValueFieldName??"1.0")</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-2">Tag Field Name</th>
+                    <td class="text-break col-10">@model.TagFieldName</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-2">Created</th>
+                    <td class="text-break col-10">@model.Metadata.Created.ToString("s")</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+
+</LeftMenu>
+
+@code {
+    private TimeSerieDefinition? model = null;
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "id")]
+    public string? Id
+    {
+        get;
+        set;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (this.Id != null)
+        {
+            this.model = await this.TimeSerieDefinitionsService.FindById(this.Id);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+         this.model = await this.TimeSerieDefinitionsService.FindById(this.Id!);
+    }
+}

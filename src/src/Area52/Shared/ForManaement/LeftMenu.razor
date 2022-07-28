@@ -1,0 +1,42 @@
+﻿
+<div class="row">
+    <div class="col-2">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <NavLink class="nav-link h6" ActiveClass="fw-bold" href="Management/Tsa/List" Match="NavLinkMatch.Prefix">TimeSeries definitions</NavLink>
+            </li>
+
+            @*TODO*@
+            <li class="nav-item">
+                <NavLink class="nav-link h6" ActiveClass="active" href="#" Match="NavLinkMatch.Prefix">API Keys</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link h6" ActiveClass="active" href="#" Match="NavLinkMatch.Prefix">Predefined queries</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link h6" ActiveClass="active" href="#" Match="NavLinkMatch.Prefix">State</NavLink>
+            </li>
+        </ul>
+
+    </div>
+    <div class="col-10">
+        <h1>@this.Title</h1>
+        @this.ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? Title
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public RenderFragment? ChildContent
+    {
+        get;
+        set;
+    }
+}
