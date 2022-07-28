@@ -61,7 +61,6 @@ public class ArchivationHostedService : BackgroundService
             {
                 await Task.Delay(TimeSpan.FromMinutes(1.0), stoppingToken);
             }
-
         }
     }
 }
