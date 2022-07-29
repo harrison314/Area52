@@ -43,6 +43,12 @@ public class TimeSeriesQueryRequest
         get;
         init;
     }
+
+    public AgregateFn AgregationFunction
+    {
+        get;
+        init;
+    }
 }
 
 public enum TimeSeriesGroupByFn
@@ -54,6 +60,15 @@ public enum TimeSeriesGroupByFn
     Months,
     Quarters,
     Years
+}
+
+public enum AgregateFn
+{
+    Count,
+    Sum,
+    Min,
+    Max,
+    Avg
 }
 
 public class TimeSeriesItem

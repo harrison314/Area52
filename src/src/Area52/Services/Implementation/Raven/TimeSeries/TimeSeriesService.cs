@@ -78,6 +78,7 @@ public class TimeSeriesService : ITimeSeriesService
 
     public async Task<IReadOnlyList<TimeSeriesItem>> ExecuteQuery(TimeSeriesQueryRequest request, CancellationToken cancellationToken)
     {
+        this.logger.LogTrace("Entering to ExecuteQuery with DefinitionId {DefinitionId}.", request.DefinitionId);
 
         Action<ITimePeriodBuilder> groupingAction = request.GroupByFunction switch //input is a string that represents some client input
         {
@@ -91,26 +92,26 @@ public class TimeSeriesService : ITimeSeriesService
             _ => throw new InvalidProgramException($"Enum value {request.GroupByFunction} is not supported.")
         };
 
+        AgregateFunctionRuntime agregateRuntime = AgregateFunctionHelper.GetFunctions(request.AgregationFunction);
+
         using var session = this.documentStore.OpenAsyncSession();
-        var ts = await session.Query<TimeSerieDefinition>()
+        TimeSeriesAggregationResult ts = await session.Query<TimeSerieDefinition>()
             .Where(t => t.Id == request.DefinitionId)
             .Select(t => global::Raven.Client.Documents.Queries.RavenQuery.TimeSeries(t, TimeSeriesConstants.TsName, request.From, request.To)
                 .GroupBy(groupingAction)
-                 .Select(t => t.Sum())
+                 .Select(t => new
+                 {
+                     // TODO: fix slection
+                     Count = t.Count(),
+                     Sum = t.Sum(),
+                     Min = t.Min(),
+                     Max = t.Max(),
+                     Average = t.Average()
+                 })
                  .ToList()
                  )
             .SingleAsync(cancellationToken);
 
-        List<TimeSeriesItem> result = new List<TimeSeriesItem>(ts.Results.Length);
-        for (int i = 0; i < ts.Results.Length; i++)
-        {
-            result.Add(new TimeSeriesItem()
-            {
-                From = ts.Results[i].From,
-                Value = ts.Results[i].Sum[0]
-            });
-        }
-
-        return result;
+        return agregateRuntime.Mapper(ts); ;
     }
 }

@@ -47,7 +47,7 @@ internal class TimeSeriesWriter : ITimeSeriesWriter
         this.logger.LogTrace("Entering to FlushBuffer");
         using var session = this.documentStore.OpenAsyncSession();
 
-        var ts = session.TimeSeriesFor(this.documentId, TimeSeriesConstants.TsName);
+        global::Raven.Client.Documents.Session.IAsyncSessionDocumentTimeSeries ts = session.TimeSeriesFor(this.documentId, TimeSeriesConstants.TsName);
 
         foreach (var entity in this.buffer)
         {
