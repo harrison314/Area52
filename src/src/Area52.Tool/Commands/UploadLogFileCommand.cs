@@ -63,7 +63,7 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
     {
         using FileStream fs = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 2048);
         using TextReader tr = new StreamReader(fs, Encoding.UTF8);
-        AnsiConsole.WriteLine("Opoen file [green]{0}[/]", settings.FilePath.EscapeMarkup());
+        AnsiConsole.MarkupLine("Opoen file [green]{0}[/]", settings.FilePath.EscapeMarkup());
 
         string? line;
 
@@ -92,11 +92,18 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
 
     private async Task UploadLogs(Settings settings, StringBuilder sb, int count)
     {
-        AnsiConsole.WriteLine("[silver]Start uploading...[/]");
+        AnsiConsole.MarkupLine("[silver]Start uploading...[/]");
         DateTime startTime = DateTime.UtcNow;
-        await ClefClient.Upload(settings.Url, sb.ToString(), settings.ApiKey, default);
-        TimeSpan duration = DateTime.UtcNow - startTime;
+        try
+        {
+            await ClefClient.Upload(settings.Url, sb.ToString(), settings.ApiKey, default);
+            TimeSpan duration = DateTime.UtcNow - startTime;
 
-        AnsiConsole.WriteLine("Upload [green]{0}[/] logs in [green]{1}[/].", count, duration);
+            AnsiConsole.MarkupLine("Upload [green]{0}[/] logs in [green]{1}[/].", count, duration);
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.WriteException(ex, ExceptionFormats.Default);
+        }
     }
 }
