@@ -1,4 +1,4 @@
-﻿using Area52.Services.Contracts;
+﻿using Area52.Services.Contracts.TimeSeries;
 using Raven.Client.Documents.Indexes;
 
 namespace Area52.Services.Implementation.Raven.Indexes;

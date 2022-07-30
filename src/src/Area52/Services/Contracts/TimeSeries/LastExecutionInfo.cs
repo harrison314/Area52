@@ -1,4 +1,4 @@
-﻿namespace Area52.Services.Contracts;
+﻿namespace Area52.Services.Contracts.TimeSeries;
 
 public class LastExecutionInfo
 {

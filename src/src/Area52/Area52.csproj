@@ -29,6 +29,7 @@
     <PackageReference Include="RavenDB.Client" Version="5.3.103" />
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Blazor-ApexCharts" Version="0.9.13-beta" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿@page "/Management/Tsa/Create"
 @using Area52.Services.Contracts
+@using Area52.Services.Contracts.TimeSeries
 @using Area52.Shared.ForManaement
 @using System.ComponentModel.DataAnnotations
 @implements IDisposable
@@ -48,6 +49,31 @@
             <ValidationMessage For="@(()=>model.TagFieldName)" class="form-text" />
         </div>
 
+        <div class="mb-3">
+            <label class="form-label">Graph options</label>
+            <div class="row">
+                <div class="col-4">
+                    <InputSelect class="form-select" @bind-Value="@model.DefaultAgregationFunction">
+                        <option value="@AgregateFn.Count">Agregate using Count</option>
+                        <option value="@AgregateFn.Sum">Agregate using Sum</option>
+                        <option value="@AgregateFn.Min">Agregate using Min</option>
+                        <option value="@AgregateFn.Max">Agregate using Max</option>
+                        <option value="@AgregateFn.Avg">Agregate using Avg</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <InputSelect class="form-select" @bind-Value="@model.ShowGraphTime">
+                        <option value="@ShowGraphTime.LastHour">Show last hour</option>
+                        <option value="@ShowGraphTime.LastDay">Show last day</option>
+                        <option value="@ShowGraphTime.LastWeek">Show last week</option>
+                        <option value="@ShowGraphTime.LastMonth">Show last month</option>
+                        <option value="@ShowGraphTime.LastYear">Show last year</option>
+                    </InputSelect>
+                </div>
+            </div>
+            <div class="form-text">Set time agregation function and default timerange for graph show.</div>
+        </div>
+
         <div>
             <button type="submit" class="btn btn-success float-end">Submit</button>
         </div>
@@ -88,7 +114,9 @@
                 Name = this.model.Name,
                 Query = this.model.Query.Trim(),
                 TagFieldName = this.model.TagFieldName,
-                ValueFieldName = this.model.ValueFieldName
+                ValueFieldName = this.model.ValueFieldName,
+                DefaultAgregationFunction = this.model.DefaultAgregationFunction,
+                ShowGraphTime = this.model.ShowGraphTime
             });
 
         this.NavManager.NavigateTo($"/Management/Tsa/Detail?id={Uri.EscapeDataString(definitionId)}");
@@ -141,6 +169,18 @@
 
         [StringLength(1000, ErrorMessage = "TagFieldName is too long (1000 character limit).")]
         public string? TagFieldName
+        {
+            get;
+            set;
+        }
+
+        public AgregateFn DefaultAgregationFunction
+        {
+            get;
+            set;
+        }
+
+        public ShowGraphTime ShowGraphTime
         {
             get;
             set;

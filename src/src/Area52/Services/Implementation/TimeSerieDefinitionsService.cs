@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Area52.Services.Contracts;
+using Area52.Services.Contracts.TimeSeries;
 using Area52.Services.Implementation.QueryParser.Nodes;
 
 namespace Area52.Services.Implementation;

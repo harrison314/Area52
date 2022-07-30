@@ -1,5 +1,6 @@
 ﻿using Area52.Infrastructure.App;
 using Area52.Infrastructure.Clef;
+using Area52.Services.Contracts.TimeSeries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection;
@@ -48,7 +49,7 @@ namespace Area52
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.TimeSeriesBackgroundService>();
 
             // Services
-            builder.Services.AddTransient<Services.Contracts.ITimeSerieDefinitionsService, Services.Implementation.TimeSerieDefinitionsService>();
+            builder.Services.AddTransient<ITimeSerieDefinitionsService, Services.Implementation.TimeSerieDefinitionsService>();
 
             builder.Services.AddHealthChecks().ConfigureHealthChecks(configurator);
 

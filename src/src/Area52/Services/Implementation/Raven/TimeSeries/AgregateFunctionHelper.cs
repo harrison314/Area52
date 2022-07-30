@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Area52.Services.Contracts;
+using Area52.Services.Contracts.TimeSeries;
 using Raven.Client.Documents.Queries.TimeSeries;
 
 namespace Area52.Services.Implementation.Raven.TimeSeries;
@@ -26,6 +27,14 @@ internal static class AgregateFunctionHelper
         };
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static DateTime GetAvgTime(ref TimeSeriesRangeAggregation aggregation)
+    {
+        long from = aggregation.From.Ticks;
+        long to = aggregation.To.Ticks;
+        return new DateTime(from + (to - from) / 2, DateTimeKind.Utc);
+    }
+
     private static List<TimeSeriesItem> MapCount(TimeSeriesAggregationResult ts)
     {
         List<TimeSeriesItem> result = new List<TimeSeriesItem>(ts.Results.Length);
@@ -33,7 +42,7 @@ internal static class AgregateFunctionHelper
         {
             result.Add(new TimeSeriesItem()
             {
-                From = ts.Results[i].From,
+                Time = GetAvgTime(ref ts.Results[i]),
                 Value = ts.Results[i].Count[0]
             });
         }
@@ -48,7 +57,7 @@ internal static class AgregateFunctionHelper
         {
             result.Add(new TimeSeriesItem()
             {
-                From = ts.Results[i].From,
+                Time = GetAvgTime(ref ts.Results[i]),
                 Value = ts.Results[i].Sum[0]
             });
         }
@@ -63,7 +72,7 @@ internal static class AgregateFunctionHelper
         {
             result.Add(new TimeSeriesItem()
             {
-                From = ts.Results[i].From,
+                Time = GetAvgTime(ref ts.Results[i]),
                 Value = ts.Results[i].Min[0]
             });
         }
@@ -78,7 +87,7 @@ internal static class AgregateFunctionHelper
         {
             result.Add(new TimeSeriesItem()
             {
-                From = ts.Results[i].From,
+                Time = GetAvgTime(ref ts.Results[i]),
                 Value = ts.Results[i].Max[0]
             });
         }
@@ -93,7 +102,7 @@ internal static class AgregateFunctionHelper
         {
             result.Add(new TimeSeriesItem()
             {
-                From = ts.Results[i].From,
+                Time = GetAvgTime(ref ts.Results[i]),
                 Value = ts.Results[i].Average[0]
             });
         }

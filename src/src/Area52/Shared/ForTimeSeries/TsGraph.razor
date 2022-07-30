@@ -1,0 +1,172 @@
+﻿@using ApexCharts;
+@using Area52.Services.Contracts;
+@using Area52.Services.Contracts.TimeSeries
+@inject ITimeSeriesService TimeSeriesService
+@inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
+@* Graph data: https://apexcharts.github.io/Blazor-ApexCharts/donut-charts *@
+<div class="card @this.AdditionalClass">
+    <div class="card-body">
+        @if (this.items == null)
+        {
+            <LoadingIndicator />
+        }
+        else
+        {
+            <div class="card-title">@this.tsDef.Name</div>
+            <ApexChart TItem="TimeSeriesItem"
+                   Title=""
+                   Options="@options"
+                   Height="250"
+                   XAxisType="XAxisType.Datetime"
+                   @ref="chart">
+
+                <ApexPointSeries TItem="TimeSeriesItem"
+                             Items="@this.items"
+                             Name="@(this.tsDef.ValueFieldName?? string.Empty)"
+                             SeriesType="@seriesType"
+                             XValue="@(e => e.Time)"
+                             YValue="@(e => (decimal)e.Value)"
+                             OrderBy="e=>e.X"
+                             Stroke="@(new SeriesStroke() { Width = 1, Color = "#0d6efd" })" />
+            </ApexChart>
+        }
+
+        <p class="card-text text-muted">@(this.tsDef?.Description??string.Empty)</p>
+    </div>
+
+    @if (this.tsDef != null)
+    {
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-8"></div>
+                <div class="col-2">
+                    <select class="form-control form-select-sm"
+                        value="@this.graphTime"
+                        @onchange="@(value => this.GraphTimeValueChanged(Enum.Parse<ShowGraphTime>(value?.Value?.ToString()??this.tsDef.DefaultAgregationFunction.ToString())))">
+                        <option value="@ShowGraphTime.LastHour">Show last hour</option>
+                        <option value="@ShowGraphTime.LastDay">Show last day</option>
+                        <option value="@ShowGraphTime.LastWeek">Show last week</option>
+                        <option value="@ShowGraphTime.LastMonth">Show last month</option>
+                        <option value="@ShowGraphTime.LastYear">Show last year</option>
+                    </select>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="ToggleGraph">
+                        Togle graph type
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string Id
+    {
+        get;
+        set;
+    } = null!;
+
+    [Parameter]
+    public string AdditionalClass
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    private ApexChart<TimeSeriesItem> chart;
+    private ApexChartOptions<TimeSeriesItem> options = new ApexChartOptions<TimeSeriesItem>()
+        {
+            Chart = new Chart()
+            {
+                Zoom = new Zoom()
+                {
+                    Enabled = false
+                },
+                Animations = new Animations
+                {
+                    Easing = Easing.Linear,
+                    DynamicAnimation = new DynamicAnimation
+                    {
+                        Speed = 500
+                    }
+                }
+            }
+        };
+
+    private IReadOnlyList<TimeSeriesItem>? items = null;
+    private TimeSerieDefinition tsDef;
+    private SeriesType seriesType = SeriesType.Area;
+    private ShowGraphTime graphTime;
+
+    //protected override async Task OnInitializedAsync()
+    //{
+
+    //}
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.tsDef = await TimeSerieDefinitionsService.FindById(this.Id);
+        this.graphTime = this.tsDef.ShowGraphTime;
+
+        this.items = null;
+        this.StateHasChanged();
+        await Task.Yield();
+
+        this.items = await this.TimeSeriesService.ExecuteQuery(this.CreateParameter(this.tsDef, this.tsDef.ShowGraphTime), default);
+    }
+
+    private TimeSeriesQueryRequest CreateParameter(TimeSerieDefinition timeSerieDefinition, ShowGraphTime showGraphTime)
+    {
+        DateTime utcNow = DateTime.UtcNow;
+        (TimeSpan diff, TimeSeriesGroupByFn groupByFn) = showGraphTime switch
+        {
+            ShowGraphTime.LastHour => (TimeSpan.FromHours(1.0), TimeSeriesGroupByFn.Minutes),
+            ShowGraphTime.LastDay => (TimeSpan.FromHours(24.0), TimeSeriesGroupByFn.Minutes),
+            ShowGraphTime.LastWeek => (TimeSpan.FromDays(7.0), TimeSeriesGroupByFn.Hours),
+            ShowGraphTime.LastMonth => (TimeSpan.FromDays(30.0), TimeSeriesGroupByFn.Days),
+            ShowGraphTime.LastYear => (TimeSpan.FromDays(365.0), TimeSeriesGroupByFn.Days),
+            _ => throw new InvalidProgramException($"Enum value {showGraphTime} is not supported.")
+        };
+
+        return new TimeSeriesQueryRequest()
+            {
+                DefinitionId = this.Id,
+                AgregationFunction = timeSerieDefinition.DefaultAgregationFunction,
+                From = utcNow - diff,
+                To = utcNow,
+                GroupByFunction = groupByFn
+            };
+    }
+
+    private async Task GraphTimeValueChanged(ShowGraphTime newValue)
+    {
+        this.graphTime = newValue;
+        await Task.Yield();
+
+        this.items = await this.TimeSeriesService.ExecuteQuery(this.CreateParameter(this.tsDef, newValue), default);
+        await this.chart.UpdateSeriesAsync();
+    }
+
+    private async Task ToggleGraph()
+    {
+        if (this.seriesType == SeriesType.Area)
+        {
+            this.seriesType = SeriesType.Bar;
+        }
+        else
+        {
+            this.seriesType = SeriesType.Area;
+        }
+
+        // Hek for reaload graph type
+        var tmp = this.items;
+        this.items = null;
+        this.StateHasChanged();
+        await Task.Yield();
+        this.items = tmp;
+        this.StateHasChanged();
+    }
+}

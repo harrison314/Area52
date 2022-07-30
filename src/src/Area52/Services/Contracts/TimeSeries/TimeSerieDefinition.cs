@@ -1,4 +1,4 @@
-﻿namespace Area52.Services.Contracts;
+﻿namespace Area52.Services.Contracts.TimeSeries;
 
 public class TimeSerieDefinition
 {
@@ -33,6 +33,18 @@ public class TimeSerieDefinition
     }
 
     public string? TagFieldName
+    {
+        get;
+        set;
+    }
+
+    public AgregateFn DefaultAgregationFunction
+    {
+        get;
+        set;
+    }
+
+    public ShowGraphTime ShowGraphTime
     {
         get;
         set;

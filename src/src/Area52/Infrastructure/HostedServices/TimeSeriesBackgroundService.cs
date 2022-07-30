@@ -1,4 +1,5 @@
 ﻿using Area52.Services.Contracts;
+using Area52.Services.Contracts.TimeSeries;
 using Area52.Services.Implementation.QueryParser;
 using Area52.Services.Implementation.QueryParser.Nodes;
 

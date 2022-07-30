@@ -1,5 +1,5 @@
 ﻿@page "/Management/Tsa/List"
-@using Area52.Services.Contracts
+@using Area52.Services.Contracts.TimeSeries
 @using Area52.Shared.ForManaement
 @inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
 
@@ -7,11 +7,9 @@
 
 <LeftMenu Title="List of timeseries definitions">
     <div>
-        <NavLink class="btn btn-outline-primary btn-sm float-end"
-                 href="Management/Tsa/Create">
-            Create
+        <NavLink class="btn btn-outline-primary btn-sm float-end" href="Management/Tsa/Create">
+            <span class="oi oi-plus"></span> Create
         </NavLink>
-
     </div>
 
     @if (this.items == null)

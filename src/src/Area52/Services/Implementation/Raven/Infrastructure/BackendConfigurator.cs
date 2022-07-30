@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.App;
 using Area52.Services.Configuration;
+using Area52.Services.Contracts.TimeSeries;
 using Area52.Services.Implementation.Raven.TimeSeries;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
@@ -69,9 +70,9 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<Contracts.ILogManager, LogManager>();
         services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
 
-        services.AddSingleton<Contracts.ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
-        services.AddSingleton<Contracts.ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
-        services.AddSingleton<Contracts.ITimeSeriesService, TimeSeriesService>();
+        services.AddSingleton<ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
+        services.AddSingleton<ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
+        services.AddSingleton<ITimeSeriesService, TimeSeriesService>();
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)

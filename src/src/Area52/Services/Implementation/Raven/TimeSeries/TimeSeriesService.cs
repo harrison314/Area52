@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Area52.Services.Contracts;
+using Area52.Services.Contracts.TimeSeries;
 using Area52.Services.Implementation.Raven.Indexes;
 using Area52.Services.Implementation.Raven.Models;
 using Raven.Client.Documents;

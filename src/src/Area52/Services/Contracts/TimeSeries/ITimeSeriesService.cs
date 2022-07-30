@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Area52.Services.Contracts;
+namespace Area52.Services.Contracts.TimeSeries;
 
 public interface ITimeSeriesService
 {
@@ -73,7 +73,7 @@ public enum AgregateFn
 
 public class TimeSeriesItem
 {
-    public DateTime From
+    public DateTime Time
     {
         get;
         init;
