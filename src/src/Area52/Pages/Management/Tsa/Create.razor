@@ -141,7 +141,7 @@
         {
             get;
             set;
-        }
+        } = string.Empty;
 
         [Required]
         [MinLength(5, ErrorMessage = "Minimum lenght is 5 chars.")]
@@ -150,7 +150,7 @@
         {
             get;
             set;
-        }
+        } = string.Empty;
 
         [Required]
         [MinLength(1, ErrorMessage = "Minimum lenght is 1 chars.")]
@@ -158,7 +158,7 @@
         {
             get;
             set;
-        }
+        } = string.Empty;
 
         [StringLength(1000, ErrorMessage = "ValueFieldName is too long (1000 character limit).")]
         public string? ValueFieldName
@@ -184,6 +184,11 @@
         {
             get;
             set;
+        }
+
+        public ViewModel()
+        {
+                
         }
     }
 }

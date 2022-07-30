@@ -7,6 +7,7 @@ public class LastExecutionInfo
         get;
         set;
     }
+
     public LastExecutionInfo()
     {
 

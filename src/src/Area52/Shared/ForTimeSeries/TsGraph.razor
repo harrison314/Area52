@@ -12,7 +12,7 @@
         }
         else
         {
-            <div class="card-title">@this.tsDef.Name</div>
+            <div class="card-title">@this.tsDef!.Name</div>
             <ApexChart TItem="TimeSeriesItem"
                    Title=""
                    Options="@options"
@@ -97,7 +97,7 @@
         };
 
     private IReadOnlyList<TimeSeriesItem>? items = null;
-    private TimeSerieDefinition tsDef;
+    private TimeSerieDefinition? tsDef = null;
     private SeriesType seriesType = SeriesType.Area;
     private ShowGraphTime graphTime;
 
@@ -143,6 +143,7 @@
 
     private async Task GraphTimeValueChanged(ShowGraphTime newValue)
     {
+        System.Diagnostics.Debug.Assert(this.tsDef is not null);
         this.graphTime = newValue;
         await Task.Yield();
 
