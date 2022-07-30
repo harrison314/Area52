@@ -30,17 +30,26 @@ public class EventMiddleware
                 List<LogEntity> list = new List<LogEntity>();
                 while ((line = await tr.ReadLineAsync()) != null)
                 {
-                    int encodedLen = Encoding.UTF8.GetByteCount(line);
-                    if (encodedLen >= buffer.Length)
+                    try
                     {
-                        ArrayPool<byte>.Shared.Return(buffer, false);
-                        int reuested = Encoding.UTF8.GetByteCount(line);
-                        buffer = ArrayPool<byte>.Shared.Rent(reuested);
-                        encodedLen = Encoding.UTF8.GetBytes(line, buffer);
-                    }
+                        int encodedLen = Encoding.UTF8.GetByteCount(line);
+                        if (encodedLen >= buffer.Length)
+                        {
+                            ArrayPool<byte>.Shared.Return(buffer, false);
+                            int reuested = Encoding.UTF8.GetByteCount(line);
+                            buffer = ArrayPool<byte>.Shared.Rent(reuested);
+                            encodedLen = Encoding.UTF8.GetBytes(line, buffer);
+                        }
 
-                    encodedLen = Encoding.UTF8.GetBytes(line, buffer);
-                    list.Add(ClefParser.Read(buffer.AsSpan(0, encodedLen)));
+                        encodedLen = Encoding.UTF8.GetBytes(line, buffer);
+                        list.Add(ClefParser.Read(buffer.AsSpan(0, encodedLen)));
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        this.logger.LogWarning(ex, "Problem with sinle line {line}", line);
+                        errorCounter++;
+                        // TODO: configurable retrow exception
+                    }
                 }
 
                 await this.logWriter.Write(list);

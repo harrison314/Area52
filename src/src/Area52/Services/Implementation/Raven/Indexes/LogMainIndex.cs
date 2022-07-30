@@ -57,8 +57,8 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                            {
                                Level = this.CreateField("Level", log.Level, new CreateFieldOptions()
                                {
-                                   Indexing = FieldIndexing.Exact,
-                                   Storage = FieldStorage.Yes,
+                                   Indexing = FieldIndexing.Exact | FieldIndexing.Default,
+                                   Storage = FieldStorage.No,
                                    TermVector = FieldTermVector.No
                                }),
                                LevelNumeric = log.LevelNumeric,
@@ -73,17 +73,22 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                                    log.Message,
                                    log.Exception),
 
-                               _ = log.Properties.Select(t => this.CreateField(t.Name, (object)t.Values ?? (object)t.Valued!.Value, new CreateFieldOptions()
+                               _ = log.Properties.Where(t => t.Values != null).Select(t => this.CreateField(t.Name, t.Values, new CreateFieldOptions()
+                               {
+                                   Indexing = FieldIndexing.Exact | FieldIndexing.Default,
+                                   Storage = FieldStorage.No,
+                                   TermVector = FieldTermVector.No
+                               })),
+                               _Numbers = log.Properties.Where(t => t.Valued.HasValue).Select(t => this.CreateField(t.Name, t.Valued!.Value, new CreateFieldOptions()
                                {
                                    Indexing = FieldIndexing.Exact,
-                                   Storage = FieldStorage.Yes,
+                                   Storage = FieldStorage.No,
                                    TermVector = FieldTermVector.No
-                               }))
+                               })),
                            };
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         this.Index("LevelNumeric", FieldIndexing.Exact);
         this.Index("LogFullText", FieldIndexing.Search);
-        this.TermVector("Message", FieldTermVector.Yes);
     }
 }
