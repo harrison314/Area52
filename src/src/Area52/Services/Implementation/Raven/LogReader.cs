@@ -81,7 +81,7 @@ public class LogReader : ILogReader
         return this.ReadLogsInternals(query, limit);
     }
 
-    public async IAsyncEnumerable<LogEntity> ReadLogsInternals(IAstNode astNodes, int? limit)
+    public async IAsyncEnumerable<LogEntity> ReadLogsInternals(IAstNode? astNodes, int? limit)
     {
         DynamicIndexQueryBuilder builder = new DynamicIndexQueryBuilder();
         builder.SetSelectClausule(null);

@@ -24,6 +24,11 @@ public class TimeSerieDefinitionIndex : AbstractIndexCreationTask<TimeSerieDefin
             get;
             set;
         }
+
+        public Result()
+        {
+            this.Id = string.Empty;
+        }
     }
 
     public TimeSerieDefinitionIndex()

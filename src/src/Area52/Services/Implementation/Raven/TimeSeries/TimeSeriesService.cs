@@ -119,6 +119,7 @@ public class TimeSeriesService : ITimeSeriesService
                 TimeSeriesGroupByFn.Minutes => (Action<ITimePeriodBuilder>)(builder => builder.Minutes(1)),
                 TimeSeriesGroupByFn.Hours => (Action<ITimePeriodBuilder>)(builder => builder.Hours(1)),
                 TimeSeriesGroupByFn.Days => (Action<ITimePeriodBuilder>)(builder => builder.Days(1)),
+                TimeSeriesGroupByFn.Weeks => (Action<ITimePeriodBuilder>)(builder => builder.Days(7)),
                 TimeSeriesGroupByFn.Months => (Action<ITimePeriodBuilder>)(builder => builder.Months(1)),
                 TimeSeriesGroupByFn.Quarters => (Action<ITimePeriodBuilder>)(builder => builder.Quarters(1)),
                 TimeSeriesGroupByFn.Years => (Action<ITimePeriodBuilder>)(builder => builder.Years(1)),
@@ -151,6 +152,10 @@ public class TimeSeriesService : ITimeSeriesService
         {
             this.logger.LogError(ex, "Unexcepted error in ExecuteQuery method with DefinitionId {DefinitionId}.", request.DefinitionId);
             throw;
+        }
+        finally
+        {
+            this.logger.LogDebug("Exiting to ExecuteQuery with DefinitionId {DefinitionId}.", request.DefinitionId);
         }
     }
 }

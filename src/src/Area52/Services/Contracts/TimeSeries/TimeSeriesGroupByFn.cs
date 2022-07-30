@@ -6,6 +6,7 @@ public enum TimeSeriesGroupByFn
     Minutes,
     Hours,
     Days,
+    Weeks,
     Months,
     Quarters,
     Years

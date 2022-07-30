@@ -47,7 +47,6 @@ public class EventMiddleware
                     catch (InvalidOperationException ex)
                     {
                         this.logger.LogWarning(ex, "Problem with sinle line {line}", line);
-                        errorCounter++;
                         // TODO: configurable retrow exception
                     }
                 }

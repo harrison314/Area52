@@ -76,7 +76,7 @@
         set;
     } = string.Empty;
 
-    private ApexChart<TimeSeriesItem> chart;
+    private ApexChart<TimeSeriesItem> chart = null!;
     private ApexChartOptions<TimeSeriesItem> options = new ApexChartOptions<TimeSeriesItem>()
         {
             Chart = new Chart()
@@ -127,7 +127,7 @@
             ShowGraphTime.LastDay => (TimeSpan.FromHours(24.0), TimeSeriesGroupByFn.Minutes),
             ShowGraphTime.LastWeek => (TimeSpan.FromDays(7.0), TimeSeriesGroupByFn.Hours),
             ShowGraphTime.LastMonth => (TimeSpan.FromDays(30.0), TimeSeriesGroupByFn.Days),
-            ShowGraphTime.LastYear => (TimeSpan.FromDays(365.0), TimeSeriesGroupByFn.Days),
+            ShowGraphTime.LastYear => (TimeSpan.FromDays(365.0), TimeSeriesGroupByFn.Weeks),
             _ => throw new InvalidProgramException($"Enum value {showGraphTime} is not supported.")
         };
 
