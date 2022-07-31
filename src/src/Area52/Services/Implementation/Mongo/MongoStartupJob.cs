@@ -134,6 +134,28 @@ public class MongoStartupJob : IStartupJob
             }));
 
         await this.mongoDatabase.CreateCollectionAsync(CollectionNames.LockAcquires, null, cancellationToken);
-        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.DataProtectionKeys, null, cancellationToken);
+        //await this.mongoDatabase.CreateCollectionAsync(CollectionNames.DataProtectionKeys, new CreateCollectionOptions(), cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSerieDefinition, null, cancellationToken);
+
+        var mongoTimeSerieDefinitionCollection = this.mongoDatabase.GetCollection<Models.MongoTimeSerieDefinition>(CollectionNames.LogEntitys);
+        await mongoTimeSerieDefinitionCollection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoTimeSerieDefinition>(
+           new BsonDocumentIndexKeysDefinition<Models.MongoTimeSerieDefinition>(new MongoDB.Bson.BsonDocument()
+           {
+                {"Enabled",1 },
+                {"Metadata.Created", -1 },
+           }),
+           new CreateIndexOptions()
+           {
+               Background = false,
+               Name = "MongoTimeSerieDefinition_IX"
+           }));
+
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSerieItems, 
+            new CreateCollectionOptions<Models.MongoTimeSerieItem>()
+            {
+                TimeSeriesOptions = new TimeSeriesOptions(nameof(Models.MongoTimeSerieItem.Timestamp), new Optional<string>(nameof(Models.MongoTimeSerieItem.Meta))),
+            },
+            cancellationToken);
+
     }
 }

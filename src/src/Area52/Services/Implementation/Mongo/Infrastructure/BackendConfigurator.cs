@@ -49,6 +49,9 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<Contracts.ILogReader, LogReader>();
         services.AddTransient<Contracts.ILogManager, LogManager>();
         services.AddTransient<Contracts.IDistributedLocker, MongoDbDistributedLocker>();
+
+        services.AddTransient<Contracts.TimeSeries.ITimeSerieDefinitionsRepository, TimeSeries.TimeSerieDefinitionsRepository>();
+        services.AddTransient<Contracts.TimeSeries.ITimeSeriesService, TimeSeries.TimeSeriesService>();
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
