@@ -124,7 +124,7 @@ public class LogReader : ILogReader
                 { nameof(LogEntity.LevelNumeric), 1 },
                 { nameof(LogEntity.Message), 1 },
                 { nameof(LogEntity.MessageTemplate), 1 },
-                { $"{nameof(LogEntity.Properties)}.$", 1 },
+                { nameof(LogEntity.Properties), 1 },
             }
         });
 
