@@ -129,6 +129,7 @@ public class TimeSeriesService : ITimeSeriesService
             AgregateFunctionRuntime agregateRuntime = AgregateFunctionHelper.GetFunctions(request.AgregationFunction);
 
             using var session = this.documentStore.OpenAsyncSession();
+
             TimeSeriesAggregationResult ts = await session.Query<TimeSerieDefinition>()
                 .Where(t => t.Id == request.DefinitionId)
                 .Select(t => global::Raven.Client.Documents.Queries.RavenQuery.TimeSeries(t, TimeSeriesConstants.TsName, request.From, request.To)

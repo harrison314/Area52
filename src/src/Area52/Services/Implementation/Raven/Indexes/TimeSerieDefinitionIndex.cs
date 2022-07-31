@@ -31,6 +31,11 @@ public class TimeSerieDefinitionIndex : AbstractIndexCreationTask<TimeSerieDefin
         }
     }
 
+    public override string IndexName
+    {
+        get => "TimeSerieDefinition/LastExecuted";
+    }
+
     public TimeSerieDefinitionIndex()
     {
         this.Map = definitions => from d in definitions

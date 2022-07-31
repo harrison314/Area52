@@ -56,6 +56,7 @@ public class MongoDbXmlRepository : IXmlRepository
         XElement? expirationElement = element.Element("expirationDate");
         if (expirationElement == null)
         {
+            this.logger.LogWarning("Expiration date is not present in Xelement.");
             return null;
         }
 
