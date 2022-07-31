@@ -57,7 +57,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
 
     public async Task<IReadOnlyList<TimeSerieDefinitionInfo>> FindDefinictions()
     {
-        this.logger.LogTrace("Entering to Create.");
+        this.logger.LogTrace("Entering to FindDefinictions.");
 
         try
         {
