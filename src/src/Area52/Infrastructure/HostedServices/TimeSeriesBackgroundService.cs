@@ -1,7 +1,9 @@
-﻿using Area52.Services.Contracts;
+﻿using Area52.Services.Configuration;
+using Area52.Services.Contracts;
 using Area52.Services.Contracts.TimeSeries;
 using Area52.Services.Implementation.QueryParser;
 using Area52.Services.Implementation.QueryParser.Nodes;
+using Microsoft.Extensions.Options;
 
 namespace Area52.Infrastructure.HostedServices;
 
@@ -10,16 +12,19 @@ public class TimeSeriesBackgroundService : BackgroundService
     private readonly IDistributedLocker locker;
     private readonly ITimeSeriesService timeSeriesService;
     private readonly ILogReader logReader;
+    private readonly IOptions<TimeSeriesSetup> timeSeriesSetup;
     private readonly ILogger<TimeSeriesBackgroundService> logger;
 
     public TimeSeriesBackgroundService(IDistributedLocker locker,
         ITimeSeriesService timeSeriesService,
         ILogReader logReader,
+        IOptions<TimeSeriesSetup> timeSeriesSetup,
         ILogger<TimeSeriesBackgroundService> logger)
     {
         this.locker = locker;
         this.timeSeriesService = timeSeriesService;
         this.logReader = logReader;
+        this.timeSeriesSetup = timeSeriesSetup;
         this.logger = logger;
     }
 
@@ -27,13 +32,13 @@ public class TimeSeriesBackgroundService : BackgroundService
     {
         this.logger.LogTrace("Entering to ExecuteAsync.");
 
-        await Task.Delay(15 * 1000); //TODO
+        TimeSeriesSetup setup = this.timeSeriesSetup.Value;
+        await Task.Delay(setup.StartupDelay, stoppingToken);
 
-        PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(60)); // TODO: konfiguracia
+        PeriodicTimer timer = new PeriodicTimer(setup.CheckNewDataInterval);
         while (!stoppingToken.IsCancellationRequested)
         {
-
-            DateTime execBefore = DateTime.UtcNow - TimeSpan.FromMinutes(2.0); //TODO: konfiguracia
+            DateTime execBefore = DateTime.UtcNow - setup.FindDataBeforeInterval;
             IReadOnlyList<TimeSeriesDefinitionId> tsDefinitionsFoExec = await this.timeSeriesService.GetDefinitionForExecute(execBefore, stoppingToken);
             this.logger.LogTrace("Found {count} candidates executed before {execBefore}.", tsDefinitionsFoExec.Count, execBefore);
 
@@ -58,6 +63,10 @@ public class TimeSeriesBackgroundService : BackgroundService
             }
 
             await timer.WaitForNextTickAsync(stoppingToken);
+            if (setup.RemoveOldData)
+            {
+                await this.RemoveOldData(TimeSpan.FromDays(setup.RemovaDataAdDaysOld), stoppingToken);
+            }
         }
     }
 
@@ -150,39 +159,9 @@ public class TimeSeriesBackgroundService : BackgroundService
 
         return new AndNode(timeCondition, query);
     }
+
+    private Task RemoveOldData(TimeSpan timeSpan, CancellationToken stoppingToken)
+    {
+        throw new NotImplementedException("Remove old data in timeseries is not implemented.");
+    }
 }
-
-//internal sealed class TsWriterCache : IAsyncDisposable
-//{
-//    private Dictionary<string, ITimeSeriesWriter> writers;
-//    public TsWriterCache()
-//    {
-//        this.writers = new Dictionary<string, ITimeSeriesWriter>();
-//    }
-
-//    public async ValueTask<ITimeSeriesWriter> GetOrCreate(ITimeSeriesService service,
-//        string definitonId,
-//        string definitionName,
-//        CancellationToken cancellationToken)
-//    {
-//        if (this.writers.TryGetValue(definitonId, out ITimeSeriesWriter? writer))
-//        {
-//            return writer;
-//        }
-
-//        writer = await service.CreateWriter(definitonId, definitionName, name, cancellationToken);
-
-//        this.writers.Add(name, writer);
-//        return writer;
-//    }
-
-//    public async ValueTask DisposeAsync()
-//    {
-//        foreach (KeyValuePair<string, ITimeSeriesWriter> kvp in this.writers)
-//        {
-//            await kvp.Value.DisposeAsync();
-//        }
-
-//        this.writers.Clear();
-//    }
-//}

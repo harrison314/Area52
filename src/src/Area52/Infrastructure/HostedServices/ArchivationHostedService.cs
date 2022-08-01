@@ -14,12 +14,12 @@ public class ArchivationHostedService : BackgroundService
 {
     private readonly ILogManager logManager;
     private readonly IDistributedLocker locker;
-    private readonly IOptions<ArchiveSettings> archivationSettings;
+    private readonly IOptions<ArchiveSetup> archivationSettings;
     private readonly ILogger<ArchivationHostedService> logger;
 
     public ArchivationHostedService(ILogManager logManager,
         IDistributedLocker locker,
-        IOptions<ArchiveSettings> archivationSettings,
+        IOptions<ArchiveSetup> archivationSettings,
         ILogger<ArchivationHostedService> logger)
     {
         this.logManager = logManager;

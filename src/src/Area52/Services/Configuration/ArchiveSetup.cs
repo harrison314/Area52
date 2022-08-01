@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Area52.Services.Configuration;
 
-public class ArchiveSettings
+public class ArchiveSetup
 {
     public bool Enabled
     {
@@ -26,7 +26,7 @@ public class ArchiveSettings
         set;
     }
 
-    public ArchiveSettings()
+    public ArchiveSetup()
     {
 
     }

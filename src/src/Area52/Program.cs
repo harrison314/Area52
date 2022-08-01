@@ -27,6 +27,7 @@ namespace Area52
                     .WriteTo.Console());
 
 
+
             IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration);
             configurator.GlobalSetup();
             configurator.ConfigureServices(builder);
@@ -40,12 +41,15 @@ namespace Area52
             builder.Services.AddServerSideBlazor();
 
 
-            if (builder.Configuration.GetValue<bool>("ArchiveSettings:Enabled"))
+            if (builder.Configuration.GetValue<bool>("ArchiveSetup:Enabled"))
             {
+                builder.Services.Configure<Services.Configuration.ArchiveSetup>(builder.Configuration.GetSection("ArchiveSetup"));
                 builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.ArchivationHostedService>();
             }
 
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
+
+            builder.Services.Configure<Services.Configuration.TimeSeriesSetup>(builder.Configuration.GetSection("TimeSeriesSetup"));
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.TimeSeriesBackgroundService>();
 
             // Services
