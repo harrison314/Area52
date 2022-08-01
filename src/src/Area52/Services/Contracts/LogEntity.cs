@@ -14,7 +14,7 @@ public class LogEntity
         set;
     }
 
-    public string MessageTemplate
+    public string? MessageTemplate
     {
         get;
         set;
