@@ -6,11 +6,12 @@
 @* Graph data: https://apexcharts.github.io/Blazor-ApexCharts/donut-charts *@
 <div class="card @this.AdditionalClass">
     <div class="card-body">
-        @if (this.items == null)
+        @if (this.isInLoading)
         {
             <LoadingIndicator />
         }
-        else
+
+        @if (this.items != null)
         {
             <div class="card-title">@this.tsDef!.Name</div>
             <ApexChart TItem="TimeSeriesItem"
@@ -100,6 +101,7 @@
     private TimeSerieDefinition? tsDef = null;
     private SeriesType seriesType = SeriesType.Area;
     private ShowGraphTime graphTime;
+    private bool isInLoading = false;
 
     //protected override async Task OnInitializedAsync()
     //{
@@ -112,10 +114,17 @@
         this.graphTime = this.tsDef.ShowGraphTime;
 
         this.items = null;
+        this.isInLoading = true;
         this.StateHasChanged();
         await Task.Yield();
-
-        this.items = await this.TimeSeriesService.ExecuteQuery(this.CreateParameter(this.tsDef, this.tsDef.ShowGraphTime), default);
+        try
+        {
+            this.items = await this.TimeSeriesService.ExecuteQuery(this.CreateParameter(this.tsDef, this.tsDef.ShowGraphTime), default);
+        }
+        finally
+        {
+            this.isInLoading = false;
+        }
     }
 
     private TimeSeriesQueryRequest CreateParameter(TimeSerieDefinition timeSerieDefinition, ShowGraphTime showGraphTime)
@@ -145,9 +154,17 @@
     {
         System.Diagnostics.Debug.Assert(this.tsDef is not null);
         this.graphTime = newValue;
+        this.isInLoading = true;
         await Task.Yield();
 
-        this.items = await this.TimeSeriesService.ExecuteQuery(this.CreateParameter(this.tsDef, newValue), default);
+        try
+        {
+            this.items = await this.TimeSeriesService.ExecuteQuery(this.CreateParameter(this.tsDef, newValue), default);
+        }
+        finally
+        {
+            this.isInLoading = false;
+        }
         await this.chart.UpdateSeriesAsync();
     }
 

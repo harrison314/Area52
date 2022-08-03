@@ -77,7 +77,6 @@ public class TimeSeriesService : ITimeSeriesService
 
         try
         {
-
             IMongoCollection<MongoTimeSerieItem> collection = this.mongoDatabase.GetCollection<MongoTimeSerieItem>(CollectionNames.MongoTimeSerieItems);
             ObjectId id = new ObjectId(definitionId);
             ITimeSeriesWriter writer = new TimeSeriesWriter(collection, id, this.loggerFactory.CreateLogger<TimeSeriesWriter>());
@@ -130,57 +129,49 @@ public class TimeSeriesService : ITimeSeriesService
 
             BsonDocument groupByExpression = request.GroupByFunction switch
             {
-                TimeSeriesGroupByFn.Days => new BsonDocument("date", new BsonDocument()
+                TimeSeriesGroupByFn.Days => new BsonDocument("day", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    { "year", "$date.year"},
-                    { "month", "$date.month"},
-                    { "day", "$date.day"}
-                }),
-                TimeSeriesGroupByFn.Hours => new BsonDocument("date", new BsonDocument()
+                            {"date", "$date" },
+                            {"unit", "day" },
+                            {"timezone", "UTC" }
+                })),
+                TimeSeriesGroupByFn.Hours => new BsonDocument("hour", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    { "year", "$date.year"},
-                    { "month", "$date.month"},
-                    { "day", "$date.day"},
-                    { "hour", "$date.hour"}
-                }),
-                TimeSeriesGroupByFn.Minutes => new BsonDocument("date", new BsonDocument()
+                            {"date", "$date" },
+                            {"unit", "hour" },
+                            {"timezone", "UTC" }
+                })),
+                TimeSeriesGroupByFn.Minutes => new BsonDocument("minute", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    { "year", "$date.year"},
-                    { "month", "$date.month"},
-                    { "day", "$date.day"},
-                    { "hour", "$date.hour"},
-                    { "minute", "$date.minute"}
-                }),
-                TimeSeriesGroupByFn.Months => new BsonDocument("date", new BsonDocument()
+                            {"date", "$date" },
+                            {"unit", "minute" },
+                            {"timezone", "UTC" }
+                })),
+                TimeSeriesGroupByFn.Months => new BsonDocument("month", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    { "year", "$date.year"},
-                    { "month", "$date.month"}
-                }),
-                TimeSeriesGroupByFn.Quarters => new BsonDocument()
+                            {"date", "$date" },
+                            {"unit", "month" },
+                            {"timezone", "UTC" }
+                })),
+                TimeSeriesGroupByFn.Quarters =>  new BsonDocument("quarter", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    {"date",  new BsonDocument()
-                    {
-                        { "year", "$date.year"}
-                    }},
-                    {"quarter", "$quarter" }
-                },
-                TimeSeriesGroupByFn.Seconds => new BsonDocument("date", new BsonDocument()
+                            {"date", "$date" },
+                            {"unit", "quarter" },
+                            {"timezone", "UTC" }
+                })),
+                TimeSeriesGroupByFn.Seconds => new BsonDocument("second", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    { "year", "$date.year"},
-                    { "month", "$date.month"},
-                    { "day", "$date.day"},
-                    { "hour", "$date.hour"},
-                    { "minute", "$date.minute"},
-                    { "second", "$date.second"}
-                }),
-                TimeSeriesGroupByFn.Weeks => new BsonDocument()
+                            {"date","$date" },
+                            {"unit", "second" },
+                            {"timezone", "UTC" }
+                })),
+                TimeSeriesGroupByFn.Weeks => new BsonDocument("week", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
-                    {"date",  new BsonDocument()
-                    {
-                        { "year", "$date.year"}
-                    }},
-                    {"week", "$week" }
-                },
+                            {"date","$date" },
+                            {"unit", "week" },
+                            {"startOfWeek", "monday" },
+                            {"timezone", "UTC" }
+                })),
                 _ => throw new InvalidProgramException($"Enum value {request.GroupByFunction} is not supported.")
             };
 
@@ -201,13 +192,7 @@ public class TimeSeriesService : ITimeSeriesService
 
                 new BsonDocument("$project", new BsonDocument()
                 {
-                    {"date", new BsonDocument("$dateToParts", new BsonDocument("date","$Timestamp")) },
-                    {"quarter", new BsonDocument("$dateTrunc", new BsonDocument()
-                        {
-                            {"date","$Timestamp" },
-                            {"unit", "quarter" }
-                        }) },
-                    {"week", new BsonDocument("$week", new BsonDocument("date","$Timestamp")) },
+                    {"date", "$Timestamp" },
                     {"Value", 1 },
                     {"Timestamp", 1 },
                 }),
