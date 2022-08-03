@@ -42,7 +42,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in GetDefinitionForExecute with executeBefore {executeBefore}.", executeBefore);
+            this.logger.LogError(ex, "Unexpected error in GetDefinitionForExecute with executeBefore {executeBefore}.", executeBefore);
             throw;
         }
     }
@@ -65,7 +65,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in GetDefinitionUnit method with id {id}.", id);
+            this.logger.LogError(ex, "Unexpected error in GetDefinitionUnit method with id {id}.", id);
             throw;
         }
     }
@@ -82,7 +82,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in CreateWriter method with definitionId {definitionId}.", definitionId);
+            this.logger.LogError(ex, "Unexpected error in CreateWriter method with definitionId {definitionId}.", definitionId);
             throw;
         }
     }
@@ -98,11 +98,11 @@ public class TimeSeriesService : ITimeSeriesService
             tsd.LastExecutionInfo = lastExecutionInfo;
             await session.SaveChangesAsync(cancellationToken);
 
-            this.logger.LogInformation("Confirm writing timeserie data into definition with id {definitionId}.", definitionId);
+            this.logger.LogInformation("Confirm writing time series data into definition with id {definitionId}.", definitionId);
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in ConfirmWriting method with definitionId {definitionId}.", definitionId);
+            this.logger.LogError(ex, "Unexpected error in ConfirmWriting method with definitionId {definitionId}.", definitionId);
             throw;
         }
     }
@@ -151,7 +151,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in ExecuteQuery method with DefinitionId {DefinitionId}.", request.DefinitionId);
+            this.logger.LogError(ex, "Unexpected error in ExecuteQuery method with DefinitionId {DefinitionId}.", request.DefinitionId);
             throw;
         }
         finally

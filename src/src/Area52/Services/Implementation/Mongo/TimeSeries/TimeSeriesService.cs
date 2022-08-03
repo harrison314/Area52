@@ -48,7 +48,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in GetDefinitionForExecute with executeBefore {executeBefore}.", executeBefore);
+            this.logger.LogError(ex, "Unexpected error in GetDefinitionForExecute with executeBefore {executeBefore}.", executeBefore);
             throw;
         }
     }
@@ -74,7 +74,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in GetDefinitionUnit method with id {id}.", id);
+            this.logger.LogError(ex, "Unexpected error in GetDefinitionUnit method with id {id}.", id);
             throw;
         }
     }
@@ -93,7 +93,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in CreateWriter method with definitionId {definitionId}.", definitionId);
+            this.logger.LogError(ex, "Unexpected error in CreateWriter method with definitionId {definitionId}.", definitionId);
             throw;
         }
     }
@@ -111,11 +111,11 @@ public class TimeSeriesService : ITimeSeriesService
             var update = Builders<MongoTimeSerieDefinition>.Update.Set(t => t.LastExecutionInfo, lastExecutionInfo);
             await collection.UpdateOneAsync(filter, update, null, cancellationToken);
 
-            this.logger.LogInformation("Confirm writing timeserie data into definition with id {definitionId}.", definitionId);
+            this.logger.LogInformation("Confirm writing time series data into definition with id {definitionId}.", definitionId);
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in ConfirmWriting method with definitionId {definitionId}.", definitionId);
+            this.logger.LogError(ex, "Unexpected error in ConfirmWriting method with definitionId {definitionId}.", definitionId);
             throw;
         }
     }
@@ -127,11 +127,11 @@ public class TimeSeriesService : ITimeSeriesService
         {
             BsonDocument agregationOperator = request.AgregationFunction switch
             {
-                AgregateFn.Sum => new BsonDocument("$sum", "$Value"),
-                AgregateFn.Min => new BsonDocument("$min", "$Value"),
-                AgregateFn.Count => new BsonDocument("$count", new BsonDocument()),
-                AgregateFn.Avg => new BsonDocument("$avg", "$Value"),
-                AgregateFn.Max => new BsonDocument("$max", "$Value"),
+                AggregateFn.Sum => new BsonDocument("$sum", "$Value"),
+                AggregateFn.Min => new BsonDocument("$min", "$Value"),
+                AggregateFn.Count => new BsonDocument("$count", new BsonDocument()),
+                AggregateFn.Avg => new BsonDocument("$avg", "$Value"),
+                AggregateFn.Max => new BsonDocument("$max", "$Value"),
                 _ => throw new InvalidProgramException($"Enum value {request.AgregationFunction} is not supported.")
             };
 
@@ -219,7 +219,7 @@ public class TimeSeriesService : ITimeSeriesService
                 })
             };
 
-            this.logger.LogDebug("Executing agregation stages {agregation}.", new BsonArray(values: stages));
+            this.logger.LogDebug("Executing aggregation stages {aggregation}.", new BsonArray(values: stages));
             using IAsyncCursor<BsonDocument> cursor = await collection.AggregateAsync<BsonDocument>(stages, null, cancellationToken);
 
             List<TimeSeriesItem> items = new List<TimeSeriesItem>();
@@ -243,7 +243,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in ExecuteQuery method with DefinitionId {DefinitionId}.", request.DefinitionId);
+            this.logger.LogError(ex, "Unexpected error in ExecuteQuery method with DefinitionId {DefinitionId}.", request.DefinitionId);
             throw;
         }
         finally

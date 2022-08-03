@@ -63,7 +63,7 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
     {
         using FileStream fs = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 2048);
         using TextReader tr = new StreamReader(fs, Encoding.UTF8);
-        AnsiConsole.MarkupLine("Opoen file [green]{0}[/]", settings.FilePath.EscapeMarkup());
+        AnsiConsole.MarkupLine("Open file [green]{0}[/]", settings.FilePath.EscapeMarkup());
 
         string? line;
 

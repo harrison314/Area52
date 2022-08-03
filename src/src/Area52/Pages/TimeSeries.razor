@@ -30,14 +30,14 @@
             {
                 <p class="text-muted">
                     Time series not found.
-                    Create a new timesries using
+                    Create a new time series using
                     <NavLink href="Management/Tsa/Create">management</NavLink>.
                 </p>
             }
         }
     </div>
     <div class="col-10">
-        <h1>Prehľad časových sérií</h1>
+        <h1>Time series overview</h1>
         @if (this.selecteTsId != null)
         {
             <TsGraph Id="@this.selecteTsId" AdditionalClass="mt-2" />

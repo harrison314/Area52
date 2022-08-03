@@ -45,12 +45,12 @@ public class TimeSeriesBackgroundService : BackgroundService
             foreach (TimeSeriesDefinitionId id in tsDefinitionsFoExec)
             {
                 await using IDistributedLock dLock = await this.locker.TryAquire(id.Id, TimeSpan.FromSeconds(30.0), stoppingToken);
-                if (dLock.Aquired)
+                if (dLock.Acquired)
                 {
                     TimeSeriesDefinitionUnit tsUnit = await this.timeSeriesService.GetDefinitionUnit(id.Id, stoppingToken);
                     if (!this.CheckExecutionTime(tsUnit, execBefore))
                     {
-                        this.logger.LogDebug("Time series definion with id {timeSeriesDefinitionId} has updaten in another instance.", id.Id);
+                        this.logger.LogDebug("Time series definition with id {timeSeriesDefinitionId} has updated in another instance.", id.Id);
                         continue;
                     }
 
@@ -58,7 +58,7 @@ public class TimeSeriesBackgroundService : BackgroundService
                 }
                 else
                 {
-                    this.logger.LogDebug("Lock for time series definition with id {timeSeriesDefinitionId} not aquired lock.", id.Id);
+                    this.logger.LogDebug("Lock for time series definition with id {timeSeriesDefinitionId} not acquired lock.", id.Id);
                 }
             }
 
@@ -72,7 +72,7 @@ public class TimeSeriesBackgroundService : BackgroundService
 
     private async Task ExecuteDefinition(TimeSeriesDefinitionUnit tsUnit, CancellationToken stoppingToken)
     {
-        this.logger.LogTrace("Entering to ExecuteDefinition wor time serie definition {timeSeriesDefinitionId}.", tsUnit.Id);
+        this.logger.LogTrace("Entering to ExecuteDefinition for time series definition {timeSeriesDefinitionId}.", tsUnit.Id);
         DateTime timeTo = DateTime.UtcNow;
 
         IAstNode astTree = Parser.SimpleParse(tsUnit.Query);
@@ -162,6 +162,6 @@ public class TimeSeriesBackgroundService : BackgroundService
 
     private Task RemoveOldData(TimeSpan timeSpan, CancellationToken stoppingToken)
     {
-        throw new NotImplementedException("Remove old data in timeseries is not implemented.");
+        throw new NotImplementedException("Remove old data in time-series is not implemented.");
     }
 }

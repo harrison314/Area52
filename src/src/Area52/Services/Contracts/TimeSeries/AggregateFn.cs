@@ -1,6 +1,6 @@
 ﻿namespace Area52.Services.Contracts.TimeSeries;
 
-public enum AgregateFn
+public enum AggregateFn
 {
     Count,
     Sum,

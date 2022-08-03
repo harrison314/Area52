@@ -75,108 +75,105 @@
 
 
 @code {
+    private string errorMessage = string.Empty;
+    private string query = string.Empty;
+    private IReadOnlyList<LogInfo>? infos = null;
+    private SerachControlContext context = new SerachControlContext();
+    private System.Threading.Timer? timer = null;
+    private string lastUpdate = string.Empty;
+    private string queryTime = string.Empty;
+    private long totalCount = 0;
+    private bool isInLoading = false;
 
-    @code {
-        private string errorMessage = string.Empty;
-        private string query = string.Empty;
-        private IReadOnlyList<LogInfo>? infos = null;
-        private SerachControlContext context = new SerachControlContext();
-        private System.Threading.Timer? timer = null;
-        private string lastUpdate = string.Empty;
-        private string queryTime = string.Empty;
-        private long totalCount = 0;
-        private bool isInLoading = false;
+    protected override async Task OnInitializedAsync()
+    {
+        context.OnQueryChange += this.Handler;
+        await Task.Yield();
+    }
 
-        protected override async Task OnInitializedAsync()
+    private async Task ReadLogs(bool clearBefore)
+    {
+        this.isInLoading = true;
+        try
         {
-            context.OnQueryChange += this.Handler;
-            await Task.Yield();
-        }
-
-        private async Task ReadLogs(bool clearBefore)
-        {
-            this.isInLoading = true;
-            try
+            this.errorMessage = string.Empty;
+            if (clearBefore)
             {
-                this.errorMessage = string.Empty;
-                if (clearBefore)
-                {
-                    this.infos = null;
-                    await Task.Yield();
-                }
-
-                DateTime before = DateTime.UtcNow;
-                var result = await this.LogReader.ReadLastLogs(this.query);
-                this.infos = result.Logs;
-                this.totalCount = result.TotalResults;
-                DateTime after = DateTime.UtcNow;
-
-                this.lastUpdate = DateTimeOffset.Now.ToString("s");
-                TimeSpan queryDuration = (after - before);
-                if (queryDuration.TotalSeconds > 1.0)
-                {
-                    this.queryTime = $"{queryDuration.TotalSeconds:N2} s";
-                }
-                else
-                {
-                    this.queryTime = $"{queryDuration.TotalMilliseconds:N2} ms";
-                }
+                this.infos = null;
+                await Task.Yield();
             }
-            catch (Exception ex)
-            {
-                this.Logger.LogDebug(ex, "Exception during processing query {query}.", this.query);
-                this.errorMessage = ex.Message;
-            }
-            finally
-            {
-                this.isInLoading = false;
-            }
-        }
 
-        private async void Handler(string queryApendix, bool replace, bool exceute)
-        {
-            if (replace)
+            DateTime before = DateTime.UtcNow;
+            var result = await this.LogReader.ReadLastLogs(this.query);
+            this.infos = result.Logs;
+            this.totalCount = result.TotalResults;
+            DateTime after = DateTime.UtcNow;
+
+            this.lastUpdate = DateTimeOffset.Now.ToString("s");
+            TimeSpan queryDuration = (after - before);
+            if (queryDuration.TotalSeconds > 1.0)
             {
-                this.query = queryApendix;
+                this.queryTime = $"{queryDuration.TotalSeconds:N2} s";
             }
             else
             {
-                System.Text.StringBuilder sb = new System.Text.StringBuilder(this.query ?? string.Empty);
-                if (!string.IsNullOrWhiteSpace(this.query))
-                {
-                    sb.Append(" and ");
-                }
+                this.queryTime = $"{queryDuration.TotalMilliseconds:N2} ms";
+            }
+        }
+        catch (Exception ex)
+        {
+            this.Logger.LogDebug(ex, "Exception during processing query {query}.", this.query);
+            this.errorMessage = ex.Message;
+        }
+        finally
+        {
+            this.isInLoading = false;
+        }
+    }
 
-                sb.Append(queryApendix);
-                this.query = sb.ToString();
+    private async void Handler(string queryApendix, bool replace, bool exceute)
+    {
+        if (replace)
+        {
+            this.query = queryApendix;
+        }
+        else
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(this.query ?? string.Empty);
+            if (!string.IsNullOrWhiteSpace(this.query))
+            {
+                sb.Append(" and ");
             }
 
+            sb.Append(queryApendix);
+            this.query = sb.ToString();
+        }
+
+        this.StateHasChanged();
+
+        if (exceute)
+        {
+            await this.ReadLogs(false);
             this.StateHasChanged();
-
-            if (exceute)
-            {
-                await this.ReadLogs(false);
-                this.StateHasChanged();
-            }
         }
+    }
 
-        private void ChangeTail()
+    private void ChangeTail()
+    {
+        //TODO: https://stackoverflow.com/questions/63060065/blazor-timer-call-async-api-task-to-update-ui
+        if (this.timer == null)
         {
-            //TODO: https://stackoverflow.com/questions/63060065/blazor-timer-call-async-api-task-to-update-ui
-            if (this.timer == null)
-            {
-                this.timer = new Timer(_ => ReadLogs(false).ContinueWith(_ => this.InvokeAsync(() => this.StateHasChanged())), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
-            }
-            else
-            {
-                this.timer.Dispose();
-                this.timer = null;
-            }
+            this.timer = new Timer(_ => ReadLogs(false).ContinueWith(_ => this.InvokeAsync(() => this.StateHasChanged())), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
-
-        public void Dispose()
+        else
         {
-            this.timer?.Dispose();
+            this.timer.Dispose();
+            this.timer = null;
         }
+    }
+
+    public void Dispose()
+    {
+        this.timer?.Dispose();
     }
 }

@@ -55,7 +55,7 @@ internal class TimeSeriesWriter : ITimeSeriesWriter
         }
 
         await session.SaveChangesAsync();
-        this.logger.LogInformation("Writing to timeserie in definition {timeSerieDefinitionId} {count} entities.", this.documentId, this.buffer.Count);
+        this.logger.LogInformation("Writing to time series in definition {timeSerieDefinitionId} {count} entities.", this.documentId, this.buffer.Count);
         this.buffer.Clear();
     }
 }

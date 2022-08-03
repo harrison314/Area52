@@ -11,7 +11,7 @@ internal class SuccessDistributedLock : IDistributedLock
     private readonly string id;
     private readonly IDocumentStore documentStore;
 
-    public bool Aquired
+    public bool Acquired
     {
         get => true;
     }

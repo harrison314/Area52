@@ -14,15 +14,15 @@ namespace Area52.Services.Implementation.Raven.TimeSeries;
 internal record struct AgregateFunctionRuntime(Expression<Func<ITimeSeriesGrouping, object>> GroupbyExpression, Func<TimeSeriesAggregationResult, List<TimeSeriesItem>> Mapper);
 internal static class AgregateFunctionHelper
 {
-    public static AgregateFunctionRuntime GetFunctions(AgregateFn agregateFunction)
+    public static AgregateFunctionRuntime GetFunctions(AggregateFn agregateFunction)
     {
         return agregateFunction switch
         {
-            AgregateFn.Count => new AgregateFunctionRuntime(t => new { Count = t.Count() }, MapCount),
-            AgregateFn.Sum => new AgregateFunctionRuntime(t => new { Sum = t.Sum() }, MapSum),
-            AgregateFn.Min => new AgregateFunctionRuntime(t => new { Min = t.Min() }, MapMin),
-            AgregateFn.Max => new AgregateFunctionRuntime(t => new { Max = t.Max() }, MapMax),
-            AgregateFn.Avg => new AgregateFunctionRuntime(t => new { Average = t.Average() }, MapAvg),
+            AggregateFn.Count => new AgregateFunctionRuntime(t => new { Count = t.Count() }, MapCount),
+            AggregateFn.Sum => new AgregateFunctionRuntime(t => new { Sum = t.Sum() }, MapSum),
+            AggregateFn.Min => new AgregateFunctionRuntime(t => new { Min = t.Min() }, MapMin),
+            AggregateFn.Max => new AgregateFunctionRuntime(t => new { Max = t.Max() }, MapMax),
+            AggregateFn.Avg => new AgregateFunctionRuntime(t => new { Average = t.Average() }, MapAvg),
             _ => throw new InvalidProgramException($"Enum value {agregateFunction} is not supported.")
         };
     }

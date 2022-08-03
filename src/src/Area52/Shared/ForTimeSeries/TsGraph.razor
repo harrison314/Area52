@@ -3,7 +3,7 @@
 @using Area52.Services.Contracts.TimeSeries
 @inject ITimeSeriesService TimeSeriesService
 @inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
-@* Graph data: https://apexcharts.github.io/Blazor-ApexCharts/donut-charts *@
+
 <div class="card @this.AdditionalClass">
     <div class="card-body">
         @if (this.isInLoading)
@@ -43,7 +43,7 @@
                 <div class="col-2">
                     <select class="form-control form-select-sm"
                         value="@this.graphTime"
-                        @onchange="@(value => this.GraphTimeValueChanged(Enum.Parse<ShowGraphTime>(value?.Value?.ToString()??this.tsDef.DefaultAgregationFunction.ToString())))">
+                        @onchange="@(value => this.GraphTimeValueChanged(Enum.Parse<ShowGraphTime>(value?.Value?.ToString()??this.tsDef.DefaultAggregationFunction.ToString())))">
                         <option value="@ShowGraphTime.LastHour">Show last hour</option>
                         <option value="@ShowGraphTime.LastDay">Show last day</option>
                         <option value="@ShowGraphTime.LastWeek">Show last week</option>
@@ -143,7 +143,7 @@
         return new TimeSeriesQueryRequest()
             {
                 DefinitionId = this.Id,
-                AgregationFunction = timeSerieDefinition.DefaultAgregationFunction,
+                AgregationFunction = timeSerieDefinition.DefaultAggregationFunction,
                 From = utcNow - diff,
                 To = utcNow,
                 GroupByFunction = groupByFn

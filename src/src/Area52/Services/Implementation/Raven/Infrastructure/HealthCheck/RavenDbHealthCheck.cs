@@ -21,7 +21,7 @@ public class RavenDbHealthCheck : IHealthCheck
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        this.logger.LogTrace("Enterin to CheckHealthAsync.");
+        this.logger.LogTrace("Entering to CheckHealthAsync.");
 
         try
         {

@@ -61,7 +61,7 @@ internal class TimeSeriesWriter : ITimeSeriesWriter
 
         await this.collection.InsertManyAsync(this.buffer);
 
-        this.logger.LogInformation("Writing to timeserie in definition {timeSerieDefinitionId} {count} entities.", this.definitionId, this.buffer.Count);
+        this.logger.LogInformation("Writing to time series in definition {timeSerieDefinitionId} {count} entities.", this.definitionId, this.buffer.Count);
         this.buffer.Clear();
     }
 }

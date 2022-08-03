@@ -40,7 +40,7 @@ internal class FnOpNode : BinaryOpNode
             return;
         }
 
-        throw new InvalidProgramException($"Inavlid function name {this.FnName}.");
+        throw new InvalidProgramException($"Invalid function name {this.FnName}.");
     }
 
     public override string ToString()

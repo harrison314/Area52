@@ -9,7 +9,7 @@ internal class SucccessDistributedLock : IDistributedLock
     private readonly IMongoCollection<LockAcquire> locks;
     private readonly Guid aquiredId;
 
-    public bool Aquired
+    public bool Acquired
     {
         get => true;
     }

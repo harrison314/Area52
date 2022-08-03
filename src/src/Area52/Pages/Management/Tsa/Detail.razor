@@ -3,9 +3,9 @@
 @using Area52.Shared.ForManaement
 @inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
 
-<PageTitle>Detail of timeseries definition</PageTitle>
+<PageTitle>Detail of time series definition</PageTitle>
 
-<LeftMenu Title="Detail of timeseries definition">
+<LeftMenu Title="Detail of time series definition">
     @if (this.model == null)
     {
         <LoadingIndicator />
@@ -37,8 +37,8 @@
                     <td class="text-break col-10">@model.TagFieldName</td>
                 </tr>
                 <tr>
-                    <th scope="row" class="col-2">Agregation function by time</th>
-                    <td class="text-break col-10">@model.DefaultAgregationFunction</td>
+                    <th scope="row" class="col-2">Aggregation function by time</th>
+                    <td class="text-break col-10">@model.DefaultAggregationFunction</td>
                 </tr>
                 <tr>
                     <th scope="row" class="col-2">Default graph time</th>

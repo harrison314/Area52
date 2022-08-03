@@ -2,7 +2,7 @@
 
 public interface IDistributedLock : IAsyncDisposable
 {
-    bool Aquired
+    bool Acquired
     {
         get;
     }

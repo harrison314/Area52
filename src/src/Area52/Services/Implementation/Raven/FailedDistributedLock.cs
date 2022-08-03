@@ -4,7 +4,7 @@ namespace Area52.Services.Implementation.Raven;
 
 internal class FailedDistributedLock : IDistributedLock
 {
-    public bool Aquired
+    public bool Acquired
     {
         get => false;
     }

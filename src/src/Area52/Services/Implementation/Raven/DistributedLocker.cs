@@ -23,7 +23,7 @@ public class DistributedLocker : IDistributedLocker
 
     public async Task<IDistributedLock> TryAquire(string name, TimeSpan resrvedTime, CancellationToken cancellationToken = default)
     {
-        this.logger.LogTrace("Entring to TryAquire with name {name} resrvedTime {resrvedTime}.", name, resrvedTime);
+        this.logger.LogTrace("Entering to TryAquire with name {name} resrvedTime {resrvedTime}.", name, resrvedTime);
 
         InfLock lockObject = new InfLock($"InfLock/{name}")
         {
@@ -38,7 +38,7 @@ public class DistributedLocker : IDistributedLocker
 
         if (result.Successful)
         {
-            this.logger.LogDebug("Aquird lock for {name}.", name);
+            this.logger.LogDebug("Acquired lock for {name}.", name);
             return new SuccessDistributedLock(result.Index, lockObject.Id, this.documentStore);
         }
 
@@ -52,12 +52,12 @@ public class DistributedLocker : IDistributedLocker
 
             if (refreshResult.Successful)
             {
-                this.logger.LogDebug("Aquird lock for {name}.", name);
+                this.logger.LogDebug("Acquired lock for {name}.", name);
                 return new SuccessDistributedLock(refreshResult.Index, lockObject.Id, this.documentStore);
             }
         }
 
-        this.logger.LogDebug("Lock for name {name} can not aquired.", name);
+        this.logger.LogDebug("Lock for name {name} can not acquired.", name);
         return new FailedDistributedLock();
     }
 }

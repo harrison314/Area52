@@ -34,7 +34,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in Create method.");
+            this.logger.LogError(ex, "Unexpected error in Create method.");
             throw;
         }
     }
@@ -50,7 +50,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in FindById method with id {id}.", id);
+            this.logger.LogError(ex, "Unexpected error in FindById method with id {id}.", id);
             throw;
         }
     }
@@ -72,7 +72,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted error in FindDefinictions method.");
+            this.logger.LogError(ex, "Unexpected error in FindDefinictions method.");
             throw;
         }
     }

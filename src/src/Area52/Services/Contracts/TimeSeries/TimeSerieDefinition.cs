@@ -38,7 +38,7 @@ public class TimeSerieDefinition
         set;
     }
 
-    public AgregateFn DefaultAgregationFunction
+    public AggregateFn DefaultAggregationFunction
     {
         get;
         set;

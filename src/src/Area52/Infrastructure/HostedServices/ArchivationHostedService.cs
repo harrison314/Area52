@@ -43,7 +43,7 @@ public class ArchivationHostedService : BackgroundService
                 this.archivationSettings.Value.CheckInterval.Add(TimeSpan.FromSeconds(60)),
                 stoppingToken);
 
-            if (dLock.Aquired)
+            if (dLock.Acquired)
             {
                 try
                 {

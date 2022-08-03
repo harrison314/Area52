@@ -103,7 +103,7 @@ public class Parser
         }
 
 
-        throw new InvalidProgramException("valie is not string");
+        throw new InvalidProgramException("value is not string with ' or \"");
     }
 
     private static IValueNode ParseNumber(string value)

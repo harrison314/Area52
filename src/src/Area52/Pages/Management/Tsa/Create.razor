@@ -7,9 +7,9 @@
 @inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
 @inject NavigationManager NavManager
 
-<PageTitle>Create timeserie definition</PageTitle>
+<PageTitle>Create time series definition</PageTitle>
 
-<LeftMenu Title="Create timeserie definition">
+<LeftMenu Title="Create time series definition">
     <EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
         @* <ValidationSummary />*@
@@ -17,7 +17,7 @@
         <div class="mb-3">
             <label class="form-label">Name</label>
             <InputText type="text" class="form-control" @bind-Value="@model.Name" />
-            <div class="form-text">Name of time series definition (without whitespaces).</div>
+            <div class="form-text">Name of time series definition (without whitespace).</div>
             <ValidationMessage For="@(()=>model.Name)" class="form-text" />
         </div>
 
@@ -38,7 +38,7 @@
         <div class="mb-3">
             <label class="form-label">Name of value filed</label>
             <InputText type="text" class="form-control" @bind-Value="@model.ValueFieldName" />
-            <div class="form-text">Name of value filed to timeseries value. Is is empty use value 1.0. If value is not present in log, or is text use value 1.0.</div>
+            <div class="form-text">Name of value filed to time series value. If is empty then use value 1.0. If value is not present in log, or is text use value 1.0.</div>
             <ValidationMessage For="@(()=>model.ValueFieldName)" class="form-text" />
         </div>
 
@@ -54,11 +54,11 @@
             <div class="row">
                 <div class="col-4">
                     <InputSelect class="form-select" @bind-Value="@model.DefaultAgregationFunction">
-                        <option value="@AgregateFn.Count">Agregate using Count</option>
-                        <option value="@AgregateFn.Sum">Agregate using Sum</option>
-                        <option value="@AgregateFn.Min">Agregate using Min</option>
-                        <option value="@AgregateFn.Max">Agregate using Max</option>
-                        <option value="@AgregateFn.Avg">Agregate using Avg</option>
+                        <option value="@AggregateFn.Count">Aggregate using Count</option>
+                        <option value="@AggregateFn.Sum">Aggregate using Sum</option>
+                        <option value="@AggregateFn.Min">Aggregate using Min</option>
+                        <option value="@AggregateFn.Max">Aggregate using Max</option>
+                        <option value="@AggregateFn.Avg">Aggregate using Avg</option>
                     </InputSelect>
                 </div>
                 <div class="col-4">
@@ -71,7 +71,7 @@
                     </InputSelect>
                 </div>
             </div>
-            <div class="form-text">Set time agregation function and default timerange for graph show.</div>
+            <div class="form-text">Set time aggregation function and default time-range for graph show.</div>
         </div>
 
         <div>
@@ -115,7 +115,7 @@
                 Query = this.model.Query.Trim(),
                 TagFieldName = this.model.TagFieldName,
                 ValueFieldName = this.model.ValueFieldName,
-                DefaultAgregationFunction = this.model.DefaultAgregationFunction,
+                DefaultAggregationFunction = this.model.DefaultAgregationFunction,
                 ShowGraphTime = this.model.ShowGraphTime
             });
 
@@ -134,9 +134,9 @@
     internal class ViewModel
     {
         [Required]
-        [MinLength(5, ErrorMessage = "Minimum lenght is 5 chars.")]
+        [MinLength(5, ErrorMessage = "Minimum length is 5 chars.")]
         [StringLength(250, ErrorMessage = "Name is too long (250 character limit).")]
-        [RegularExpression("^[A-Za-z0-9_-]+$", ErrorMessage = "Is alloved alphanumeric cahacters, '_' and '-'.")]
+        [RegularExpression("^[A-Za-z0-9_-]+$", ErrorMessage = "Is allowed alphanumeric characters, '_' and '-'.")]
         public string Name
         {
             get;
@@ -144,7 +144,7 @@
         } = string.Empty;
 
         [Required]
-        [MinLength(5, ErrorMessage = "Minimum lenght is 5 chars.")]
+        [MinLength(5, ErrorMessage = "Minimum length is 5 chars.")]
         [StringLength(5000, ErrorMessage = "Description is too long (5000 character limit).")]
         public string Description
         {
@@ -153,7 +153,7 @@
         } = string.Empty;
 
         [Required]
-        [MinLength(1, ErrorMessage = "Minimum lenght is 1 chars.")]
+        [MinLength(1, ErrorMessage = "Minimum length is 1 chars.")]
         public string Query
         {
             get;
@@ -174,7 +174,7 @@
             set;
         }
 
-        public AgregateFn DefaultAgregationFunction
+        public AggregateFn DefaultAgregationFunction
         {
             get;
             set;

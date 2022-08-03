@@ -56,7 +56,7 @@ public class MongoTimeSerieDefinition
         set;
     }
 
-    public AgregateFn DefaultAgregationFunction
+    public AggregateFn DefaultAggregationFunction
     {
         get;
         set;
