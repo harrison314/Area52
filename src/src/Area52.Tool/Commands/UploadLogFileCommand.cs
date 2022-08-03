@@ -21,9 +21,9 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
             set;
         }
 
-        [Description("Clef file path.")]
-        [CommandOption("-p|--path")]
-        public string FilePath
+        [Description("Clef file paths.")]
+        [CommandArgument(0, "[Paths]")]
+        public string[] FilePaths
         {
             get;
             set;
@@ -50,7 +50,7 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
         public Settings()
         {
             this.Url = string.Empty;
-            this.FilePath = string.Empty;
+            this.FilePaths = Array.Empty<string>();
         }
     }
 
@@ -61,31 +61,36 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, UploadLogFileCommand.Settings settings)
     {
-        using FileStream fs = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 2048);
-        using TextReader tr = new StreamReader(fs, Encoding.UTF8);
-        AnsiConsole.MarkupLine("Opoen file [green]{0}[/]", settings.FilePath.EscapeMarkup());
-
-        string? line;
-
-        int counter = 0;
-        StringBuilder sb = new StringBuilder();
-        while ((line = await tr.ReadLineAsync()) != null)
+        System.Diagnostics.Debugger.Break();
+        foreach(string path in settings.FilePaths)
         {
-            sb.AppendLine(line);
-            counter++;
+            using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 2048);
+            using TextReader tr = new StreamReader(fs, Encoding.UTF8);
+            AnsiConsole.MarkupLine("Open file [green]{0}[/]", path.EscapeMarkup());
 
-            if (counter >= settings.MaxLineInBatch)
+            string? line;
+
+            int counter = 0;
+            StringBuilder sb = new StringBuilder();
+            while ((line = await tr.ReadLineAsync()) != null)
+            {
+                sb.AppendLine(line);
+                counter++;
+
+                if (counter >= settings.MaxLineInBatch)
+                {
+                    await this.UploadLogs(settings, sb, counter);
+                    sb.Clear();
+                    counter = 0;
+                }
+            }
+
+            if (counter > 0)
             {
                 await this.UploadLogs(settings, sb, counter);
-                sb.Clear();
-                counter = 0;
             }
         }
-
-        if (counter > 0)
-        {
-            await this.UploadLogs(settings, sb, counter);
-        }
+        
 
         return 0;
     }
