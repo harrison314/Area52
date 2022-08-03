@@ -30,10 +30,16 @@ public class TimeSeriesService : ITimeSeriesService
         try
         {
             IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
-            // todo fix async
-            List<ObjectId> ids = collection.AsQueryable().Where(t => t.LastExecutionInfo == null || t.LastExecutionInfo.LastExecute < executeBefore)
-                .Select(t => t.Id)
-                .ToList();
+            FilterDefinition<MongoTimeSerieDefinition> filter = Builders<MongoTimeSerieDefinition>.Filter.Or(
+                Builders<MongoTimeSerieDefinition>.Filter.Eq(t => t.LastExecutionInfo, null),
+                Builders<MongoTimeSerieDefinition>.Filter.Lt(t => t.LastExecutionInfo!.LastExecute, executeBefore));
+
+            using IAsyncCursor<ObjectId> cursor = await collection.FindAsync<ObjectId>(filter, new FindOptions<MongoTimeSerieDefinition, ObjectId>()
+            {
+                Projection = Builders<MongoTimeSerieDefinition>.Projection.Expression(t => t.Id)
+            }, cancellationToken);
+
+            List<ObjectId> ids = await cursor.ToListAsync(cancellationToken);
 
             var result = new List<TimeSeriesDefinitionId>(ids.Count);
             result.AddRange(ids.Select(t => new TimeSeriesDefinitionId(t.ToString())));
@@ -55,7 +61,9 @@ public class TimeSeriesService : ITimeSeriesService
         {
             IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
             ObjectId objectId = new ObjectId(id);
-            MongoTimeSerieDefinition definition = collection.AsQueryable().Where(t => t.Id == objectId).Single();
+
+            using IAsyncCursor<MongoTimeSerieDefinition> cursor = await collection.FindAsync(t => t.Id == objectId, null, cancellationToken);
+            MongoTimeSerieDefinition definition =await cursor.SingleAsync(cancellationToken);
 
             return new TimeSeriesDefinitionUnit(definition.Id.ToString(),
                 definition.Name,
@@ -153,7 +161,7 @@ public class TimeSeriesService : ITimeSeriesService
                             {"unit", "month" },
                             {"timezone", "UTC" }
                 })),
-                TimeSeriesGroupByFn.Quarters =>  new BsonDocument("quarter", new BsonDocument("$dateTrunc", new BsonDocument()
+                TimeSeriesGroupByFn.Quarters => new BsonDocument("quarter", new BsonDocument("$dateTrunc", new BsonDocument()
                 {
                             {"date", "$date" },
                             {"unit", "quarter" },

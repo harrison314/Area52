@@ -49,7 +49,8 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         {
             IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
             ObjectId objectId = new ObjectId(id);
-            MongoTimeSerieDefinition definition = collection.AsQueryable().Where(t => t.Id == objectId).Single();
+            using IAsyncCursor<MongoTimeSerieDefinition> cursor = await collection.FindAsync(t => t.Id == objectId);
+            MongoTimeSerieDefinition definition = await cursor.SingleAsync();
 
             return this.Map(definition);
         }
@@ -67,13 +68,18 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         try
         {
             IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
-            return collection.AsQueryable().Select(t => new TimeSerieDefinitionInfo()
-            {
-                Id = t.Id.ToString(),
-                Name = t.Name,
-                Description = t.Description
-            }).ToList();
+            using IAsyncCursor<TimeSerieDefinitionInfo> cursor = await collection.FindAsync<TimeSerieDefinitionInfo>(Builders<MongoTimeSerieDefinition>.Filter.Empty,
+                new FindOptions<MongoTimeSerieDefinition, TimeSerieDefinitionInfo>()
+                {
+                    Projection = Builders<MongoTimeSerieDefinition>.Projection.Expression(t => new TimeSerieDefinitionInfo()
+                    {
+                        Id = t.Id.ToString(),
+                        Name = t.Name,
+                        Description = t.Description
+                    })
+                });
 
+            return await cursor.ToListAsync();
         }
         catch (Exception ex)
         {
