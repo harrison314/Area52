@@ -32,9 +32,11 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
 - [ ] More efective read CLEF log from request
 - [ ] Autehntification
   - [ ] Predefined queries
-  - [ ] Distributed data protection provider
+  - [x] Distributed data protection provider
   - [ ] API keys for log input with management
-- [ ] Graph and alerts as subsriptions and timeseries
+- [ ] Graph and alerts as subsriptions
+  - [x] Time series graphs
+  - [ ] Alerts
 - [ ] Log archiving using background workers
 - [x] Implements healthchecks
 - [x] Try implement using MongoDb
