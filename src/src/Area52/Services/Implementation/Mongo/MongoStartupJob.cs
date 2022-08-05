@@ -67,9 +67,10 @@ public class MongoStartupJob : IStartupJob
         await collection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoLogEntity>(
              new BsonDocumentIndexKeysDefinition<Models.MongoLogEntity>(new MongoDB.Bson.BsonDocument()
              {
-                {"Properties.Name",1 },
-                {"Properties.Values",1 },
-                {"Properties.Valued",1 },
+                {"Properties.Name", 1 },
+                {"Properties.Values", 1 },
+                {"Properties.ValuesLower", 1 },
+                {"Properties.Valued", 1 },
              }),
              new CreateIndexOptions()
              {

@@ -44,13 +44,13 @@ public class MongoLogEntity
         set;
     }
 
-    public string Message
+    public string? Message
     {
         get;
         set;
     }
 
-    public string MessageTemplate
+    public string? MessageTemplate
     {
         get;
         set;

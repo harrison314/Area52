@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Area52.Services.Contracts;
+using Area52.Services.Implementation.Mongo.Models;
 using Area52.Services.Implementation.QueryParser;
 using Area52.Services.Implementation.QueryParser.Nodes;
 using MongoDB.Bson;
@@ -41,16 +42,12 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
         {
             PropertyNode propertyNode = (PropertyNode)node.Left;
             StringValueNode strNode = (StringValueNode)node.Right;
-            string regexExpr = string.Concat("^",
-                System.Text.RegularExpressions.Regex.Escape(strNode.Value),
-                "$");
 
             BsonDocument expression = this.ConstructPropertyOperation(propertyNode.Name,
-            false,
+            InternalValueType.LowercaseString,
             new BsonDocument()
             {
-                { "$regex", regexExpr },
-                { "$options", "i" }
+                { "$eq", strNode.Value.ToLowerInvariant() }
             });
 
             this.ctxStack.Push(new BsonCtxNode(expression, QueryNodeType.Other));
@@ -301,6 +298,13 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
 
     private BsonDocument ConstructPropertyOperation(string propertyName, bool useDoubleValue, BsonValue operationDefinition)
     {
+        return this.ConstructPropertyOperation(propertyName,
+            useDoubleValue ? InternalValueType.Double : InternalValueType.String,
+            operationDefinition);
+    }
+
+    private BsonDocument ConstructPropertyOperation(string propertyName, InternalValueType valueType, BsonValue operationDefinition)
+    {
         string? simplePropertyName = this.TryGetSimplePropertyName(propertyName);
 
         if (simplePropertyName != null)
@@ -311,7 +315,14 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
             };
         }
 
-        string valueProperty = (useDoubleValue) ? "Valued" : "Values";
+        string valueProperty = valueType switch
+        {
+            InternalValueType.String => nameof(LogEntityPropertyForMongo.Values),
+            InternalValueType.LowercaseString => nameof(LogEntityPropertyForMongo.ValuesLower),
+            InternalValueType.Double => nameof(LogEntityPropertyForMongo.Valued),
+            _ => throw new InvalidProgramException($"Enum value {valueType} is not supported.")
+        };
+
         BsonDocument elemMathc = new BsonDocument("$elemMatch", new BsonDocument()
         {
             {"Name",  propertyName },

@@ -57,7 +57,7 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                            {
                                Level = this.CreateField("Level", log.Level, new CreateFieldOptions()
                                {
-                                   Indexing = FieldIndexing.Exact | FieldIndexing.Default,
+                                   Indexing = FieldIndexing.Default,
                                    Storage = FieldStorage.No,
                                    TermVector = FieldTermVector.No
                                }),
@@ -75,7 +75,7 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
 
                                _ = log.Properties.Where(t => t.Values != null).Select(t => this.CreateField(t.Name, t.Values, new CreateFieldOptions()
                                {
-                                   Indexing = FieldIndexing.Exact | FieldIndexing.Default,
+                                   Indexing = FieldIndexing.Default,
                                    Storage = FieldStorage.No,
                                    TermVector = FieldTermVector.No
                                })),

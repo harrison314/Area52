@@ -22,7 +22,6 @@ public class ParserTests
     [InlineData("Property == 'value'")]
     [InlineData("Property is not 'value'")]
     [InlineData("Property != 'value'")]
-    [InlineData("Property is eg 'value'")]
     [InlineData("Property < 'value'")]
     [InlineData("Property < 12.36")]
     [InlineData("Property > 'value'")]
@@ -55,6 +54,7 @@ public class ParserTests
     [InlineData("Timestamp > datetime('2022-06-01')")]
     [InlineData("Timestamp > -45.56")]
     [InlineData("Applicaton search 'Area52'")]
+    [InlineData("Property is cs 'value'")]
     public void Parser_SimpleParse_SpecialCases(string query)
     {
         IAstNode astNode = Parser.SimpleParse(query);

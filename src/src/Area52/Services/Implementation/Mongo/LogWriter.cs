@@ -67,7 +67,9 @@ public class LogWriter : ILogWriter
                 }
                 else
                 {
+                    System.Diagnostics.Debug.Assert(p.Values is not null);
                     pr.Values = p.Values;
+                    pr.ValuesLower = p.Values.ToLowerInvariant();
                 }
 
                 item.Properties[j] = pr;

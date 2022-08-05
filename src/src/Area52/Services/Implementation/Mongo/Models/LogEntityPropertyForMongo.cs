@@ -14,6 +14,12 @@ public class LogEntityPropertyForMongo
         set;
     }
 
+    public string? ValuesLower
+    {
+        get;
+        set;
+    }
+
     public double? Valued
     {
         get;

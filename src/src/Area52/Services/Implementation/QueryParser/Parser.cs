@@ -37,10 +37,10 @@ public class Parser
         factor.AddProduction(atomExpr).SetReduceFunction(p => p[0]);
 
 
-        atomExpr.AddProduction(propertyTerminal, "is", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[2], true));
-        atomExpr.AddProduction(propertyTerminal, "==", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[2], true));
+        atomExpr.AddProduction(propertyTerminal, "is", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[2], false));
+        atomExpr.AddProduction(propertyTerminal, "==", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[2], false));
         atomExpr.AddProduction(propertyTerminal, "is", "not", valueExpr).SetReduceFunction(p => new NotEqNode(p[0], p[3]));
-        atomExpr.AddProduction(propertyTerminal, "is", "eg", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[3], false));
+        atomExpr.AddProduction(propertyTerminal, "is", "cs", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[3], true));
 
         atomExpr.AddProduction(propertyTerminal, "!=", valueExpr).SetReduceFunction(p => new NotEqNode(p[0], p[2]));
         atomExpr.AddProduction(propertyTerminal, "in", "{", arrayExpr, "}").SetReduceFunction(p => new InNode(p[0], p[3]));
