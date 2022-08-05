@@ -29,7 +29,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         {
             MongoTimeSerieDefinition model = this.Map(timeSerieDefinition);
 
-            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
+            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSeriesDefinition);
             await collection.InsertOneAsync(model);
 
             return model.Id.ToString();
@@ -47,7 +47,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
 
         try
         {
-            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
+            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSeriesDefinition);
             ObjectId objectId = new ObjectId(id);
             using IAsyncCursor<MongoTimeSerieDefinition> cursor = await collection.FindAsync(t => t.Id == objectId);
             MongoTimeSerieDefinition definition = await cursor.SingleAsync();
@@ -67,7 +67,7 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
 
         try
         {
-            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
+            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSeriesDefinition);
             using IAsyncCursor<TimeSerieDefinitionInfo> cursor = await collection.FindAsync<TimeSerieDefinitionInfo>(Builders<MongoTimeSerieDefinition>.Filter.Empty,
                 new FindOptions<MongoTimeSerieDefinition, TimeSerieDefinitionInfo>()
                 {

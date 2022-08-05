@@ -16,12 +16,12 @@ internal static class RavenXmlRepositoryHelper
     {
         dataProtectionBuilder.Services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(services =>
         {
-            IDocumentStore documentSorage = services.GetRequiredService<IDocumentStore>();
+            IDocumentStore documentStorage = services.GetRequiredService<IDocumentStore>();
             ILogger<RavenXmlRepository> logger = services.GetRequiredService<ILogger<RavenXmlRepository>>();
 
             return new ConfigureOptions<KeyManagementOptions>(options =>
             {
-                options.XmlRepository = new RavenXmlRepository(documentSorage, logger);
+                options.XmlRepository = new RavenXmlRepository(documentStorage, logger);
             });
         });
     }

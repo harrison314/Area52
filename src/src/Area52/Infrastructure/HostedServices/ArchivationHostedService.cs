@@ -39,7 +39,7 @@ public class ArchivationHostedService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await using IDistributedLock dLock = await this.locker.TryAquire("LogErasing",
+            await using IDistributedLock dLock = await this.locker.TryAcquire("LogErasing",
                 this.archivationSettings.Value.CheckInterval.Add(TimeSpan.FromSeconds(60)),
                 stoppingToken);
 
@@ -47,7 +47,7 @@ public class ArchivationHostedService : BackgroundService
             {
                 try
                 {
-                    DateTimeOffset date = DateTimeOffset.UtcNow - TimeSpan.FromDays(this.archivationSettings.Value.RemovaLogsAdDaysOld);
+                    DateTimeOffset date = DateTimeOffset.UtcNow - TimeSpan.FromDays(this.archivationSettings.Value.RemoveLogsAdDaysOld);
                     await this.logManager.RemoveOldLogs(date, stoppingToken);
                 }
                 catch (Exception ex)

@@ -126,7 +126,7 @@ public class TimeSeriesService : ITimeSeriesService
                 _ => throw new InvalidProgramException($"Enum value {request.GroupByFunction} is not supported.")
             };
 
-            AgregateFunctionRuntime agregateRuntime = AgregateFunctionHelper.GetFunctions(request.AgregationFunction);
+            AggregateFunctionRuntime aggregateRuntime = AggregateFunctionHelper.GetFunctions(request.AggregationFunction);
 
             using var session = this.documentStore.OpenAsyncSession();
 
@@ -147,7 +147,7 @@ public class TimeSeriesService : ITimeSeriesService
                      )
                 .SingleAsync(cancellationToken);
 
-            return agregateRuntime.Mapper(ts);
+            return aggregateRuntime.Mapper(ts);
         }
         catch (Exception ex)
         {

@@ -56,7 +56,7 @@
         this.items = null;
         this.StateHasChanged();
         await Task.Yield();
-        this.items = await this.TimeSerieDefinitionsService.FindDefinictions();
+        this.items = await this.TimeSerieDefinitionsService.FindDefinitions();
     }
 
     private string FormatDescription(string text)

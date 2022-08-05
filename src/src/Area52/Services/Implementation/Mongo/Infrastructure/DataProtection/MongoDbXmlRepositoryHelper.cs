@@ -16,12 +16,12 @@ internal static class MongoDbXmlRepositoryHelper
     {
         dataProtectionBuilder.Services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(services =>
         {
-            IMongoDatabase documentSorage = services.GetRequiredService<IMongoDatabase>();
+            IMongoDatabase documentStorage = services.GetRequiredService<IMongoDatabase>();
             ILogger<MongoDbXmlRepository> logger = services.GetRequiredService<ILogger<MongoDbXmlRepository>>();
 
             return new ConfigureOptions<KeyManagementOptions>(options =>
             {
-                options.XmlRepository = new MongoDbXmlRepository(documentSorage, logger);
+                options.XmlRepository = new MongoDbXmlRepository(documentStorage, logger);
             });
         });
     }

@@ -60,9 +60,9 @@ public class MongoStartupJob : IStartupJob
 
     private async Task Migration_Initial(CancellationToken cancellationToken)
     {
-        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.LogEntitys, null, cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.LogEntities, null, cancellationToken);
 
-        var collection = this.mongoDatabase.GetCollection<Models.MongoLogEntity>(CollectionNames.LogEntitys);
+        var collection = this.mongoDatabase.GetCollection<Models.MongoLogEntity>(CollectionNames.LogEntities);
 
         await collection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoLogEntity>(
              new BsonDocumentIndexKeysDefinition<Models.MongoLogEntity>(new MongoDB.Bson.BsonDocument()
@@ -135,9 +135,9 @@ public class MongoStartupJob : IStartupJob
 
         await this.mongoDatabase.CreateCollectionAsync(CollectionNames.LockAcquires, null, cancellationToken);
         //await this.mongoDatabase.CreateCollectionAsync(CollectionNames.DataProtectionKeys, new CreateCollectionOptions(), cancellationToken);
-        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSerieDefinition, null, cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSeriesDefinition, null, cancellationToken);
 
-        var mongoTimeSerieDefinitionCollection = this.mongoDatabase.GetCollection<Models.MongoTimeSerieDefinition>(CollectionNames.LogEntitys);
+        var mongoTimeSerieDefinitionCollection = this.mongoDatabase.GetCollection<Models.MongoTimeSerieDefinition>(CollectionNames.LogEntities);
         await mongoTimeSerieDefinitionCollection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoTimeSerieDefinition>(
            new BsonDocumentIndexKeysDefinition<Models.MongoTimeSerieDefinition>(new MongoDB.Bson.BsonDocument()
            {
@@ -150,7 +150,7 @@ public class MongoStartupJob : IStartupJob
                Name = "MongoTimeSerieDefinition_IX"
            }));
 
-        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSerieItems, 
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSeriesItems, 
             new CreateCollectionOptions<Models.MongoTimeSerieItem>()
             {
                 TimeSeriesOptions = new TimeSeriesOptions(nameof(Models.MongoTimeSerieItem.Timestamp), new Optional<string>(nameof(Models.MongoTimeSerieItem.Meta))),

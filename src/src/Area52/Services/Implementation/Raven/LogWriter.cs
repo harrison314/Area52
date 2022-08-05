@@ -30,6 +30,6 @@ internal class LogWriter : ILogWriter
             await operation.StoreAsync(entity);
         }
 
-        this.logger.SucessufullWritedLogs(logs.Count);
+        this.logger.SuccessfullWrittenLogs(logs.Count);
     }
 }

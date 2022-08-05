@@ -11,19 +11,19 @@ using Raven.Client.Documents.Queries.TimeSeries;
 namespace Area52.Services.Implementation.Raven.TimeSeries;
 
 
-internal record struct AgregateFunctionRuntime(Expression<Func<ITimeSeriesGrouping, object>> GroupbyExpression, Func<TimeSeriesAggregationResult, List<TimeSeriesItem>> Mapper);
-internal static class AgregateFunctionHelper
+internal record struct AggregateFunctionRuntime(Expression<Func<ITimeSeriesGrouping, object>> GroupByExpression, Func<TimeSeriesAggregationResult, List<TimeSeriesItem>> Mapper);
+internal static class AggregateFunctionHelper
 {
-    public static AgregateFunctionRuntime GetFunctions(AggregateFn agregateFunction)
+    public static AggregateFunctionRuntime GetFunctions(AggregateFn aggregateFunction)
     {
-        return agregateFunction switch
+        return aggregateFunction switch
         {
-            AggregateFn.Count => new AgregateFunctionRuntime(t => new { Count = t.Count() }, MapCount),
-            AggregateFn.Sum => new AgregateFunctionRuntime(t => new { Sum = t.Sum() }, MapSum),
-            AggregateFn.Min => new AgregateFunctionRuntime(t => new { Min = t.Min() }, MapMin),
-            AggregateFn.Max => new AgregateFunctionRuntime(t => new { Max = t.Max() }, MapMax),
-            AggregateFn.Avg => new AgregateFunctionRuntime(t => new { Average = t.Average() }, MapAvg),
-            _ => throw new InvalidProgramException($"Enum value {agregateFunction} is not supported.")
+            AggregateFn.Count => new AggregateFunctionRuntime(t => new { Count = t.Count() }, MapCount),
+            AggregateFn.Sum => new AggregateFunctionRuntime(t => new { Sum = t.Sum() }, MapSum),
+            AggregateFn.Min => new AggregateFunctionRuntime(t => new { Min = t.Min() }, MapMin),
+            AggregateFn.Max => new AggregateFunctionRuntime(t => new { Max = t.Max() }, MapMax),
+            AggregateFn.Avg => new AggregateFunctionRuntime(t => new { Average = t.Average() }, MapAvg),
+            _ => throw new InvalidProgramException($"Enum value {aggregateFunction} is not supported.")
         };
     }
 

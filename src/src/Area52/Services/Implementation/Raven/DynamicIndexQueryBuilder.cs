@@ -5,18 +5,18 @@ namespace Area52.Services.Implementation.Raven;
 
 internal class DynamicIndexQueryBuilder
 {
-    private StringBuilder whereClausule;
+    private StringBuilder whereClause;
     private Dictionary<string, object> parameters;
-    private int nexParamesterNumber;
+    private int nexParameterNumber;
     private int? limit = null;
-    private string? selectClausule;
+    private string? selectClause;
 
     public DynamicIndexQueryBuilder()
     {
-        this.whereClausule = new StringBuilder();
-        this.selectClausule = "id() as Id, Timestamp, Message, Level";
+        this.whereClause = new StringBuilder();
+        this.selectClause = "id() as Id, Timestamp, Message, Level";
         this.parameters = new Dictionary<string, object>();
-        this.nexParamesterNumber = 0;
+        this.nexParameterNumber = 0;
     }
 
     public void SetLimit(int limit)
@@ -24,25 +24,25 @@ internal class DynamicIndexQueryBuilder
         this.limit = limit;
     }
 
-    public void SetSelectClausule(string? select)
+    public void SetSelectClause(string? select)
     {
-        this.selectClausule = select;
+        this.selectClause = select;
     }
 
     public void Add(IAstNode node)
     {
-        RqlQueryBuilderContext context = new RqlQueryBuilderContext($"p{this.nexParamesterNumber++}_");
+        RqlQueryBuilderContext context = new RqlQueryBuilderContext($"p{this.nexParameterNumber++}_");
         node.ToRql(context);
-        if (this.whereClausule.Length > 0)
+        if (this.whereClause.Length > 0)
         {
-            this.whereClausule.AppendLine();
-            this.whereClausule.Append("and (");
-            context.IntoStringBuilder(this.whereClausule, this.parameters);
-            this.whereClausule.AppendLine(")");
+            this.whereClause.AppendLine();
+            this.whereClause.Append("and (");
+            context.IntoStringBuilder(this.whereClause, this.parameters);
+            this.whereClause.AppendLine(")");
         }
         else
         {
-            context.IntoStringBuilder(this.whereClausule, this.parameters);
+            context.IntoStringBuilder(this.whereClause, this.parameters);
         }
     }
 
@@ -50,18 +50,18 @@ internal class DynamicIndexQueryBuilder
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("from index 'LogMainIndex'");
-        if (this.whereClausule.Length > 0)
+        if (this.whereClause.Length > 0)
         {
             sb.Append("where ");
-            sb.Append(this.whereClausule);
+            sb.Append(this.whereClause);
             sb.AppendLine();
         }
 
         sb.AppendLine("order by Timestamp desc");
-        if (this.selectClausule != null)
+        if (this.selectClause != null)
         {
             sb.Append("select ");
-            sb.AppendLine(this.selectClausule);
+            sb.AppendLine(this.selectClause);
         }
 
         if (this.limit.HasValue)

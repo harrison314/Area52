@@ -4,24 +4,24 @@ using MongoDB.Driver;
 
 namespace Area52.Services.Implementation.Mongo;
 
-internal class SucccessDistributedLock : IDistributedLock
+internal class SuccessDistributedLock : IDistributedLock
 {
     private readonly IMongoCollection<LockAcquire> locks;
-    private readonly Guid aquiredId;
+    private readonly Guid acquiredId;
 
     public bool Acquired
     {
         get => true;
     }
 
-    public SucccessDistributedLock(IMongoCollection<LockAcquire> locks, Guid aquiredId)
+    public SuccessDistributedLock(IMongoCollection<LockAcquire> locks, Guid acquiredId)
     {
         this.locks = locks;
-        this.aquiredId = aquiredId;
+        this.acquiredId = acquiredId;
     }
 
     public async ValueTask DisposeAsync()
     {
-        await this.locks.DeleteOneAsync(t => t.AcquireId == this.aquiredId);
+        await this.locks.DeleteOneAsync(t => t.AcquireId == this.acquiredId);
     }
 }

@@ -32,7 +32,7 @@ public class TimeSeriesSetup
         set;
     }
 
-    public int RemovaDataAdDaysOld
+    public int RemoveDataAdDaysOld
     {
         get;
         set;

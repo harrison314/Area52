@@ -44,7 +44,7 @@ public class TimeSeriesBackgroundService : BackgroundService
 
             foreach (TimeSeriesDefinitionId id in tsDefinitionsFoExec)
             {
-                await using IDistributedLock dLock = await this.locker.TryAquire(id.Id, TimeSpan.FromSeconds(30.0), stoppingToken);
+                await using IDistributedLock dLock = await this.locker.TryAcquire(id.Id, TimeSpan.FromSeconds(30.0), stoppingToken);
                 if (dLock.Acquired)
                 {
                     TimeSeriesDefinitionUnit tsUnit = await this.timeSeriesService.GetDefinitionUnit(id.Id, stoppingToken);
@@ -65,7 +65,7 @@ public class TimeSeriesBackgroundService : BackgroundService
             await timer.WaitForNextTickAsync(stoppingToken);
             if (setup.RemoveOldData)
             {
-                await this.RemoveOldData(TimeSpan.FromDays(setup.RemovaDataAdDaysOld), stoppingToken);
+                await this.RemoveOldData(TimeSpan.FromDays(setup.RemoveDataAdDaysOld), stoppingToken);
             }
         }
     }
@@ -145,16 +145,16 @@ public class TimeSeriesBackgroundService : BackgroundService
     private IAstNode AddTimestampToQuery(IAstNode query, DateTime? from, DateTime to)
     {
         IAstNode timeCondition;
-        PropertyNode timespanNode = new PropertyNode(nameof(LogEntity.Timestamp));
+        PropertyNode timestampNode = new PropertyNode(nameof(LogEntity.Timestamp));
         if (from.HasValue)
         {
-            GtOrEqNode fromNode = new GtOrEqNode(timespanNode, new StringValueNode(from.Value.ToString("s")));
-            LtNode toNode = new LtNode(timespanNode, new StringValueNode(to.ToString("s")));
+            GtOrEqNode fromNode = new GtOrEqNode(timestampNode, new StringValueNode(from.Value.ToString("s")));
+            LtNode toNode = new LtNode(timestampNode, new StringValueNode(to.ToString("s")));
             timeCondition = new AndNode(fromNode, toNode);
         }
         else
         {
-            timeCondition = new LtNode(timespanNode, new StringValueNode(to.ToString("s")));
+            timeCondition = new LtNode(timestampNode, new StringValueNode(to.ToString("s")));
         }
 
         return new AndNode(timeCondition, query);

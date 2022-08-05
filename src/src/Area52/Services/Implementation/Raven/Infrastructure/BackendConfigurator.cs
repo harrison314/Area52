@@ -60,10 +60,10 @@ public class BackendConfigurator : IBackendConfigurator
         });
 
         builder.Services.AddTransient<Contracts.IStartupJob, RavenDbIndexJob>();
-        this.RegisvicesInternal(builder.Services);
+        this.RegisterServicesInternal(builder.Services);
     }
 
-    private void RegisvicesInternal(IServiceCollection services)
+    private void RegisterServicesInternal(IServiceCollection services)
     {
         services.AddSingleton<Contracts.ILogReader, LogReader>();
         services.AddSingleton<Contracts.ILogWriter, LogWriter>();

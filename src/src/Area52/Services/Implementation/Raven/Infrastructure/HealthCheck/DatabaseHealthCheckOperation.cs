@@ -8,15 +8,15 @@ namespace Area52.Services.Implementation.Raven.Infrastructure.HealthCheck;
 
 internal class DatabaseHealthCheckOperation : IOperation
 {
-    private readonly TimeSpan timout;
+    private readonly TimeSpan timeout;
 
-    public DatabaseHealthCheckOperation(TimeSpan timout)
+    public DatabaseHealthCheckOperation(TimeSpan timeout)
     {
-        this.timout = timout;
+        this.timeout = timeout;
     }
 
     public RavenCommand GetCommand(IDocumentStore store, DocumentConventions conventions, JsonOperationContext context, HttpCache cache)
     {
-        return new DatabaseHealthCheckCommand(this.timout);
+        return new DatabaseHealthCheckCommand(this.timeout);
     }
 }

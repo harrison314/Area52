@@ -37,7 +37,7 @@ public class StartupJobHostingService : IHostedService
         }
         catch (Exception ex)
         {
-            this.logger.LogCritical(ex, "Fatal error during starup job {jobName}.", jobTypeName);
+            this.logger.LogCritical(ex, "Fatal error during startup job {jobName}.", jobTypeName);
             throw;
         }
     }

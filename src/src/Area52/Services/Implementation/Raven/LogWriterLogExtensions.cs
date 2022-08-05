@@ -6,5 +6,5 @@ internal static partial class LogWriterLogExtensions
     public static partial void EnteringToWrite(this ILogger<LogWriter> logger);
 
     [LoggerMessage(Level = LogLevel.Information, EventId = 1, Message = "Successful written {logCount} logs.")]
-    public static partial void SucessufullWritedLogs(this ILogger<LogWriter> logger, int logCount);
+    public static partial void SuccessfullWrittenLogs(this ILogger<LogWriter> logger, int logCount);
 }

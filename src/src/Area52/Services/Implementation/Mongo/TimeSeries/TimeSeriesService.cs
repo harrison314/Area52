@@ -29,7 +29,7 @@ public class TimeSeriesService : ITimeSeriesService
 
         try
         {
-            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
+            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSeriesDefinition);
             FilterDefinition<MongoTimeSerieDefinition> filter = Builders<MongoTimeSerieDefinition>.Filter.Or(
                 Builders<MongoTimeSerieDefinition>.Filter.Eq(t => t.LastExecutionInfo, null),
                 Builders<MongoTimeSerieDefinition>.Filter.Lt(t => t.LastExecutionInfo!.LastExecute, executeBefore));
@@ -59,7 +59,7 @@ public class TimeSeriesService : ITimeSeriesService
 
         try
         {
-            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
+            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSeriesDefinition);
             ObjectId objectId = new ObjectId(id);
 
             using IAsyncCursor<MongoTimeSerieDefinition> cursor = await collection.FindAsync(t => t.Id == objectId, null, cancellationToken);
@@ -85,7 +85,7 @@ public class TimeSeriesService : ITimeSeriesService
 
         try
         {
-            IMongoCollection<MongoTimeSerieItem> collection = this.mongoDatabase.GetCollection<MongoTimeSerieItem>(CollectionNames.MongoTimeSerieItems);
+            IMongoCollection<MongoTimeSerieItem> collection = this.mongoDatabase.GetCollection<MongoTimeSerieItem>(CollectionNames.MongoTimeSeriesItems);
             ObjectId id = new ObjectId(definitionId);
             ITimeSeriesWriter writer = new TimeSeriesWriter(collection, id, this.loggerFactory.CreateLogger<TimeSeriesWriter>());
 
@@ -104,7 +104,7 @@ public class TimeSeriesService : ITimeSeriesService
 
         try
         {
-            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSerieDefinition);
+            IMongoCollection<MongoTimeSerieDefinition> collection = this.mongoDatabase.GetCollection<MongoTimeSerieDefinition>(CollectionNames.MongoTimeSeriesDefinition);
             ObjectId objectId = new ObjectId(definitionId);
 
             var filter = Builders<MongoTimeSerieDefinition>.Filter.Eq(t => t.Id, objectId);
@@ -125,14 +125,14 @@ public class TimeSeriesService : ITimeSeriesService
         this.logger.LogTrace("Entering to ExecuteQuery with DefinitionId {DefinitionId}.", request.DefinitionId);
         try
         {
-            BsonDocument agregationOperator = request.AgregationFunction switch
+            BsonDocument aggregationOperator = request.AggregationFunction switch
             {
                 AggregateFn.Sum => new BsonDocument("$sum", "$Value"),
                 AggregateFn.Min => new BsonDocument("$min", "$Value"),
                 AggregateFn.Count => new BsonDocument("$count", new BsonDocument()),
                 AggregateFn.Avg => new BsonDocument("$avg", "$Value"),
                 AggregateFn.Max => new BsonDocument("$max", "$Value"),
-                _ => throw new InvalidProgramException($"Enum value {request.AgregationFunction} is not supported.")
+                _ => throw new InvalidProgramException($"Enum value {request.AggregationFunction} is not supported.")
             };
 
             BsonDocument groupByExpression = request.GroupByFunction switch
@@ -183,7 +183,7 @@ public class TimeSeriesService : ITimeSeriesService
                 _ => throw new InvalidProgramException($"Enum value {request.GroupByFunction} is not supported.")
             };
 
-            IMongoCollection<MongoTimeSerieItem> collection = this.mongoDatabase.GetCollection<MongoTimeSerieItem>(CollectionNames.MongoTimeSerieItems);
+            IMongoCollection<MongoTimeSerieItem> collection = this.mongoDatabase.GetCollection<MongoTimeSerieItem>(CollectionNames.MongoTimeSeriesItems);
             ObjectId definitionId = new ObjectId(request.DefinitionId);
             BsonDocument[] stages = new BsonDocument[]
             {
@@ -208,7 +208,7 @@ public class TimeSeriesService : ITimeSeriesService
                 new BsonDocument("$group", new BsonDocument()
                 {
                     {"_id", groupByExpression},
-                    {"Value", agregationOperator },
+                    {"Value", aggregationOperator },
                     {"From", new BsonDocument("$min", "$Timestamp") },
                     {"To", new BsonDocument("$max", "$Timestamp") },
                 }),
@@ -232,7 +232,7 @@ public class TimeSeriesService : ITimeSeriesService
                     TimeSeriesItem item = new TimeSeriesItem()
                     {
                         Time = new DateTime(from + (to - from) / 2, DateTimeKind.Utc),
-                        Value = this.GetNumricValue(doc["Value"])
+                        Value = this.GetNumericValue(doc["Value"])
                     };
 
                     items.Add(item);
@@ -252,7 +252,7 @@ public class TimeSeriesService : ITimeSeriesService
         }
     }
 
-    private double GetNumricValue(BsonValue value)
+    private double GetNumericValue(BsonValue value)
     {
         if (value.IsInt32)
         {

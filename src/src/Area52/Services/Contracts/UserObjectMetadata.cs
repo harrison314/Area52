@@ -8,13 +8,13 @@ public class UserObjectMetadata
         set;
     }
 
-    public string CreatdBy
+    public string CreatedBy
     {
         get;
         set;
     }
 
-    public string CreatdById
+    public string CreatedById
     {
         get;
         set;
@@ -22,7 +22,7 @@ public class UserObjectMetadata
 
     public UserObjectMetadata()
     {
-        this.CreatdBy = string.Empty;
-        this.CreatdById = string.Empty;
+        this.CreatedBy = string.Empty;
+        this.CreatedById = string.Empty;
     }
 }

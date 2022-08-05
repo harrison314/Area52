@@ -20,7 +20,7 @@ public class ArchiveSetup
         set;
     }
 
-    public int RemovaLogsAdDaysOld
+    public int RemoveLogsAdDaysOld
     {
         get;
         set;

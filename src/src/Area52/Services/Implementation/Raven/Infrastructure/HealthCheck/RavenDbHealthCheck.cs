@@ -25,10 +25,10 @@ public class RavenDbHealthCheck : IHealthCheck
 
         try
         {
-            IDocumentStore documentStre = this.serviceProvider.GetRequiredService<IDocumentStore>();
+            IDocumentStore documentStore = this.serviceProvider.GetRequiredService<IDocumentStore>();
             DatabaseHealthCheckOperation operation = new DatabaseHealthCheckOperation(context.Registration.Timeout);
 
-            await documentStre.Operations.SendAsync(operation, token: cancellationToken);
+            await documentStore.Operations.SendAsync(operation, token: cancellationToken);
             return HealthCheckResult.Healthy();
         }
         catch (Exception ex)

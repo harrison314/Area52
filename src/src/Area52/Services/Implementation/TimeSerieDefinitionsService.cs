@@ -26,7 +26,7 @@ public class TimeSerieDefinitionsService : ITimeSerieDefinitionsService
         }
 
         QueryParser.IAstNode queryNodes = QueryParser.Parser.SimpleParse(query);
-        TimeSeriesDefinicitonCheckVisitor timeSeriesDefinicitonCheckVisitor = new TimeSeriesDefinicitonCheckVisitor();
+        TimeSeriesDefinitionCheckVisitor timeSeriesDefinicitonCheckVisitor = new TimeSeriesDefinitionCheckVisitor();
         timeSeriesDefinicitonCheckVisitor.Visit(queryNodes);
     }
 
@@ -41,8 +41,8 @@ public class TimeSerieDefinitionsService : ITimeSerieDefinitionsService
         timeSerieDefinition.Metadata = new UserObjectMetadata()
         {
             Created = DateTime.UtcNow,
-            CreatdBy = "System", //TODO
-            CreatdById = "System"
+            CreatedBy = "System", //TODO
+            CreatedById = "System"
         };
 
         return this.repository.Create(timeSerieDefinition);
@@ -53,15 +53,15 @@ public class TimeSerieDefinitionsService : ITimeSerieDefinitionsService
         return this.repository.FindById(id);
     }
 
-    public Task<IReadOnlyList<TimeSerieDefinitionInfo>> FindDefinictions()
+    public Task<IReadOnlyList<TimeSerieDefinitionInfo>> FindDefinitions()
     {
         return this.repository.FindDefinictions();
     }
 }
 
-internal class TimeSeriesDefinicitonCheckVisitor : QueryParser.AstNodeVisitor
+internal class TimeSeriesDefinitionCheckVisitor : QueryParser.AstNodeVisitor
 {
-    public TimeSeriesDefinicitonCheckVisitor()
+    public TimeSeriesDefinitionCheckVisitor()
     {
 
     }

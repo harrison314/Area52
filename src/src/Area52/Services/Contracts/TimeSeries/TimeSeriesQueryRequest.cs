@@ -26,7 +26,7 @@ public class TimeSeriesQueryRequest
         init;
     }
 
-    public AggregateFn AgregationFunction
+    public AggregateFn AggregationFunction
     {
         get;
         init;

@@ -20,6 +20,5 @@ internal static class ModelHelpers
             cm.SetIgnoreExtraElements(true);
             cm.MapIdMember(c => c.Id).SetSerializer(new StringSerializer(BsonType.ObjectId)).SetIgnoreIfDefault(true);
         });
-
     }
 }
