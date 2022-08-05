@@ -41,7 +41,7 @@ public static class ClefParser
                             break;
 
                         case "@mt":
-                            entry.MessageTemplate = jsonReader.GetString()!;
+                            entry.MessageTemplate = jsonReader.GetString();
                             break;
 
                         case "@l":
@@ -78,8 +78,12 @@ public static class ClefParser
                                 propName = propName[1..];
                             }
 
-                            tmpArray[arrayIndex] = GetInnerProperty(propName, ref jsonReader);
-                            arrayIndex++;
+                            (LogEntityProperty newProp, bool addProperty) = GetInnerProperty(propName, ref jsonReader);
+                            if (addProperty)
+                            {
+                                tmpArray[arrayIndex] = newProp;
+                                arrayIndex++;
+                            }
                             break;
                     }
                 }
@@ -94,7 +98,14 @@ public static class ClefParser
 
         if (string.IsNullOrEmpty(entry.Message))
         {
-            RenderMessage(entry, renderings);
+            if (string.IsNullOrEmpty(entry.MessageTemplate))
+            {
+                entry.Message = string.Empty;
+            }
+            else
+            {
+                RenderMessage(entry, renderings);
+            }
         }
 
         EnshureLoglevel(entry);
@@ -116,8 +127,11 @@ public static class ClefParser
         writer.WritePropertyName("@m");
         writer.WriteStringValue(entity.Message);
 
-        writer.WritePropertyName("@mt");
-        writer.WriteStringValue(entity.MessageTemplate);
+        if (entity.MessageTemplate != null)
+        {
+            writer.WritePropertyName("@mt");
+            writer.WriteStringValue(entity.MessageTemplate);
+        }
 
         writer.WritePropertyName("@l");
         writer.WriteStringValue(entity.Level);
@@ -180,11 +194,11 @@ public static class ClefParser
         entry.LevelNumeric = (int)level;
     }
 
-    private static LogEntityProperty GetInnerProperty(string name, ref System.Text.Json.Utf8JsonReader jsonReader)
+    private static (LogEntityProperty prop, bool success) GetInnerProperty(string name, ref System.Text.Json.Utf8JsonReader jsonReader)
     {
         if (jsonReader.TokenType == System.Text.Json.JsonTokenType.String)
         {
-            return new LogEntityProperty(name, jsonReader.GetString()!);
+            return (new LogEntityProperty(name, jsonReader.GetString()!), true);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.Number)
         {
@@ -198,26 +212,26 @@ public static class ClefParser
                 valueNumber = jsonReader.GetDouble();
             }
 
-            return new LogEntityProperty(name, valueNumber);
+            return (new LogEntityProperty(name, valueNumber), true);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.Null)
         {
-            return new LogEntityProperty(name, string.Empty);
+            return (new LogEntityProperty(name, string.Empty), false);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.True)
         {
-            return new LogEntityProperty(name, "true");
+            return (new LogEntityProperty(name, "true"), true);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.False)
         {
-            return new LogEntityProperty(name, "false");
+            return (new LogEntityProperty(name, "false"), true);
         }
         else if (jsonReader.TokenType == System.Text.Json.JsonTokenType.StartObject
             || jsonReader.TokenType == System.Text.Json.JsonTokenType.StartArray)
         {
             string? json = System.Text.Json.Nodes.JsonNode.Parse(ref jsonReader)?.ToJsonString();
 
-            return new LogEntityProperty(name, json ?? string.Empty);
+            return (new LogEntityProperty(name, json ?? string.Empty), true);
         }
 
         throw new InvalidProgramException($"Invalid token for read property {jsonReader.TokenType}.");
