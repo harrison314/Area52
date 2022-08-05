@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.App;
 using Area52.Services.Configuration;
+using Area52.Services.Contracts.TimeSeries;
+using Area52.Services.Implementation.Raven.TimeSeries;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Raven.Client.Documents;
@@ -58,15 +60,19 @@ public class BackendConfigurator : IBackendConfigurator
         });
 
         builder.Services.AddTransient<Contracts.IStartupJob, RavenDbIndexJob>();
-        this.RegisvicesInternal(builder.Services);
+        this.RegisterServicesInternal(builder.Services);
     }
 
-    private void RegisvicesInternal(IServiceCollection services)
+    private void RegisterServicesInternal(IServiceCollection services)
     {
-        services.AddTransient<Contracts.ILogReader, LogReader>();
+        services.AddSingleton<Contracts.ILogReader, LogReader>();
         services.AddSingleton<Contracts.ILogWriter, LogWriter>();
         services.AddSingleton<Contracts.ILogManager, LogManager>();
         services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
+
+        services.AddSingleton<ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
+        services.AddSingleton<ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
+        services.AddSingleton<ITimeSeriesService, TimeSeriesService>();
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)

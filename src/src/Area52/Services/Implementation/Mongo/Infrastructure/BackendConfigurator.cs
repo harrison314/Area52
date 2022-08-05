@@ -40,15 +40,18 @@ public class BackendConfigurator : IBackendConfigurator
         });
 
         builder.Services.AddTransient<Contracts.IStartupJob, MongoStartupJob>();
-        this.RegisvicesInternal(builder.Services);
+        this.RegisterServicesInternal(builder.Services);
     }
 
-    private void RegisvicesInternal(IServiceCollection services)
+    private void RegisterServicesInternal(IServiceCollection services)
     {
         services.AddSingleton<Contracts.ILogWriter, LogWriter>();
         services.AddSingleton<Contracts.ILogReader, LogReader>();
         services.AddTransient<Contracts.ILogManager, LogManager>();
         services.AddTransient<Contracts.IDistributedLocker, MongoDbDistributedLocker>();
+
+        services.AddTransient<Contracts.TimeSeries.ITimeSerieDefinitionsRepository, TimeSeries.TimeSerieDefinitionsRepository>();
+        services.AddTransient<Contracts.TimeSeries.ITimeSeriesService, TimeSeries.TimeSeriesService>();
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)

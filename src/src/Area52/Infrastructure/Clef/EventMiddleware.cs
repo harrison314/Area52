@@ -25,7 +25,7 @@ public class EventMiddleware
             byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
             try
             {
-                // TODO: Optimalize
+                // TODO: Optimize
                 using TextReader tr = new StreamReader(httpContext.Request.Body, System.Text.Encoding.UTF8);
                 List<LogEntity> list = new List<LogEntity>();
                 while ((line = await tr.ReadLineAsync()) != null)
@@ -46,8 +46,8 @@ public class EventMiddleware
                     }
                     catch (InvalidOperationException ex)
                     {
-                        this.logger.LogWarning(ex, "Problem with sinle line {line}", line);
-                        // TODO: configurable retrow exception
+                        this.logger.LogWarning(ex, "Problem with single line {line}", line);
+                        // TODO: configurable re-trow exception
                     }
                 }
 

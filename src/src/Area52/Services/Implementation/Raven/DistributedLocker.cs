@@ -21,13 +21,13 @@ public class DistributedLocker : IDistributedLocker
         this.logger = logger;
     }
 
-    public async Task<IDistributedLock> TryAquire(string name, TimeSpan resrvedTime, CancellationToken cancellationToken = default)
+    public async Task<IDistributedLock> TryAcquire(string name, TimeSpan reservedTime, CancellationToken cancellationToken = default)
     {
-        this.logger.LogTrace("Entring to TryAquire with name {name} resrvedTime {resrvedTime}.", name, resrvedTime);
+        this.logger.LogTrace("Entering to TryAcquire with name {name} reservedTime {reservedTime}.", name, reservedTime);
 
         InfLock lockObject = new InfLock($"InfLock/{name}")
         {
-            ExpireAt = DateTime.UtcNow + resrvedTime
+            ExpireAt = DateTime.UtcNow + reservedTime
         };
 
         PutCompareExchangeValueOperation<InfLock> putCommand = new PutCompareExchangeValueOperation<InfLock>(lockObject.Id,
@@ -38,7 +38,7 @@ public class DistributedLocker : IDistributedLocker
 
         if (result.Successful)
         {
-            this.logger.LogDebug("Aquird lock for {name}.", name);
+            this.logger.LogDebug("Acquired lock for {name}.", name);
             return new SuccessDistributedLock(result.Index, lockObject.Id, this.documentStore);
         }
 
@@ -52,12 +52,12 @@ public class DistributedLocker : IDistributedLocker
 
             if (refreshResult.Successful)
             {
-                this.logger.LogDebug("Aquird lock for {name}.", name);
+                this.logger.LogDebug("Acquired lock for {name}.", name);
                 return new SuccessDistributedLock(refreshResult.Index, lockObject.Id, this.documentStore);
             }
         }
 
-        this.logger.LogDebug("Lock for name {name} can not aquired.", name);
+        this.logger.LogDebug("Lock for name {name} can not acquired.", name);
         return new FailedDistributedLock();
     }
 }

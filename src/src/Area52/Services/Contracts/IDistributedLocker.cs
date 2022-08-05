@@ -2,5 +2,5 @@
 
 public interface IDistributedLocker
 {
-    Task<IDistributedLock> TryAquire(string name, TimeSpan resrvedTime, CancellationToken cancellationToken = default);
+    Task<IDistributedLock> TryAcquire(string name, TimeSpan reservedTime, CancellationToken cancellationToken = default);
 }

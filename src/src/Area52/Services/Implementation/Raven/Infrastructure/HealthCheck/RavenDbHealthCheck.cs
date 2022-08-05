@@ -21,14 +21,14 @@ public class RavenDbHealthCheck : IHealthCheck
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        this.logger.LogTrace("Enterin to CheckHealthAsync.");
+        this.logger.LogTrace("Entering to CheckHealthAsync.");
 
         try
         {
-            IDocumentStore documentStre = this.serviceProvider.GetRequiredService<IDocumentStore>();
+            IDocumentStore documentStore = this.serviceProvider.GetRequiredService<IDocumentStore>();
             DatabaseHealthCheckOperation operation = new DatabaseHealthCheckOperation(context.Registration.Timeout);
 
-            await documentStre.Operations.SendAsync(operation, token: cancellationToken);
+            await documentStore.Operations.SendAsync(operation, token: cancellationToken);
             return HealthCheckResult.Healthy();
         }
         catch (Exception ex)

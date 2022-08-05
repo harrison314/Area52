@@ -2,5 +2,5 @@
 
 public interface ILogManager
 {
-    Task RemoveOldLogs(DateTimeOffset timeAtDeteledLogs, CancellationToken cancellationToken);
+    Task RemoveOldLogs(DateTimeOffset timeAtDeletedLogs, CancellationToken cancellationToken);
 }

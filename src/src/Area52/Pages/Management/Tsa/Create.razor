@@ -1,0 +1,194 @@
+﻿@page "/Management/Tsa/Create"
+@using Area52.Services.Contracts
+@using Area52.Services.Contracts.TimeSeries
+@using Area52.Shared.ForManaement
+@using System.ComponentModel.DataAnnotations
+@implements IDisposable
+@inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
+@inject NavigationManager NavManager
+
+<PageTitle>Create time series definition</PageTitle>
+
+<LeftMenu Title="Create time series definition">
+    <EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        @* <ValidationSummary />*@
+
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <InputText type="text" class="form-control" @bind-Value="@model.Name" />
+            <div class="form-text">Name of time series definition (without whitespace).</div>
+            <ValidationMessage For="@(()=>model.Name)" class="form-text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <InputTextArea class="form-control" @bind-Value="@model.Description" />
+            <div class="form-text">Human readable description.</div>
+            <ValidationMessage For="@(()=>model.Description)" class="form-text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Query</label>
+            <InputText type="text" class="form-control" @bind-Value="@model.Query" />
+            <div class="form-text">Query for select logs. This query can not contains <i>Timestamp</i> restrictions.</div>
+            <ValidationMessage For="@(()=>model.Query)" class="form-text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Name of value filed</label>
+            <InputText type="text" class="form-control" @bind-Value="@model.ValueFieldName" />
+            <div class="form-text">Name of value filed to time series value. If is empty then use value 1.0. If value is not present in log, or is text use value 1.0.</div>
+            <ValidationMessage For="@(()=>model.ValueFieldName)" class="form-text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tag field name</label>
+            <InputText type="text" class="form-control" @bind-Value="@model.TagFieldName" />
+            <div class="form-text">Time series destination name.</div>
+            <ValidationMessage For="@(()=>model.TagFieldName)" class="form-text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Graph options</label>
+            <div class="row">
+                <div class="col-4">
+                    <InputSelect class="form-select" @bind-Value="@model.DefaultAgregationFunction">
+                        <option value="@AggregateFn.Count">Aggregate using Count</option>
+                        <option value="@AggregateFn.Sum">Aggregate using Sum</option>
+                        <option value="@AggregateFn.Min">Aggregate using Min</option>
+                        <option value="@AggregateFn.Max">Aggregate using Max</option>
+                        <option value="@AggregateFn.Avg">Aggregate using Avg</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <InputSelect class="form-select" @bind-Value="@model.ShowGraphTime">
+                        <option value="@ShowGraphTime.LastHour">Show last hour</option>
+                        <option value="@ShowGraphTime.LastDay">Show last day</option>
+                        <option value="@ShowGraphTime.LastWeek">Show last week</option>
+                        <option value="@ShowGraphTime.LastMonth">Show last month</option>
+                        <option value="@ShowGraphTime.LastYear">Show last year</option>
+                    </InputSelect>
+                </div>
+            </div>
+            <div class="form-text">Set time aggregation function and default time-range for graph show.</div>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-success float-end">Submit</button>
+        </div>
+    </EditForm>
+</LeftMenu>
+
+@code {
+    private ViewModel model = new ViewModel();
+    private EditContext? editContext;
+    private ValidationMessageStore? messageStore;
+
+    protected override void OnInitialized()
+    {
+        this.editContext = new EditContext(model);
+        this.messageStore = new ValidationMessageStore(this.editContext);
+        this.editContext.OnValidationRequested += this.HandleValidationRequested;
+    }
+
+    private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+    {
+        this.messageStore?.Clear();
+
+        try
+        {
+            this.TimeSerieDefinitionsService.CheckQuery(this.model.Query);
+        }
+        catch (Area52QueryException ex)
+        {
+            this.messageStore?.Add(() => this.model.Query, ex.Message);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        string definitionId = await this.TimeSerieDefinitionsService.Create(new TimeSerieDefinition()
+            {
+                Description = this.model.Description,
+                Name = this.model.Name,
+                Query = this.model.Query.Trim(),
+                TagFieldName = this.model.TagFieldName,
+                ValueFieldName = this.model.ValueFieldName,
+                DefaultAggregationFunction = this.model.DefaultAgregationFunction,
+                ShowGraphTime = this.model.ShowGraphTime
+            });
+
+        this.NavManager.NavigateTo($"/Management/Tsa/Detail?id={Uri.EscapeDataString(definitionId)}");
+    }
+
+    public void Dispose()
+    {
+        if (this.editContext is not null)
+        {
+            this.editContext.OnValidationRequested -= this.HandleValidationRequested;
+        }
+    }
+
+
+    internal class ViewModel
+    {
+        [Required]
+        [MinLength(5, ErrorMessage = "Minimum length is 5 chars.")]
+        [StringLength(250, ErrorMessage = "Name is too long (250 character limit).")]
+        [RegularExpression("^[A-Za-z0-9_-]+$", ErrorMessage = "Is allowed alphanumeric characters, '_' and '-'.")]
+        public string Name
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        [Required]
+        [MinLength(5, ErrorMessage = "Minimum length is 5 chars.")]
+        [StringLength(5000, ErrorMessage = "Description is too long (5000 character limit).")]
+        public string Description
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        [Required]
+        [MinLength(1, ErrorMessage = "Minimum length is 1 chars.")]
+        public string Query
+        {
+            get;
+            set;
+        } = string.Empty;
+
+        [StringLength(1000, ErrorMessage = "ValueFieldName is too long (1000 character limit).")]
+        public string? ValueFieldName
+        {
+            get;
+            set;
+        }
+
+        [StringLength(1000, ErrorMessage = "TagFieldName is too long (1000 character limit).")]
+        public string? TagFieldName
+        {
+            get;
+            set;
+        }
+
+        public AggregateFn DefaultAgregationFunction
+        {
+            get;
+            set;
+        }
+
+        public ShowGraphTime ShowGraphTime
+        {
+            get;
+            set;
+        }
+
+        public ViewModel()
+        {
+                
+        }
+    }
+}

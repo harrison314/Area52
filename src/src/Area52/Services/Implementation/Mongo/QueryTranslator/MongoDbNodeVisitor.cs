@@ -126,7 +126,7 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
 
         if (node.Left is PropertyNode propertyNode && propertyNode.Name != "LogFullText")
         {
-            throw new QuerySyntaxMongoException("Invalid use of serach operator for MongoDb backend.");
+            throw new QuerySyntaxMongoException("Invalid use of search operator for MongoDb back-end.");
         }
 
         BsonDocument expression = new BsonDocument()

@@ -23,7 +23,7 @@ public class LogWriter : ILogWriter
     public async Task Write(IReadOnlyList<LogEntity> logs)
     {
         this.logger.LogTrace("Entering to Write.");
-        IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntitys);
+        IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntities);
         await collection.InsertManyAsync(this.ToModels(logs));
 
         this.logger.LogInformation("Successful write {logsCount} logs into MongoDb.", logs.Count);

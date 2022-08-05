@@ -32,12 +32,12 @@ public class StartupJobHostingService : IHostedService
                 jobTypeName = job.GetType().FullName!;
                 this.logger.LogTrace("Starting executing job {jobName}.", jobTypeName);
                 await job.Execute(cancellationToken);
-                this.logger.LogDebug("Executed job {jobName} succesfully.", jobTypeName);
+                this.logger.LogDebug("Executed job {jobName} successfully.", jobTypeName);
             }
         }
         catch (Exception ex)
         {
-            this.logger.LogCritical(ex, "Fatal error during starup job {jobName}.", jobTypeName);
+            this.logger.LogCritical(ex, "Fatal error during startup job {jobName}.", jobTypeName);
             throw;
         }
     }

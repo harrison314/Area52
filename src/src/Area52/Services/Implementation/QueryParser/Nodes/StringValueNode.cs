@@ -51,7 +51,7 @@ internal class StringValueNode : IValueNode
                     '\'' when literal[0] == '\'' => '\'',
                     '"' when literal[0] == '"' => '"',
                     'u' => throw new NotImplementedException("Unicode char encoding is not implemented."),
-                    _ => throw new ApplicationException($"Invalid chacter in string on position {i}")
+                    _ => throw new ApplicationException($"Invalid character in string on position {i}")
                 };
 
 

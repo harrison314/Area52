@@ -20,15 +20,15 @@ public class LogManager : ILogManager
         this.logger = logger;
     }
 
-    public async Task RemoveOldLogs(DateTimeOffset timeAtDeteledLogs, CancellationToken cancellationToken)
+    public async Task RemoveOldLogs(DateTimeOffset timeAtDeletedLogs, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to RemoveOldLogs with timeAtDeteledLogs={timeAtDeteledLogs}", timeAtDeteledLogs);
+        this.logger.LogTrace("Entering to RemoveOldLogs with timeAtDeletedLogs={timeAtDeletedLogs}", timeAtDeletedLogs);
 
-        IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntitys);
-        DateTime urcTimeToDelete = timeAtDeteledLogs.UtcDateTime;
+        IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntities);
+        DateTime urcTimeToDelete = timeAtDeletedLogs.UtcDateTime;
 
         _ = await collection.DeleteManyAsync(t => t.TimestampIndex.Utc < urcTimeToDelete, cancellationToken);
 
-        this.logger.LogInformation("Removed old logs to {timeAtDeteledLogs}.", timeAtDeteledLogs);
+        this.logger.LogInformation("Removed old logs to {timeAtDeletedLogs}.", timeAtDeletedLogs);
     }
 }

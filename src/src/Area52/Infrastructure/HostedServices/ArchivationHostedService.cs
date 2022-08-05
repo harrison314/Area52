@@ -14,12 +14,12 @@ public class ArchivationHostedService : BackgroundService
 {
     private readonly ILogManager logManager;
     private readonly IDistributedLocker locker;
-    private readonly IOptions<ArchiveSettings> archivationSettings;
+    private readonly IOptions<ArchiveSetup> archivationSettings;
     private readonly ILogger<ArchivationHostedService> logger;
 
     public ArchivationHostedService(ILogManager logManager,
         IDistributedLocker locker,
-        IOptions<ArchiveSettings> archivationSettings,
+        IOptions<ArchiveSetup> archivationSettings,
         ILogger<ArchivationHostedService> logger)
     {
         this.logManager = logManager;
@@ -39,15 +39,15 @@ public class ArchivationHostedService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await using IDistributedLock dLock = await this.locker.TryAquire("LogErasing",
+            await using IDistributedLock dLock = await this.locker.TryAcquire("LogErasing",
                 this.archivationSettings.Value.CheckInterval.Add(TimeSpan.FromSeconds(60)),
                 stoppingToken);
 
-            if (dLock.Aquired)
+            if (dLock.Acquired)
             {
                 try
                 {
-                    DateTimeOffset date = DateTimeOffset.UtcNow - TimeSpan.FromDays(this.archivationSettings.Value.RemovaLogsAdDaysOld);
+                    DateTimeOffset date = DateTimeOffset.UtcNow - TimeSpan.FromDays(this.archivationSettings.Value.RemoveLogsAdDaysOld);
                     await this.logManager.RemoveOldLogs(date, stoppingToken);
                 }
                 catch (Exception ex)
@@ -61,7 +61,6 @@ public class ArchivationHostedService : BackgroundService
             {
                 await Task.Delay(TimeSpan.FromMinutes(1.0), stoppingToken);
             }
-
         }
     }
 }

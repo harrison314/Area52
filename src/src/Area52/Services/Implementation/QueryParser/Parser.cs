@@ -14,7 +14,7 @@ public class Parser
         ITerminal<IAstNode> stringTerminal = configurator.CreateTerminal("\"([^\"]+|\\\\\")*\"|'([^']+|\\\\')*'", ParseString);
         ITerminal<IAstNode> nullTerminal = configurator.CreateTerminal("null", _ => new NullValueNode());
         ITerminal<IAstNode> numberTerminal = configurator.CreateTerminal("-?[0-9]+(\\.[0-9]+)?", ParseNumber);
-        ITerminal<IAstNode> propertyTerminal = configurator.CreateTerminal("[0-9a-zA-Z_]+", ParsePropety);
+        ITerminal<IAstNode> propertyTerminal = configurator.CreateTerminal("[0-9a-zA-Z_]+", ParseProperty);
 
         INonTerminal<IAstNode> expr = configurator.CreateNonTerminal();
         INonTerminal<IAstNode> term = configurator.CreateNonTerminal();
@@ -82,7 +82,7 @@ public class Parser
     public static IAstNode SimpleParse(string input)
     {
         if (input == null) throw new ArgumentNullException(nameof(input));
-        if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Input value can not by only whitespaces.", nameof(input));
+        if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Input value can not by only whitespace.", nameof(input));
         
         try
         {
@@ -103,7 +103,7 @@ public class Parser
         }
 
 
-        throw new InvalidProgramException("valie is not string");
+        throw new InvalidProgramException("value is not string with ' or \"");
     }
 
     private static IValueNode ParseNumber(string value)
@@ -111,7 +111,7 @@ public class Parser
         return new NumberValueNode(double.Parse(value, System.Globalization.CultureInfo.InvariantCulture));
     }
 
-    private static PropertyNode ParsePropety(string value)
+    private static PropertyNode ParseProperty(string value)
     {
         return new PropertyNode(value);
     }

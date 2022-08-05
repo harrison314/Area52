@@ -23,12 +23,12 @@ public class MongoDbDistributedLocker : IDistributedLocker
         this.failed = new FailedDistributedLock();
     }
 
-    public async Task<IDistributedLock> TryAquire(string name, TimeSpan resrvedTime, CancellationToken cancellationToken = default)
+    public async Task<IDistributedLock> TryAcquire(string name, TimeSpan reservedTime, CancellationToken cancellationToken = default)
     {
         Guid acquireId = Guid.NewGuid();
-        if(await this.TryUpdate(resrvedTime, name, acquireId))
+        if(await this.TryUpdate(reservedTime, name, acquireId))
         {
-            return new SucccessDistributedLock(this.locks, acquireId);
+            return new SuccessDistributedLock(this.locks, acquireId);
         }
         else
         {

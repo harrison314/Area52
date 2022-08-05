@@ -9,6 +9,8 @@ namespace Area52.Services.Implementation.Mongo.Models;
 public static class CollectionNames
 {
     public const string LockAcquires = "LockAcquires";
-    public const string LogEntitys = "LogEntitys";
+    public const string LogEntities = "LogEntities";
     public const string DataProtectionKeys = "DataProtectionKey";
+    public const string MongoTimeSeriesDefinition = "TimeSeriesDefinition";
+    public const string MongoTimeSeriesItems = "TimeSeriesItems";
 }

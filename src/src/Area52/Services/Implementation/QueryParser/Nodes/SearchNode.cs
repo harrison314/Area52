@@ -35,6 +35,6 @@ internal class SearchNode : BinaryOpNode
             return this.Right.ToString()!;
         }
 
-        return this.ToString("serach");
+        return this.ToString("search");
     }
 }

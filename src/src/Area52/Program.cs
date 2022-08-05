@@ -1,5 +1,6 @@
 ﻿using Area52.Infrastructure.App;
 using Area52.Infrastructure.Clef;
+using Area52.Services.Contracts.TimeSeries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection;
@@ -26,6 +27,7 @@ namespace Area52
                     .WriteTo.Console());
 
 
+
             IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration);
             configurator.GlobalSetup();
             configurator.ConfigureServices(builder);
@@ -39,12 +41,19 @@ namespace Area52
             builder.Services.AddServerSideBlazor();
 
 
-            if (builder.Configuration.GetValue<bool>("ArchiveSettings:Enabled"))
+            if (builder.Configuration.GetValue<bool>("ArchiveSetup:Enabled"))
             {
+                builder.Services.Configure<Services.Configuration.ArchiveSetup>(builder.Configuration.GetSection("ArchiveSetup"));
                 builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.ArchivationHostedService>();
             }
 
             builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
+
+            builder.Services.Configure<Services.Configuration.TimeSeriesSetup>(builder.Configuration.GetSection("TimeSeriesSetup"));
+            builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.TimeSeriesBackgroundService>();
+
+            // Services
+            builder.Services.AddTransient<ITimeSerieDefinitionsService, Services.Implementation.TimeSerieDefinitionsService>();
 
             builder.Services.AddHealthChecks().ConfigureHealthChecks(configurator);
 
