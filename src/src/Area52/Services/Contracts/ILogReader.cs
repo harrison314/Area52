@@ -11,7 +11,7 @@ public interface ILogReader
 {
     Task<ReadLastLogResult> ReadLastLogs(string query);
 
-    Task<LogEntity> LoadLogInfo(string id);
+    Task<LogEntity?> LoadLogInfo(string id);
 
     IAsyncEnumerable<LogEntity> ReadLogs(string query, int? limit);
 

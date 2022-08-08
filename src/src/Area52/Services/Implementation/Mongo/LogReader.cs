@@ -23,7 +23,7 @@ public class LogReader : ILogReader
         this.logger = logger;
     }
 
-    public async Task<LogEntity> LoadLogInfo(string id)
+    public async Task<LogEntity?> LoadLogInfo(string id)
     {
         this.logger.LogTrace("Entering to LoadLogInfo with id {logENtityId}", id);
 
@@ -98,7 +98,7 @@ public class LogReader : ILogReader
     private async IAsyncEnumerable<LogEntity> ReadLogsInternal(IAstNode? query, int? limit)
     {
         MongoDbNodeVisitor visitor = new MongoDbNodeVisitor();
-        if (query!=null)
+        if (query != null)
         {
             visitor.Visit(query);
         }
@@ -137,15 +137,21 @@ public class LogReader : ILogReader
         }
     }
 
-    private LogEntity MapFrom(MongoLogEntity entity)
+    [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("entity")]
+    private LogEntity? MapFrom(MongoLogEntity? entity)
     {
+        if (entity == null)
+        {
+            return null;
+        }
+
         return new LogEntity()
         {
             EventId = entity.EventId,
             Exception = entity.Exception,
             Level = entity.Level,
             LevelNumeric = entity.LevelNumeric,
-            Message = entity.Message,
+            Message = entity.Message ?? string.Empty,
             MessageTemplate = entity.MessageTemplate,
             Properties = this.MapFrom(entity.Properties),
             Timestamp = entity.Timestamp

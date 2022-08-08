@@ -20,7 +20,7 @@ public class LogReader : ILogReader
         this.logger = logger;
     }
 
-    public async Task<LogEntity> LoadLogInfo(string id)
+    public async Task<LogEntity?> LoadLogInfo(string id)
     {
         this.logger.LogTrace("Entering to LoadLogInfo with id {logId}", id);
 
