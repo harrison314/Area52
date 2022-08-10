@@ -89,5 +89,9 @@ public class MongoTimeSerieDefinition
     public MongoTimeSerieDefinition()
     {
         this.Version = 1;
+        this.Query = null!;
+        this.Description = null!;
+        this.Name = null!;
+        this.Metadata = null!;
     }
 }
