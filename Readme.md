@@ -40,6 +40,7 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
 - [ ] Log archiving using background workers
 - [x] Implements healthchecks
 - [x] Try implement using MongoDb
+- [x] Dashboard
 
 ## Getting logs into Area 52
 It is possible to use libraries for SEQ.

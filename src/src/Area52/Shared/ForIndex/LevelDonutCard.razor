@@ -1,0 +1,59 @@
+﻿@using ApexCharts;
+@using Area52.Services.Contracts.Statistics
+
+<div class="card border-primary mb-3">
+    <div class="card-content">
+        <div class="card-body">
+            <ApexChart TItem="LogShare"
+                       Options="@this.options"
+                       Title="Levels distribution">
+
+                <ApexPointSeries TItem="LogShare"
+                                 Items="this.LevelsDistribution"
+                                 SeriesType="SeriesType.Donut"
+                                 Name="Level"
+                                 XValue="@(e => e.Level)"
+                                 YValue="@(e=>(decimal)e.Percent)"
+                                 OrderBy="e=>(int)e.X"
+                                 PointColor="e=>this.GetColor(e.Level)" />
+            </ApexChart>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ApexChartOptions<LogShare> options { get; set; } = new ApexChartOptions<LogShare>()
+    {
+        Yaxis = new List<YAxis>()
+        {
+           new YAxis()
+           {
+               Labels = new YAxisLabels()
+               {
+                   Formatter ="function(value, opt){ return Number(value).toFixed(2) + '%'; }"
+               }
+           }
+        }
+    };
+
+    [Parameter, EditorRequired]
+    public IReadOnlyList<LogShare> LevelsDistribution
+    {
+        get;
+        set;
+    } = null!;
+
+    private string GetColor(LogLevel level)
+    {
+        return level switch
+        {
+            LogLevel.Trace => "#0d6efd",
+            LogLevel.Debug => "#6c757d",
+            LogLevel.Information => "#198754",
+            LogLevel.Warning => "#ffc107",
+            LogLevel.Error => "#dc3545",
+            LogLevel.Critical => "#212529",
+            _ => "#0d6efd"
+        };
+    }
+}

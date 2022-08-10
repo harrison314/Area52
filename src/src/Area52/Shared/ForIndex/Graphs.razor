@@ -1,0 +1,44 @@
+﻿@using Area52.Services.Contracts.Statistics
+@inject IFastStatisticsServices FastStatisticsServices
+
+<div class="row">
+    <div class="col">
+        <h2>Logs distribution</h2>
+    </div>
+</div>
+
+<div class="row">
+    @if (this.logShare != null)
+    {
+        <div class="col-xl-6 col-sm-12 col-12">
+            <LevelDonutCard LevelsDistribution="@this.logShare" />
+        </div>
+
+        @if (this.applicationShare != null)
+        {
+            <div class="col-xl-6 col-sm-12 col-12">
+                <ApplicationsDocnutCard ApplicationsDistribution="this.applicationShare" />
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col">
+            <LoadingIndicator />
+        </div>
+    }
+</div>
+
+@code {
+    private IReadOnlyList<LogShare>? logShare = null;
+    private IReadOnlyList<ApplicationShare>? applicationShare = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.logShare = await this.FastStatisticsServices.GetLevelsDistribution(CancellationToken.None);
+        await Task.Yield();
+        await Task.Delay(100);
+
+        this.applicationShare = await this.FastStatisticsServices.GetApplicationsDistribution(CancellationToken.None);
+    }
+}

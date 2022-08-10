@@ -1,0 +1,46 @@
+﻿@using ApexCharts;
+@using Area52.Services.Contracts.Statistics
+
+<div class="card border-primary mb-3">
+    <div class="card-content">
+        <div class="card-body">
+            <ApexChart TItem="ApplicationShare"
+                       Options="@this.options"
+                       Title="Applications distribution">
+
+                <ApexPointSeries TItem="ApplicationShare"
+                                 Items="this.ApplicationsDistribution"
+                                 SeriesType="SeriesType.Donut"
+                                 Name="Application"
+                                 XValue="@(e => e.ApplicationName)"
+                                 YValue="@(e => e.Percent)"
+                                 OrderBy="@(e => -e.Y)"
+                                 />
+            </ApexChart>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private ApexChartOptions<ApplicationShare> options { get; set; } = new ApexChartOptions<ApplicationShare>()
+    {
+        Yaxis = new List<YAxis>()
+        {
+           new YAxis()
+           {
+               Labels = new YAxisLabels()
+               {
+                   Formatter ="function(value, opt){ return Number(value).toFixed(2) + '%'; }"
+               }
+           }
+        }
+    };
+
+    [Parameter, EditorRequired]
+    public IReadOnlyList<ApplicationShare> ApplicationsDistribution
+    {
+        get;
+        set;
+    } = null!;
+}

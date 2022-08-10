@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Area52.Infrastructure.App;
 using Area52.Services.Configuration;
+using Area52.Services.Contracts.Statistics;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -52,6 +53,8 @@ public class BackendConfigurator : IBackendConfigurator
 
         services.AddTransient<Contracts.TimeSeries.ITimeSerieDefinitionsRepository, TimeSeries.TimeSerieDefinitionsRepository>();
         services.AddTransient<Contracts.TimeSeries.ITimeSeriesService, TimeSeries.TimeSeriesService>();
+
+        services.AddTransient<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
@@ -65,6 +68,16 @@ public class BackendConfigurator : IBackendConfigurator
     public void AddDataProtectionStorage(IDataProtectionBuilder dataProtectionBuilder)
     {
         DataProtection.MongoDbXmlRepositoryHelper.Register(dataProtectionBuilder);
+    }
+
+    private IFastStatisticsServices RegisterCachedFastStatisticServices(IServiceProvider sp)
+    {
+        IMongoDatabase mongoDatabase = sp.GetRequiredService<IMongoDatabase>();
+        ILogger<Statistics.FastStatisticsServices> logger = sp.GetRequiredService<ILogger<Statistics.FastStatisticsServices>>();
+        Microsoft.Extensions.Caching.Memory.IMemoryCache memoryCache = sp.GetRequiredService<Microsoft.Extensions.Caching.Memory.IMemoryCache>();
+
+        Statistics.FastStatisticsServices fss = new Statistics.FastStatisticsServices(mongoDatabase, logger);
+        return new FastStatisticsServicesCache(fss, memoryCache);
     }
 }
 

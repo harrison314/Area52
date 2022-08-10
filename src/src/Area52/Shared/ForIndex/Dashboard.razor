@@ -1,0 +1,141 @@
+﻿@using Area52.Services.Contracts.Statistics
+@inject IFastStatisticsServices FastStatisticsServices
+
+<div class="row">
+    <div class="col">
+        <h2>Status</h2>
+    </div>
+</div>
+
+@if (this.stats != null)
+{
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 col-12">
+            <Card Name="Total log count"
+              Value="@this.FormatLargeNumber(this.stats.TotalLogCount)"
+              IconClass="oi oi-info" />
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12">
+            <Card Name="New logs per hour"
+              Value="@this.FormatLargeNumber(this.stats.NewLogsPerLastHour)"
+              IconClass="oi oi-signal" />
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12">
+            <Card Name="Time series"
+              Value="@this.stats.TimeSeriesCount.ToString()"
+              IconClass="oi oi-graph" />
+        </div>
+
+        <div class="col-xl-3 col-sm-6 col-12">
+            @*TODO: make beter and icon *@
+            <Card Name="Back-end"
+              Value="@this.stats.BackendType.ToString()"
+              IconClass="oi oi-beaker" />
+        </div>
+
+        @*@if (this.responsibility)
+    {
+    <div class="col-xl-3 col-sm-6 col-12">
+    <Card Name="Responsibility"
+    Value="OK"
+    IconClass="oi oi-timer" />
+    </div>
+    }
+    else
+    {
+    <div class="col-xl-3 col-sm-6 col-12">
+    <Card Name="Responsibility"
+    Value="Bad"
+    IconClass="oi oi-timer"
+    ColorClassName="danger" />
+    </div>
+    }*@
+
+    </div>
+
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 col-12">
+            <Card Name="Errors in last hour"
+              Value="@this.FormatLargeNumber(this.stats.ErrorsInLastHour)"
+              IconClass="oi oi-bug" />
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12">
+            @if (this.stats.CriticalInLastDay > 0L)
+            {
+                <Card Name="Critical in last day"
+              Value="@this.FormatLargeNumber(this.stats.CriticalInLastDay)"
+              IconClass="oi oi-warning"
+              ColorClassName="danger" />
+            }
+            else
+            {
+                <Card Name="Critical in last day"
+              Value="0"
+              IconClass="oi oi-warning" />
+            }
+        </div>
+    </div>
+
+    @if (this.enagleGraphs)
+    {
+        <ErrorBoundary>
+            <ChildContent>
+                <Graphs />
+            </ChildContent>
+            <ErrorContent>
+                <div class="alert alert-danger" role="alert">
+                    Error during show graphs.
+                </div>
+            </ErrorContent>
+        </ErrorBoundary>
+    }
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <LoadingIndicator />
+        </div>
+    </div>
+}
+
+@code {
+    private BaseStatistics? stats = null;
+    private bool responsibility = false;
+    private bool enagleGraphs = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Yield();
+        this.stats = await this.FastStatisticsServices.GetBaseStatistics(CancellationToken.None);
+        this.responsibility = this.stats.ResponseTime < TimeSpan.FromSeconds(30);
+
+        await Task.Yield();
+        await Task.Delay(500);
+
+        this.enagleGraphs = true;
+    }
+
+    private string FormatLargeNumber(long number)
+    {
+        if (number < 10_000)
+        {
+            return number.ToString();
+        }
+
+        if (number < 10_000_000)
+        {
+            number = (long)Math.Round(number / 1_000.0);
+            return $"{number}K";
+        }
+
+        if (number < 10_000_000_000)
+        {
+            number = (long)Math.Round(number / 1_000_000.0);
+            return $"{number}M";
+        }
+
+        number = (long)Math.Round(number / 1_000_000_000.0);
+        return $"{number}G";
+    }
+}

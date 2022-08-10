@@ -73,6 +73,8 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
         services.AddSingleton<ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
         services.AddSingleton<ITimeSeriesService, TimeSeriesService>();
+
+        services.AddSingleton<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)
@@ -86,5 +88,15 @@ public class BackendConfigurator : IBackendConfigurator
     public void AddDataProtectionStorage(IDataProtectionBuilder dataProtectionBuilder)
     {
         DataProtection.RavenXmlRepositoryHelper.Register(dataProtectionBuilder);
+    }
+
+    private Contracts.Statistics.IFastStatisticsServices RegisterCachedFastStatisticServices(IServiceProvider sp)
+    {
+        IDocumentStore documentStore = sp.GetRequiredService<IDocumentStore>();
+        ILogger<Statistics.FastStatisticsServices> logger = sp.GetRequiredService<ILogger<Statistics.FastStatisticsServices>>();
+        Microsoft.Extensions.Caching.Memory.IMemoryCache memoryCache = sp.GetRequiredService<Microsoft.Extensions.Caching.Memory.IMemoryCache>();
+
+        Statistics.FastStatisticsServices fss = new Statistics.FastStatisticsServices(documentStore, logger);
+        return new FastStatisticsServicesCache(fss, memoryCache);
     }
 }
