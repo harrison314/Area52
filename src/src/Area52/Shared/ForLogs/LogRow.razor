@@ -12,8 +12,8 @@
 @if (this.showDetails)
 {
     <div class="row bg-light">
-
         <div class="col-11" style="margin-left: 3em;">
+            
             @if (this.errorMessage != null)
             {
                 <p class="text-danger">@this.errorMessage</p>
@@ -24,6 +24,29 @@
             }
             else
             {
+                <div class="row">
+                    <div class="col ">
+                        <div class="btn-group btn-group-sm float-end" role="group">
+                            <BSDropdown>
+                                <Toggler>
+                                    <BSToggle IsButton="true" Color="BSColor.Primary" IsOutlined="true" Size="Size.Small">
+                                        <span class="fa fa-expand"></span>&nbsp;
+                                    </BSToggle>
+                                </Toggler>
+                                <Content>
+                                    <BSDropdownItem @onclick="@(_=>this.AddToTimestampSearch(10))">Near 10 sec.</BSDropdownItem>
+                                    <BSDropdownItem @onclick="@(_=>this.AddToTimestampSearch(60))">Near 1 min.</BSDropdownItem>
+                                    <BSDropdownItem @onclick="@(_=>this.AddToTimestampSearch(600))">Near 10 min.</BSDropdownItem>
+                                </Content>
+                            </BSDropdown>
+
+                            @* <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToTimestampSearch(600))">
+                    <span class="fa fa-copy"></span>
+                    </button>*@
+                        </div>
+                    </div>
+                </div>
+
                 <h6 class="fw-bold">Template</h6>
                 <p>@this.entity.MessageTemplate</p>
                 @if (this.entity.Exception != null)
@@ -168,5 +191,11 @@
                 Name = name,
                 Valued = value
             }, op);
+    }
+
+    private void AddToTimestampSearch(int secunds)
+    {
+        System.Diagnostics.Debug.Assert(this.entity is not null);
+        this.Context?.AddToQuery(this.entity.Timestamp, secunds);
     }
 }

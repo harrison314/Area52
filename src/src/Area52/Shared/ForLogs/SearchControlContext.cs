@@ -23,9 +23,19 @@ public class SearchControlContext
         this.OnQueryChange?.Invoke(this.ToQuery(property, binOperator), false, false);
     }
 
+    public void AddToQuery(DateTimeOffset logTime, int  secunds)
+    {
+        this.OnQueryChange?.Invoke(this.ToNearQuery(logTime, secunds), false, false);
+    }
+
     public void SearchNow(LogEntityProperty property, string? binOperator = null)
     {
         this.OnQueryChange?.Invoke(this.ToQuery(property, binOperator), true, true);
+    }
+
+    public void SearchNow(DateTimeOffset logTime, int secunds)
+    {
+        this.OnQueryChange?.Invoke(this.ToNearQuery(logTime, secunds), true, true);
     }
 
     private string ToQuery(LogEntityProperty property, string? binOperator)
@@ -55,5 +65,11 @@ public class SearchControlContext
         }
 
         throw new InvalidProgramException("Missing value of LogEntityProperty.");
+    }
+
+    private string ToNearQuery(DateTimeOffset time, int secunds)
+    {
+        TimeSpan interval = TimeSpan.FromSeconds(secunds);
+        return $"Timestamp between '{(time- interval):s}' and '{(time + interval):s}'";
     }
 }
