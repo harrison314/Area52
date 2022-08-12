@@ -9,11 +9,11 @@ namespace Area52.Shared.ForLogs;
 
 public delegate void QueryChangeDelegate(string queryApendix, bool replace, bool exceute);
 
-public class SerachControlContext
+public class SearchControlContext
 {
     public event QueryChangeDelegate? OnQueryChange;
 
-    public SerachControlContext()
+    public SearchControlContext()
     {
 
     }
