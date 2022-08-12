@@ -1,6 +1,8 @@
 ﻿@using Area52.Services.Contracts
 @using Microsoft.Extensions.Logging
 @inject ILogReader LogReader
+@inject Microsoft.JSInterop.IJSRuntime JsRuntime
+@inject IBlazorStrap BlazorStrap
 @inject ILogger<LogRow> Logger
 
 <div class="row @(this.showDetails? "bg-light":string.Empty)">
@@ -13,7 +15,7 @@
 {
     <div class="row bg-light">
         <div class="col-11" style="margin-left: 3em;">
-            
+
             @if (this.errorMessage != null)
             {
                 <p class="text-danger">@this.errorMessage</p>
@@ -30,7 +32,7 @@
                             <BSDropdown>
                                 <Toggler>
                                     <BSToggle IsButton="true" Color="BSColor.Primary" IsOutlined="true" Size="Size.Small">
-                                        <span class="fa fa-expand"></span>&nbsp;
+                                        <span class="fa fa-arrows-v"></span>&nbsp;
                                     </BSToggle>
                                 </Toggler>
                                 <Content>
@@ -40,9 +42,12 @@
                                 </Content>
                             </BSDropdown>
 
-                            @* <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToTimestampSearch(600))">
-                    <span class="fa fa-copy"></span>
-                    </button>*@
+                            <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="this.CopyLogFormatedMessage">
+                                <span class="fa fa-copy"></span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="this.CopyAsJson">
+                                <span class="fa fa-code"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -120,14 +125,14 @@
     {
         get;
         set;
-    }
+    } = null!;
 
     [CascadingParameter]
     public SearchControlContext Context
     {
         get;
         set;
-    }
+    }= null!;
 
     private async Task ToggleShowDetails()
     {
@@ -197,5 +202,35 @@
     {
         System.Diagnostics.Debug.Assert(this.entity is not null);
         this.Context?.AddToQuery(this.entity.Timestamp, secunds);
+    }
+
+    private async Task CopyText(string text, string message)
+    {
+        await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        this.BlazorStrap.Toaster.Add("Copy", message, o =>
+        {
+            o.CloseAfter = 1000;
+            o.Color = BSColor.Info;
+            o.Toast = Toast.Default;
+        });
+    }
+
+    private async Task CopyLogFormatedMessage()
+    {
+        System.Diagnostics.Debug.Assert(this.entity is not null);
+        await this.CopyText($"{this.entity.Timestamp:s} | {this.entity.Level} | {this.entity.Message} | {this.entity.Exception}",
+        "Copy log information's to clipboard.");
+    }
+
+    private async Task CopyAsJson()
+    {
+        System.Diagnostics.Debug.Assert(this.entity is not null);
+        string json = System.Text.Json.JsonSerializer.Serialize<LogEntity>(this.entity,
+        new System.Text.Json.JsonSerializerOptions()
+        {
+            WriteIndented = true
+        });
+
+        await this.CopyText(json,"Copy log as JSON to clipboard.");
     }
 }
