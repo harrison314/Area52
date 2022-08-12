@@ -57,10 +57,17 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                            {
                                Level = this.CreateField("Level", log.Level, new CreateFieldOptions()
                                {
+                                   Indexing = FieldIndexing.Exact,
+                                   Storage = FieldStorage.No,
+                                   TermVector = FieldTermVector.No
+                               }),
+                               LevelExact = this.CreateField("Level", log.Level, new CreateFieldOptions()
+                               {
                                    Indexing = FieldIndexing.Default,
                                    Storage = FieldStorage.No,
                                    TermVector = FieldTermVector.No
                                }),
+                               //Level = log.Level,
                                LevelNumeric = log.LevelNumeric,
                                Timestamp = log.Timestamp,
                                Message = log.Message,
@@ -72,7 +79,12 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                                    " ",
                                    log.Message,
                                    log.Exception),
-
+                               _Exact = log.Properties.Where(t => t.Values != null).Select(t => this.CreateField(t.Name, t.Values, new CreateFieldOptions()
+                               {
+                                   Indexing = FieldIndexing.Exact,
+                                   Storage = FieldStorage.No,
+                                   TermVector = FieldTermVector.No
+                               })),
                                _ = log.Properties.Where(t => t.Values != null).Select(t => this.CreateField(t.Name, t.Values, new CreateFieldOptions()
                                {
                                    Indexing = FieldIndexing.Default,
@@ -88,7 +100,16 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                            };
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
+        //this.Index(t => t.Level, FieldIndexing.Default);
+        //this.Index(t => t.Level, FieldIndexing.Exact);
+        //this.Index("LevelNumeric", FieldIndexing.Exact);
+
+
         this.Index("LevelNumeric", FieldIndexing.Exact);
         this.Index("LogFullText", FieldIndexing.Search);
+
+        //this.Store(t => t.Timestamp, FieldStorage.Yes);
+        //this.Store(t => t.Level, FieldStorage.Yes);
+        //this.Store(t => t.Message, FieldStorage.Yes);
     }
 }
