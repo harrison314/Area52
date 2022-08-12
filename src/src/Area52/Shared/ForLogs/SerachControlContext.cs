@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Area52.Shared.Logs;
+namespace Area52.Shared.ForLogs;
 
 public delegate void QueryChangeDelegate(string queryApendix, bool replace, bool exceute);
 
