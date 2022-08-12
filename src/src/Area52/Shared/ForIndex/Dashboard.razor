@@ -13,24 +13,24 @@
         <div class="col-xl-3 col-sm-6 col-12">
             <Card Name="Total log count"
               Value="@this.FormatLargeNumber(this.stats.TotalLogCount)"
-              IconClass="oi oi-info" />
+              IconClass="fa fa-info fa-fw" />
         </div>
         <div class="col-xl-3 col-sm-6 col-12">
             <Card Name="New logs per hour"
               Value="@this.FormatLargeNumber(this.stats.NewLogsPerLastHour)"
-              IconClass="oi oi-signal" />
+              IconClass="fa fa-signal fa-fw" />
         </div>
         <div class="col-xl-3 col-sm-6 col-12">
             <Card Name="Time series"
               Value="@this.stats.TimeSeriesCount.ToString()"
-              IconClass="oi oi-graph" />
+              IconClass="fa fa-line-chart fa-fw" />
         </div>
 
         <div class="col-xl-3 col-sm-6 col-12">
             @*TODO: make beter and icon *@
             <Card Name="Back-end"
               Value="@this.stats.BackendType.ToString()"
-              IconClass="oi oi-beaker" />
+              IconClass="fa fa-database fa-fw" />
         </div>
 
         @*@if (this.responsibility)
@@ -57,21 +57,21 @@
         <div class="col-xl-3 col-sm-6 col-12">
             <Card Name="Errors in last hour"
               Value="@this.FormatLargeNumber(this.stats.ErrorsInLastHour)"
-              IconClass="oi oi-bug" />
+              IconClass="fa fa-bug fa-fw" />
         </div>
         <div class="col-xl-3 col-sm-6 col-12">
             @if (this.stats.CriticalInLastDay > 0L)
             {
                 <Card Name="Critical in last day"
               Value="@this.FormatLargeNumber(this.stats.CriticalInLastDay)"
-              IconClass="oi oi-warning"
+              IconClass="fa fa-exclamation-triangle fa-fw"
               ColorClassName="danger" />
             }
             else
             {
                 <Card Name="Critical in last day"
               Value="0"
-              IconClass="oi oi-warning" />
+              IconClass="fa fa-exclamation-triangle fa-fw" />
             }
         </div>
     </div>

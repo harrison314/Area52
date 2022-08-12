@@ -1,6 +1,7 @@
 ﻿using Area52.Infrastructure.App;
 using Area52.Infrastructure.Clef;
 using Area52.Services.Contracts.TimeSeries;
+using BlazorStrap;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection;
@@ -39,6 +40,7 @@ namespace Area52
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
+            builder.Services.AddBlazorStrap();
 
 
             if (builder.Configuration.GetValue<bool>("ArchiveSetup:Enabled"))

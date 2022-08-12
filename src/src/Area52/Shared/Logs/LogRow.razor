@@ -47,17 +47,17 @@
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch("Level", entity.Level, "is eg"))">
-                                        <span class="oi oi-plus"></span>
+                                        <span class="fa fa-plus"></span>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow("Level", entity.Level, "is eg"))">
-                                        <span class="oi oi-loop-square"></span>
+                                        <span class="fa fa-exchange"></span>
                                     </button>
 
                                     <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch("LevelNumeric", entity.LevelNumeric, ">="))">
-                                        <span class="oi oi-chevron-right"></span>
+                                        <span class="fa fa-caret-square-o-right"></span>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow("LevelNumeric", entity.LevelNumeric, ">="))">
-                                        <span class="oi oi-caret-right"></span>
+                                        <span class="fa fa-chevron-right"></span>
                                     </button>
                                 </div>
                             </td>
@@ -70,10 +70,10 @@
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch(attr))">
-                                            <span class="oi oi-plus"></span>
+                                            <span class="fa fa-plus"></span>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow(attr))">
-                                            <span class="oi oi-loop-square"></span>
+                                            <span class="fa fa-exchange"></span>
                                         </button>
                                     </div>
                                 </td>

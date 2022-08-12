@@ -30,6 +30,7 @@
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Blazor-ApexCharts" Version="0.9.13-beta" />
+    <PackageReference Include="BlazorStrap" Version="5.0.106" />
   </ItemGroup>
 
   <ItemGroup>

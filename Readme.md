@@ -26,7 +26,7 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
 - [Piglet](https://www.nuget.org/packages/Piglet/) as query parser
 - [RavenDb](https://ravendb.net/) as primary storage and indexing engine
 - [MongoDb](https://www.mongodb.com/) as alternative storage and indexing engine
-- [Bootstrap 5](https://getbootstrap.com/) and [OpenIcon](https://useiconic.com/open/)
+- [Bootstrap 5](https://getbootstrap.com/) and [Font Awesome 4](https://fontawesome.com/v4/icons/)
 
 ## Future work
 - [ ] More efective read CLEF log from request

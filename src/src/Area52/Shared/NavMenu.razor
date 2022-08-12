@@ -1,4 +1,4 @@
-﻿<nav class="navbar navbar-expand-sm bg-dark navbar-dark mb-3">
+﻿@*<nav class="navbar navbar-expand-sm bg-dark navbar-dark mb-3">
     <div class="container">
     <NavLink class="navbar-brand" href="">
         <img src="/brandIcon.png" class="d-inline-block align-text-top" alt="" width="25" />
@@ -7,7 +7,7 @@
         <ul class="navbar-nav">
             <li class="nav-item">
                 <NavLink class="nav-link" ActiveClass="active" href="Logs" Match="NavLinkMatch.All">Logs</NavLink>
-                @*<a class="nav-link active" href="#">Active</a>*@
+                @*<a class="nav-link active" href="#">Active</a>
             </li>
             <li class="nav-item">
                 <NavLink class="nav-link" ActiveClass="active" href="Management" Match="NavLinkMatch.All">Management</NavLink>
@@ -19,10 +19,78 @@
             <li class="nav-item">
                 <NavLink class="nav-link" ActiveClass="active" href="QueryLanguage" Match="NavLinkMatch.All">Query Language</NavLink>
             </li>
-            
+
             <li class="nav-item">
                <NavLink class="nav-link" ActiveClass="active" href="About" Match="NavLinkMatch.All">About</NavLink>
             </li>
         </ul>
     </div>
-</nav>
+</nav>*@
+
+
+<BSNavbar Color="BSColor.Dark" IsDark="true" Class="mb-3">
+    <BSContainer Container="Container.Default">
+        <BSNavbarBrand Url="">
+            <img src="/brandIcon.png" class="d-inline-block align-text-top" alt="" width="25" />
+            Area 52
+        </BSNavbarBrand>
+
+        <BSCollapse IsInNavbar="true">
+            <Toggler>
+                <BSNavbarToggle />
+            </Toggler>
+            <Content>
+                <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
+                    <BSNavItem Url="Logs">Logs</BSNavItem>
+                    <BSNavItem Url="TimeSeries">Time Series</BSNavItem>
+                    <BSNavItem Url="Management">Management</BSNavItem>
+                    <BSNavItem Url="QueryLanguage">Query Language</BSNavItem>
+                    <BSNavItem Url="About">About</BSNavItem>
+
+                    @*<BSNavItem IsDropdown="true">
+                        <BSDropdown>
+                            <Toggler><BSToggle IsNavLink="true">Help</BSToggle></Toggler>
+                            <Content>
+                                <BSDropdownItem Url="About">About</BSDropdownItem>
+                                <BSDropdownItem IsDivider="true" />
+                                <BSDropdownItem Url="QueryLanguage">Query Language</BSDropdownItem>
+                            </Content>
+                        </BSDropdown>
+                    </BSNavItem>*@
+                </BSNav>
+            </Content>
+        </BSCollapse>
+
+    </BSContainer>
+
+    @* <BSContainer Container="Container.Fluid">
+    <BSNavbarBrand>Navbar</BSNavbarBrand>
+    <BSCollapse IsInNavbar="true">
+    <Toggler>
+    <BSNavbarToggle />
+    </Toggler>
+    <Content>
+    <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
+    <BSNavItem IsActive="true" Url="javascript:void(0);">Home</BSNavItem>
+    <BSNavItem Url="javascript:void(0);">Link</BSNavItem>
+    <BSNavItem IsDropdown="true">
+    <BSDropdown>
+    <Toggler><BSToggle IsNavLink="true">Dropdown</BSToggle></Toggler>
+    <Content>
+    <BSDropdownItem Url="javascript:void(0);">Action</BSDropdownItem>
+    <BSDropdownItem Url="javascript:void(0);">Another action</BSDropdownItem>
+    <BSDropdownItem IsDivider="true" />
+    <BSDropdownItem Url="javascript:void(0);">Something else here</BSDropdownItem>
+    </Content>
+    </BSDropdown>
+    </BSNavItem>
+    <BSNavItem Url="javascript:void(0);" IsDisabled="true">Disabled</BSNavItem>
+    </BSNav>
+    </Content>
+    </BSCollapse>
+    <form class="d-flex">
+    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+    <BSButton Color="BSColor.Success" IsOutlined="true">Search</BSButton>
+    </form>
+    </BSContainer>*@
+</BSNavbar>
