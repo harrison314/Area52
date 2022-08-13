@@ -1,6 +1,7 @@
 ﻿using Area52.Services.Configuration;
 using Area52.Services.Contracts;
 using Area52.Services.Contracts.TimeSeries;
+using Area52.Services.Implementation;
 using Area52.Services.Implementation.QueryParser;
 using Area52.Services.Implementation.QueryParser.Nodes;
 using Microsoft.Extensions.Options;
@@ -148,13 +149,13 @@ public class TimeSeriesBackgroundService : BackgroundService
         PropertyNode timestampNode = new PropertyNode(nameof(LogEntity.Timestamp));
         if (from.HasValue)
         {
-            GtOrEqNode fromNode = new GtOrEqNode(timestampNode, new StringValueNode(from.Value.ToString("s")));
-            LtNode toNode = new LtNode(timestampNode, new StringValueNode(to.ToString("s")));
+            GtOrEqNode fromNode = new GtOrEqNode(timestampNode, new StringValueNode(from.Value.ToString(FormatConstants.SortableDateTimeFormat)));
+            LtNode toNode = new LtNode(timestampNode, new StringValueNode(to.ToString(FormatConstants.SortableDateTimeFormat)));
             timeCondition = new AndNode(fromNode, toNode);
         }
         else
         {
-            timeCondition = new LtNode(timestampNode, new StringValueNode(to.ToString("s")));
+            timeCondition = new LtNode(timestampNode, new StringValueNode(to.ToString(FormatConstants.SortableDateTimeFormat)));
         }
 
         return new AndNode(timeCondition, query);

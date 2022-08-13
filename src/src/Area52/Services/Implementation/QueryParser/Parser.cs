@@ -71,9 +71,9 @@ public class Parser
         valueExpr.AddProduction("datetime", "(", stringTerminal, ")").SetReduceFunction(p =>
         {
             StringValueNode str = (StringValueNode)p[2];
-            DateTime dt = DateTime.Parse(str.Value);
+            DateTime dt = DateTime.Parse(str.Value, null, System.Globalization.DateTimeStyles.AdjustToUniversal);
 
-            return new StringValueNode(dt.ToString("s"));
+            return new StringValueNode(dt.ToString(FormatConstants.SortableDateTimeFormat));
         });
 
         return configurator.CreateParser();

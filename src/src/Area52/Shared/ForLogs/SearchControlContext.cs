@@ -1,4 +1,5 @@
 ﻿using Area52.Services.Contracts;
+using Area52.Services.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +71,6 @@ public class SearchControlContext
     private string ToNearQuery(DateTimeOffset time, int secunds)
     {
         TimeSpan interval = TimeSpan.FromSeconds(secunds);
-        return $"Timestamp between '{(time- interval):s}' and '{(time + interval):s}'";
+        return $"Timestamp between '{(time- interval).ToString(FormatConstants.SortableDateTimeFormat)}' and '{(time + interval).ToString(FormatConstants.SortableDateTimeFormat)}'";
     }
 }

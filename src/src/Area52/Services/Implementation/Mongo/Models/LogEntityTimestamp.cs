@@ -25,6 +25,6 @@ public class LogEntityTimestamp
     public LogEntityTimestamp(DateTimeOffset time)
     {
         this.Utc = time.UtcDateTime;
-        this.Sortable = time.ToString("s");
+        this.Sortable = time.ToString(FormatConstants.SortableDateTimeFormat);
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using Area52.Services.Contracts
+@using Area52.Services.Implementation
 @using Microsoft.Extensions.Logging
 @inject ILogReader LogReader
 @inject Microsoft.JSInterop.IJSRuntime JsRuntime
@@ -6,7 +7,7 @@
 @inject ILogger<LogRow> Logger
 
 <div class="row @(this.showDetails? "bg-light":string.Empty)">
-    <div class="col-2 pointer-cursor" @onclick="@ToggleShowDetails">@this.LogInfo.Timestamp.ToString("s")</div>
+    <div class="col-2 pointer-cursor" @onclick="@ToggleShowDetails">@this.LogInfo.Timestamp.ToString(FormatConstants.ShowSortableDateTimeFormat)</div>
     <div class="col-1 pointer-cursor" @onclick="@ToggleShowDetails"><LogLevelBadge Level="@this.LogInfo.Level" /></div>
     <div class="col-9">@this.LogInfo.Message</div>
 </div>
@@ -26,8 +27,8 @@
             }
             else
             {
-                <div class="row">
-                    <div class="col ">
+                <div class="row mt-1">
+                    <div class="col">
                         <div class="btn-group btn-group-sm float-end" role="group">
                             <BSDropdown>
                                 <Toggler>
@@ -210,13 +211,13 @@
     private void AddToNewerSearch()
     {
         System.Diagnostics.Debug.Assert(this.entity is not null);
-        this.Context?.AddToQuery(new LogEntityProperty("Timestamp", this.entity.Timestamp.ToString("s")), ">=");
+        this.Context?.AddToQuery(new LogEntityProperty("Timestamp", this.entity.Timestamp.ToString(FormatConstants.SortableDateTimeFormat)), ">=");
     }
 
     private void AddToOlderSearch()
     {
         System.Diagnostics.Debug.Assert(this.entity is not null);
-        this.Context?.AddToQuery(new LogEntityProperty("Timestamp", this.entity.Timestamp.ToString("s")), "<=");
+        this.Context?.AddToQuery(new LogEntityProperty("Timestamp", this.entity.Timestamp.ToString(FormatConstants.SortableDateTimeFormat)), "<=");
     }
 
     private async Task CopyText(string text, string message)
@@ -233,7 +234,7 @@
     private async Task CopyLogFormatedMessage()
     {
         System.Diagnostics.Debug.Assert(this.entity is not null);
-        await this.CopyText($"{this.entity.Timestamp:s} | {this.entity.Level} | {this.entity.Message} | {this.entity.Exception}",
+        await this.CopyText($"{this.entity.Timestamp.ToString(FormatConstants.SortableDateTimeFormat)} | {this.entity.Level} | {this.entity.Message} | {this.entity.Exception}",
         "Copy log information's to clipboard.");
     }
 

@@ -39,7 +39,7 @@ public class LogWriter : ILogWriter
             {
                 EventId = entity.EventId,
                 Exception = entity.Exception,
-                LogFullText = string.Concat(entity.Timestamp.ToString("s"),
+                LogFullText = string.Concat(entity.Timestamp.ToString(FormatConstants.SortableDateTimeFormat),
                                    " ",
                                    entity.Level,
                                    " ",
