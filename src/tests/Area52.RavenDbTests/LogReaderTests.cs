@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Area52.RavenDbTests.TestUtils;
+using Area52.Services.Configuration;
 using Area52.Services.Contracts;
 using Area52.Services.Implementation.Raven;
+using Microsoft.Extensions.Options;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.TestDriver;
@@ -22,7 +24,7 @@ public class LogReaderTests : RavenTestDriver
         await CommonDocuments.PrepareDocuments(store);
         this.WaitForIndexing(store);
 
-        LogReader reader = new LogReader(store, LoggerCreator.Create<LogReader>());
+        LogReader reader = new LogReader(store, this.CreateOptions(), LoggerCreator.Create<LogReader>());
 
         LogEntity? result = await reader.LoadLogInfo("LogEntitys/4589-F");
 
@@ -43,7 +45,7 @@ public class LogReaderTests : RavenTestDriver
         await CommonDocuments.PrepareDocuments(store);
         this.WaitForIndexing(store);
 
-        LogReader reader = new LogReader(store, LoggerCreator.Create<LogReader>());
+        LogReader reader = new LogReader(store, this.CreateOptions(), LoggerCreator.Create<LogReader>());
 
         ReadLastLogResult result = await reader.ReadLastLogs(query);
 
@@ -64,7 +66,7 @@ public class LogReaderTests : RavenTestDriver
         await CommonDocuments.PrepareDocuments(store);
         this.WaitForIndexing(store);
 
-        LogReader reader = new LogReader(store, LoggerCreator.Create<LogReader>());
+        LogReader reader = new LogReader(store, this.CreateOptions(), LoggerCreator.Create<LogReader>());
 
         IAsyncEnumerable<LogEntity> result = reader.ReadLogs(query, 50);
         IReadOnlyList<LogEntity> materializedResult = await this.MaterializeResult(result);
@@ -75,11 +77,19 @@ public class LogReaderTests : RavenTestDriver
     private async Task<IReadOnlyList<LogEntity>> MaterializeResult(IAsyncEnumerable<LogEntity> logs)
     {
         List<LogEntity> result = new List<LogEntity>();
-        await foreach(LogEntity entity in logs)
+        await foreach (LogEntity entity in logs)
         {
             result.Add(entity);
         }
 
         return result;
+    }
+
+    private IOptions<Area52Setup> CreateOptions()
+    {
+        return Options.Create(new Area52Setup()
+        {
+            MaxLogShow = 150
+        });
     }
 }

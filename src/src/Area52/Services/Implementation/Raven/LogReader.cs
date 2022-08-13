@@ -1,5 +1,7 @@
-﻿using Area52.Services.Contracts;
+﻿using Area52.Services.Configuration;
+using Area52.Services.Contracts;
 using Area52.Services.Implementation.QueryParser;
+using Microsoft.Extensions.Options;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using System;
@@ -12,11 +14,13 @@ namespace Area52.Services.Implementation.Raven;
 public class LogReader : ILogReader
 {
     private readonly IDocumentStore documentStore;
+    private readonly IOptions<Area52Setup> area52Setup;
     private readonly ILogger<LogReader> logger;
 
-    public LogReader(IDocumentStore documentStore, ILogger<LogReader> logger)
+    public LogReader(IDocumentStore documentStore, IOptions<Area52Setup> area52Setup, ILogger<LogReader> logger)
     {
         this.documentStore = documentStore;
+        this.area52Setup = area52Setup;
         this.logger = logger;
     }
 
@@ -49,7 +53,7 @@ public class LogReader : ILogReader
             IAsyncRawDocumentQuery<LogInfo> request = session.Advanced.AsyncRawQuery<LogInfo>(reqlQuery.Query);
             reqlQuery.SetParameters(request);
             request.NoTracking();
-            request.Take(150);
+            request.Take(this.area52Setup.Value.MaxLogShow);
             request.Statistics(out QueryStatistics stats);
             List<LogInfo> result = await request.ToListAsync();
 

@@ -28,6 +28,7 @@ namespace Area52
                     .WriteTo.Console());
 
 
+            builder.Services.Configure<Services.Configuration.Area52Setup>(builder.Configuration.GetSection(nameof(Services.Configuration.Area52Setup)));
 
             IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration);
             configurator.GlobalSetup();

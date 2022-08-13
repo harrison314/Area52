@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Area52.Services.Configuration;
 using Area52.Services.Contracts;
 using Area52.Services.Implementation.Mongo.Models;
 using Area52.Services.Implementation.Mongo.QueryTranslator;
 using Area52.Services.Implementation.QueryParser;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -15,11 +17,13 @@ namespace Area52.Services.Implementation.Mongo;
 public class LogReader : ILogReader
 {
     private readonly IMongoDatabase mongoDatabase;
+    private readonly IOptions<Area52Setup> area52Setup;
     private readonly ILogger<LogReader> logger;
 
-    public LogReader(IMongoDatabase mongoDatabase, ILogger<LogReader> logger)
+    public LogReader(IMongoDatabase mongoDatabase, IOptions<Area52Setup> area52Setup, ILogger<LogReader> logger)
     {
         this.mongoDatabase = mongoDatabase;
+        this.area52Setup = area52Setup;
         this.logger = logger;
     }
 
@@ -59,7 +63,7 @@ public class LogReader : ILogReader
             IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntities);
             using var cursor = await collection.FindAsync<LogInfo>(findCriteria, new FindOptions<MongoLogEntity, LogInfo>()
             {
-                Limit = 150,
+                Limit = this.area52Setup.Value.MaxLogShow,
                 Sort = new BsonDocument("TimestampIndex.Utc", -1),
                 Projection = new BsonDocument()
             {
