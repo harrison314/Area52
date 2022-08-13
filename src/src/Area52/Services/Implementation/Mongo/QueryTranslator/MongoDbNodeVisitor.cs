@@ -43,6 +43,31 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
             PropertyNode propertyNode = (PropertyNode)node.Left;
             StringValueNode strNode = (StringValueNode)node.Right;
 
+            string? specialName = strNode.Value switch
+            {
+                nameof(LogEntity.Timestamp) => "TimestampIndex.Sortable",
+                nameof(LogEntity.Message) => "Message",
+                nameof(LogEntity.Exception) => "Exception",
+                nameof(LogEntity.Level) => "Level",
+                nameof(LogEntity.MessageTemplate) => "MessageTemplate",
+                _ => null
+            };
+
+            if (specialName != null)
+            {
+                string regexExpr = string.Concat("^",
+                    System.Text.RegularExpressions.Regex.Escape(strNode.Value),
+                    "$");
+                BsonDocument regexExpression = new BsonDocument(specialName, new BsonDocument()
+                {
+                    { "$regex", regexExpr },
+                    { "$options", "i" }
+                });
+
+                this.ctxStack.Push(new BsonCtxNode(regexExpression, QueryNodeType.Other));
+                return;
+            }
+
             BsonDocument expression = this.ConstructPropertyOperation(propertyNode.Name,
             InternalValueType.LowercaseString,
             new BsonDocument()
