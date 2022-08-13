@@ -39,6 +39,9 @@
                                     <BSDropdownItem @onclick="@(_=>this.AddToTimestampSearch(10))">Near 10 sec.</BSDropdownItem>
                                     <BSDropdownItem @onclick="@(_=>this.AddToTimestampSearch(60))">Near 1 min.</BSDropdownItem>
                                     <BSDropdownItem @onclick="@(_=>this.AddToTimestampSearch(600))">Near 10 min.</BSDropdownItem>
+                                    <BSDropdownItem IsDivider="true" />
+                                    <BSDropdownItem @onclick="@(_=>this.AddToNewerSearch())">Newer</BSDropdownItem>
+                                    <BSDropdownItem @onclick="@(_=>this.AddToOlderSearch())">Older</BSDropdownItem>
                                 </Content>
                             </BSDropdown>
 
@@ -202,6 +205,18 @@
     {
         System.Diagnostics.Debug.Assert(this.entity is not null);
         this.Context?.AddToQuery(this.entity.Timestamp, secunds);
+    }
+
+    private void AddToNewerSearch()
+    {
+        System.Diagnostics.Debug.Assert(this.entity is not null);
+        this.Context?.AddToQuery(new LogEntityProperty("Timestamp", this.entity.Timestamp.ToString("s")), ">=");
+    }
+
+    private void AddToOlderSearch()
+    {
+        System.Diagnostics.Debug.Assert(this.entity is not null);
+        this.Context?.AddToQuery(new LogEntityProperty("Timestamp", this.entity.Timestamp.ToString("s")), "<=");
     }
 
     private async Task CopyText(string text, string message)
