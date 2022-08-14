@@ -19,6 +19,9 @@ public class ParserTests
 
     [Theory]
     [InlineData("Property is 'value'")]
+    [InlineData("[Property] is 'value'")]
+    [InlineData("[Property with space] is 'value'")]
+    [InlineData("[0] is 'value'")]
     [InlineData("Property == 'value'")]
     [InlineData("Property is not 'value'")]
     [InlineData("Property != 'value'")]

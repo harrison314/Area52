@@ -9,7 +9,7 @@
 <div class="row @(this.showDetails? "bg-light":string.Empty)">
     <div class="col-2 pointer-cursor" @onclick="@ToggleShowDetails">@this.LogInfo.Timestamp.ToString(FormatConstants.ShowSortableDateTimeFormat)</div>
     <div class="col-1 pointer-cursor" @onclick="@ToggleShowDetails"><LogLevelBadge Level="@this.LogInfo.Level" /></div>
-    <div class="col-9">@this.LogInfo.Message</div>
+    <div class="col-9 text-break">@this.LogInfo.Message</div>
 </div>
 
 @if (this.showDetails)
@@ -57,11 +57,11 @@
                 </div>
 
                 <h6 class="fw-bold">Template</h6>
-                <p>@this.entity.MessageTemplate</p>
+                <p class="text-break">@this.entity.MessageTemplate</p>
                 @if (this.entity.Exception != null)
                 {
                     <h6 class="fw-bold">Exception</h6>
-                    <p><pre>@this.entity.Exception</pre></p>
+                    <p><pre class="text-break">@this.entity.Exception</pre></p>
                 }
 
                 <table class="table table-sm">
@@ -94,9 +94,11 @@
                                 </div>
                             </td>
                         </tr>
-                        @foreach (var attr in this.entity.Properties)
+                        @for (int i=0;i<this.entity.Properties.Length;i++)
                         {
-                            <tr @key="@attr.Name">
+                           var attr = this.entity.Properties[i];
+
+                            <tr @key="@i">
                                 <td>@attr.Name</td>
                                 <td>@attr.GetValueString()</td>
                                 <td>
