@@ -33,7 +33,7 @@ public static class ClefParser
                     switch (propName)
                     {
                         case "@t":
-                            entry.Timestamp = jsonReader.GetDateTimeOffset();
+                            entry.Timestamp = jsonReader.GetDateTimeOffset().ToUniversalTime();
                             break;
 
                         case "@m":
