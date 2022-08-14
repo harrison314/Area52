@@ -1,4 +1,6 @@
-﻿using Area52.Services.Contracts;
+﻿using Area52.Services.Configuration;
+using Area52.Services.Contracts;
+using Microsoft.Extensions.Options;
 using System.Buffers;
 using System.Text;
 
@@ -8,12 +10,14 @@ public class EventMiddleware
 {
     private readonly RequestDelegate next;
     private readonly ILogWriter logWriter;
+    private readonly IOptions<Area52Setup> area52Setup;
     private readonly ILogger<EventMiddleware> logger;
 
-    public EventMiddleware(RequestDelegate next, ILogWriter logWriter, ILogger<EventMiddleware> logger)
+    public EventMiddleware(RequestDelegate next, ILogWriter logWriter, IOptions<Area52Setup> area52Setup, ILogger<EventMiddleware> logger)
     {
         this.next = next;
         this.logWriter = logWriter;
+        this.area52Setup = area52Setup;
         this.logger = logger;
     }
 
@@ -22,12 +26,14 @@ public class EventMiddleware
         if (httpContext.Request.Method == "POST" && httpContext.Request.Path == "/api/events/raw")
         {
             string? line = null;
+            int? maxErrors = this.area52Setup.Value.MaxErrorInClefBatch;
             byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
             try
             {
                 // TODO: Optimize
                 using TextReader tr = new StreamReader(httpContext.Request.Body, System.Text.Encoding.UTF8);
                 List<LogEntity> list = new List<LogEntity>();
+                int errorCounter = 0;
                 while ((line = await tr.ReadLineAsync()) != null)
                 {
                     try
@@ -47,7 +53,13 @@ public class EventMiddleware
                     catch (InvalidOperationException ex)
                     {
                         this.logger.LogWarning(ex, "Problem with single line {line}", line);
-                        // TODO: configurable re-trow exception
+                        errorCounter++;
+
+                        if (maxErrors.HasValue && errorCounter > maxErrors.Value)
+                        {
+                            this.logger.LogDebug("Error in this batch more than maximum limit {maximumLimit}.", maxErrors.Value);
+                            throw;
+                        }
                     }
                 }
 
