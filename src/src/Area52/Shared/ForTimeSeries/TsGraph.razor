@@ -53,6 +53,14 @@
                 </div>
                 <div class="col-2">
                     <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="ToggleGraph">
+                       @if(this.seriesType == SeriesType.Area)
+                        {
+                            <span class="fa fa-bar-chart"></span>
+                        }
+                        else
+                        {
+                            <span class="fa fa-area-chart"></span>
+                        }
                         Togle graph type
                     </button>
                 </div>
