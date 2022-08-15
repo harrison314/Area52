@@ -74,6 +74,8 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
         services.AddSingleton<ITimeSeriesService, TimeSeriesService>();
 
+        services.AddSingleton<Contracts.IUserPrefernceServices, UserPrefernceServices>();
+
         services.AddSingleton<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
     }
 

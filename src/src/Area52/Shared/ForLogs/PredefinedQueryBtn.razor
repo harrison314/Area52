@@ -1,0 +1,38 @@
+﻿@using Area52.Services.Contracts
+@inject IUserPrefernceServices UserPrefernceServices
+
+<BSDropdown Class="ms-1">
+    <Toggler>
+        <BSToggle IsButton="true" Color="BSColor.Primary" IsOutlined="true" Size="Size.None">
+            <span class="fa fa-tags fa-fw"></span> Stored queries
+        </BSToggle>
+    </Toggler>
+    <Content>
+        @for (int i = 0; i < this.queries.Count; i++)
+        {
+            int index = i;
+            <BSDropdownItem @key="@i" OnClick="@(e=>this.ClickToQuery(index))">@this.queries[i].Name</BSDropdownItem>
+        }
+    </Content>
+</BSDropdown>
+
+@code {
+    private IReadOnlyList<SturedQuery> queries = new List<SturedQuery>();
+
+    [Parameter, EditorRequired]
+    public SearchControlContext Context
+    {
+        get;
+        set;
+    } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.queries = await this.UserPrefernceServices.GetQueries(default);
+    }
+
+    private void ClickToQuery(int index)
+    {
+        this.Context.SearchNow(this.queries[index].Query);
+    }
+}

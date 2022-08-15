@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Pages\Management\PredefinedQueries\Index.razor" />
     <None Include="Shared\ForIndex\Card.razor" />
   </ItemGroup>
 

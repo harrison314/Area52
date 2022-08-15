@@ -34,6 +34,11 @@ public class SearchControlContext
         this.OnQueryChange?.Invoke(this.ToQuery(property, binOperator), true, true);
     }
 
+    public void SearchNow(string query)
+    {
+        this.OnQueryChange?.Invoke(query, true, true);
+    }
+
     public void SearchNow(DateTimeOffset logTime, int secunds)
     {
         this.OnQueryChange?.Invoke(this.ToNearQuery(logTime, secunds), true, true);

@@ -1,0 +1,50 @@
+﻿@page "/Management/PredefinedQueries"
+@using Area52.Shared.ForManaement
+@using Area52.Services.Contracts
+@inject IUserPrefernceServices UserPrefernceServices
+
+<PageTitle>Predefined queries</PageTitle>
+
+<LeftMenu Title="Predefined queries">
+    @if (this.queries == null)
+    {
+        <LoadingIndicator />
+    }
+    else
+    {
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Query</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < this.queries.Count; i++)
+                {
+                    <tr @key="@i">
+                        <td>
+                            <input class="form-control" type="text" @bind="@this.queries[i].Name" />
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" @bind="@this.queries[i].Query" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</LeftMenu>
+
+@code {
+    private List<SturedQuery>? queries = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.queries = (List<SturedQuery>)await this.UserPrefernceServices.GetQueries(default);
+    }
+}
