@@ -14,7 +14,7 @@ public class Area52Setup
         set;
     }
 
-    public int MaxErrorInClefBatch
+    public int? MaxErrorInClefBatch
     {
         get;
         set;
