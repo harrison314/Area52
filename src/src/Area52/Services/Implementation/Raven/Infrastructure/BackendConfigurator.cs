@@ -17,9 +17,11 @@ namespace Area52.Services.Implementation.Raven.Infrastructure;
 
 public class BackendConfigurator : IBackendConfigurator
 {
-    public BackendConfigurator()
-    {
+    private readonly IFeatureManagement featureManagement;
 
+    public BackendConfigurator(IFeatureManagement featureManagement)
+    {
+        this.featureManagement = featureManagement;
     }
 
     public void GlobalSetup()
@@ -70,9 +72,11 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<Contracts.ILogManager, LogManager>();
         services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
 
-        services.AddSingleton<ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
-        services.AddSingleton<ITimeSerieDefinitionsService, TimeSerieDefinitionsService>();
-        services.AddSingleton<ITimeSeriesService, TimeSeriesService>();
+        if (this.featureManagement.IsFeatureEnabled(FeatureNames.TimeSeries))
+        {
+            services.AddSingleton<ITimeSerieDefinitionsRepository, TimeSerieDefinitionsRepository>();
+            services.AddSingleton<ITimeSeriesService, TimeSeriesService>();
+        }
 
         services.AddSingleton<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
     }

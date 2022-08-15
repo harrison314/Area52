@@ -14,9 +14,11 @@ namespace Area52.Services.Implementation.Mongo.Infrastructure;
 
 public class BackendConfigurator : IBackendConfigurator
 {
-    public BackendConfigurator()
-    {
+    private readonly IFeatureManagement featureManagement;
 
+    public BackendConfigurator(IFeatureManagement featureManagement)
+    {
+        this.featureManagement = featureManagement;
     }
 
     public void GlobalSetup()
@@ -51,8 +53,11 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddTransient<Contracts.ILogManager, LogManager>();
         services.AddTransient<Contracts.IDistributedLocker, MongoDbDistributedLocker>();
 
-        services.AddTransient<Contracts.TimeSeries.ITimeSerieDefinitionsRepository, TimeSeries.TimeSerieDefinitionsRepository>();
-        services.AddTransient<Contracts.TimeSeries.ITimeSeriesService, TimeSeries.TimeSeriesService>();
+        if (this.featureManagement.IsFeatureEnabled(FeatureNames.TimeSeries))
+        {
+            services.AddTransient<Contracts.TimeSeries.ITimeSerieDefinitionsRepository, TimeSeries.TimeSerieDefinitionsRepository>();
+            services.AddTransient<Contracts.TimeSeries.ITimeSeriesService, TimeSeries.TimeSeriesService>();
+        }
 
         services.AddTransient<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
     }

@@ -20,11 +20,13 @@
               Value="@this.FormatLargeNumber(this.stats.NewLogsPerLastHour)"
               IconClass="fa fa-signal fa-fw" />
         </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <Card Name="Time series"
-              Value="@this.stats.TimeSeriesCount.ToString()"
-              IconClass="fa fa-line-chart fa-fw" />
-        </div>
+        <EnabledFeature Name="@FeatureNames.TimeSeries">
+            <div class="col-xl-3 col-sm-6 col-12">
+                <Card Name="Time series"
+                  Value="@this.stats.TimeSeriesCount.ToString()"
+                  IconClass="fa fa-line-chart fa-fw" />
+            </div>
+        </EnabledFeature>
 
         <div class="col-xl-3 col-sm-6 col-12">
             @*TODO: make beter and icon *@

@@ -42,22 +42,24 @@
             <Content>
                 <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
                     <BSNavItem Url="Logs">Logs</BSNavItem>
-                    <BSNavItem Url="TimeSeries">Time Series</BSNavItem>
+                    <EnabledFeature Name="@FeatureNames.TimeSeries">
+                        <BSNavItem Url="TimeSeries">Time Series</BSNavItem>
+                    </EnabledFeature>
                     <BSNavItem Url="Management">Management</BSNavItem>
                     <BSNavItem Url="QueryLanguage">Query Language</BSNavItem>
                     <BSNavItem Url="About">About</BSNavItem>
 
                     @*<BSNavItem IsDropdown="true">
-                        <BSDropdown IsDark="true">
-                            <Toggler>
-                                <BSToggle IsNavLink="true">Dropdown</BSToggle>
-                            </Toggler>
-                            <Content>
-                                <BSDropdownItem>Action</BSDropdownItem>
-                                <BSDropdownItem>Another action</BSDropdownItem>
-                                <BSDropdownItem>Something else here</BSDropdownItem>
-                            </Content>
-                        </BSDropdown>
+                    <BSDropdown IsDark="true">
+                    <Toggler>
+                    <BSToggle IsNavLink="true">Dropdown</BSToggle>
+                    </Toggler>
+                    <Content>
+                    <BSDropdownItem>Action</BSDropdownItem>
+                    <BSDropdownItem>Another action</BSDropdownItem>
+                    <BSDropdownItem>Something else here</BSDropdownItem>
+                    </Content>
+                    </BSDropdown>
                     </BSNavItem>*@
                 </BSNav>
             </Content>

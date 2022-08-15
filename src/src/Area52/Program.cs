@@ -29,8 +29,9 @@ namespace Area52
 
 
             builder.Services.Configure<Services.Configuration.Area52Setup>(builder.Configuration.GetSection(nameof(Services.Configuration.Area52Setup)));
+            IFeatureManagement featureManagement = builder.AddFeatureManagement();
 
-            IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration);
+            IBackendConfigurator configurator = BackendConfiguratorFactory.Create(builder.Configuration, featureManagement);
             configurator.GlobalSetup();
             configurator.ConfigureServices(builder);
 
@@ -44,19 +45,29 @@ namespace Area52
             builder.Services.AddBlazorStrap();
 
 
-            if (builder.Configuration.GetValue<bool>("ArchiveSetup:Enabled"))
+            if (featureManagement.IsFeatureEnabled(FeatureNames.BackgroundProcessing))
             {
-                builder.Services.Configure<Services.Configuration.ArchiveSetup>(builder.Configuration.GetSection("ArchiveSetup"));
-                builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.ArchivationHostedService>();
+                if (builder.Configuration.GetValue<bool>("ArchiveSetup:Enabled"))
+                {
+                    builder.Services.Configure<Services.Configuration.ArchiveSetup>(builder.Configuration.GetSection("ArchiveSetup"));
+                    builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.ArchivationHostedService>();
+                }
+
+                builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
+
+                builder.Services.Configure<Services.Configuration.TimeSeriesSetup>(builder.Configuration.GetSection("TimeSeriesSetup"));
+
+                if (featureManagement.IsFeatureEnabled(FeatureNames.TimeSeries))
+                {
+                    builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.TimeSeriesBackgroundService>();
+                }
             }
 
-            builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.StartupJobHostingService>();
-
-            builder.Services.Configure<Services.Configuration.TimeSeriesSetup>(builder.Configuration.GetSection("TimeSeriesSetup"));
-            builder.Services.AddHostedService<Area52.Infrastructure.HostedServices.TimeSeriesBackgroundService>();
-
             // Services
-            builder.Services.AddTransient<ITimeSerieDefinitionsService, Services.Implementation.TimeSerieDefinitionsService>();
+            if (featureManagement.IsFeatureEnabled(FeatureNames.TimeSeries))
+            {
+                builder.Services.AddTransient<ITimeSerieDefinitionsService, Services.Implementation.TimeSerieDefinitionsService>();
+            }
 
             builder.Services.AddHealthChecks().ConfigureHealthChecks(configurator);
 
@@ -71,7 +82,11 @@ namespace Area52
             }
 
             app.UseHealthChecks("/health");
-            app.UseEventMiddleware();
+            if (featureManagement.IsFeatureEnabled(FeatureNames.ClefEndpoint))
+            {
+                app.UseEventMiddleware();
+            }
+
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();

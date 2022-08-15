@@ -1,0 +1,29 @@
+﻿@inject Area52.Infrastructure.App.IFeatureManagement FeatureManagement
+
+@if(this.enabled)
+{
+    @this.ChildContent
+}
+
+@code {
+    private bool enabled = false;
+
+    [Parameter, EditorRequired]
+    public string Name
+    {
+        get;
+        set;
+    } = null!;
+
+    [Parameter]
+    public RenderFragment? ChildContent 
+    { 
+        get; 
+        set; 
+    }
+
+    protected override void OnParametersSet()
+    {
+        this.enabled = this.FeatureManagement.IsFeatureEnabled(this.Name);
+    }
+}
