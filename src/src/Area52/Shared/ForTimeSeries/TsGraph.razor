@@ -22,7 +22,7 @@
                    @ref="chart">
 
                 <ApexPointSeries TItem="TimeSeriesItem"
-                             Items="@this.items"
+                             Items="@(this.items!)"
                              Name="@(this.tsDef.ValueFieldName?? string.Empty)"
                              SeriesType="@seriesType"
                              XValue="@(e => e.Time)"
@@ -107,7 +107,7 @@
 
     private IReadOnlyList<TimeSeriesItem>? items = null;
     private TimeSerieDefinition? tsDef = null;
-    private SeriesType seriesType = SeriesType.Area;
+    private SeriesType seriesType = SeriesType.Bar;
     private ShowGraphTime graphTime;
     private bool isInLoading = false;
 
@@ -173,7 +173,15 @@
         {
             this.isInLoading = false;
         }
-        await this.chart.UpdateSeriesAsync();
+
+        var tmp = this.items;
+        this.items = null;
+        this.StateHasChanged();
+        await Task.Yield();
+        this.items = tmp;
+        this.StateHasChanged();
+
+        //await this.chart.UpdateSeriesAsync();
     }
 
     private async Task ToggleGraph()
