@@ -13,4 +13,5 @@ public static class CollectionNames
     public const string DataProtectionKeys = "DataProtectionKey";
     public const string MongoTimeSeriesDefinition = "TimeSeriesDefinition";
     public const string MongoTimeSeriesItems = "TimeSeriesItems";
+    public const string MongoUserPrefernce = "UserPrefernce";
 }

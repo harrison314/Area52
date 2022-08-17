@@ -158,5 +158,18 @@ public class MongoStartupJob : IStartupJob
             },
             cancellationToken);
 
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoUserPrefernce, null, cancellationToken);
+
+        var mongoUserPreferenceCollection = this.mongoDatabase.GetCollection<Models.MongoUserPrefernce>(CollectionNames.MongoUserPrefernce);
+        await mongoUserPreferenceCollection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoUserPrefernce>(
+           new BsonDocumentIndexKeysDefinition<Models.MongoUserPrefernce>(new MongoDB.Bson.BsonDocument()
+           {
+                {"Metadata.CreatedById", 1 },
+           }),
+           new CreateIndexOptions()
+           {
+               Background = false,
+               Name = "MongoUserPrefernce_IX"
+           }));
     }
 }
