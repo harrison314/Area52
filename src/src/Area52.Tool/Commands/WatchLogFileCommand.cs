@@ -35,8 +35,17 @@ public class WatchLogFileCommand : AsyncCommand<WatchLogFileCommand.Settings>
 
         [Description("Log count in one upload batch.")]
         [CommandOption("-b|--batch-size")]
-        [DefaultValue(10)]
+        [DefaultValue(500)]
         public int MaxLineInBatch
+        {
+            get;
+            set;
+        }
+
+        [Description("Log flash timeout in second.")]
+        [CommandOption("-t|--log-timeout")]
+        [DefaultValue(16)]
+        public int LogTimoutInSec
         {
             get;
             set;
@@ -66,7 +75,7 @@ public class WatchLogFileCommand : AsyncCommand<WatchLogFileCommand.Settings>
         await using WatchLogSender sender = new WatchLogSender(settings.Url,
             settings.ApiKey,
             settings.MaxLineInBatch,
-            TimeSpan.FromSeconds(16.0));
+            TimeSpan.FromSeconds(settings.LogTimoutInSec));
 
         Console.CancelKeyPress += this.Console_CancelKeyPress;
         while (!this.canceled)
@@ -81,7 +90,7 @@ public class WatchLogFileCommand : AsyncCommand<WatchLogFileCommand.Settings>
             }
             else
             {
-                hasSend = await sender.TrySend(Array.Empty<string>());
+                hasSend = await sender.TrySend();
                 await Task.Delay(1000);
             }
 

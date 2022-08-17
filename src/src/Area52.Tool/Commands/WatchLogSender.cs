@@ -44,6 +44,17 @@ internal class WatchLogSender : IAsyncDisposable
         return false;
     }
 
+    public async ValueTask<bool> TrySend()
+    {
+        if (this.linesCount > 0 && (DateTime.UtcNow - this.lastSend) > this.timeLimit)
+        {
+            await this.FlushBuffer();
+            return true;
+        }
+
+        return false;
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (this.linesCount > 0)
