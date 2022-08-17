@@ -11,17 +11,23 @@ public class Area52Setup
     public int MaxLogShow
     {
         get;
-        set;
+        init;
     }
 
     public int? MaxErrorInClefBatch
     {
         get;
-        set;
+        init;
+    }
+
+    public Dictionary<string, bool> Features
+    {
+        get;
+        init;
     }
 
     public Area52Setup()
     {
-
+        this.Features = null!;
     }
 }

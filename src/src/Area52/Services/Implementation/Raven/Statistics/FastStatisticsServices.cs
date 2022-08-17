@@ -129,8 +129,10 @@ public class FastStatisticsServices : IFastStatisticsServices
                 .ExecuteAsync(cancellationToken);
 
             FacetResult result = logs["Applications"];
-            List<FacetValue> sorted = result.Values;
-            sorted.Sort((a, b) => b.Count.CompareTo(a.Count));
+            //List<FacetValue> sorted = result.Values;
+            //sorted.Sort((a, b) => b.Count.CompareTo(a.Count));
+            //sorted = this.FilterApplications(sorted);
+            List<FacetValue> sorted = this.FilterApplications(result.Values);
 
             decimal totalCount = (decimal)await session.Query<LogMainIndex.Result, LogMainIndex>()
                 .LongCountAsync(cancellationToken);
@@ -157,5 +159,26 @@ public class FastStatisticsServices : IFastStatisticsServices
             this.logger.LogError(ex, "Error during executionTime GetApplicationsDistribution.");
             throw;
         }
+    }
+
+    private List<FacetValue> FilterApplications(List<FacetValue> sorted)
+    {
+        return sorted.GroupBy(t => t.Range.ToLowerInvariant())
+              .Select(t => t.FirstOrDefault(q => this.IsNonNormalizedName(q.Range)) ?? t.First())
+              .OrderByDescending(t => t.Count)
+              .ToList();
+    }
+
+    private bool IsNonNormalizedName(string name)
+    {
+        for (int i = 0; i < name.Length; i++)
+        {
+            if (char.IsUpper(name, i))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

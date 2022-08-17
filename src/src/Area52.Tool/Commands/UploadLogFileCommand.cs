@@ -61,8 +61,7 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, UploadLogFileCommand.Settings settings)
     {
-        System.Diagnostics.Debugger.Break();
-        foreach(string path in settings.FilePaths)
+        foreach (string path in settings.FilePaths)
         {
             using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 2048);
             using TextReader tr = new StreamReader(fs, Encoding.UTF8);
@@ -90,7 +89,7 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
                 await this.UploadLogs(settings, sb, counter);
             }
         }
-        
+
 
         return 0;
     }
