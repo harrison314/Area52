@@ -12,27 +12,32 @@
     <div class="col">
         <LogQueryInput @bind-Value="query" IsReadonly="@(timer != null)" OnSearch="@(_=>this.ReadLogs(false))" />
 
-        <div class="input-group mb-3">
-            <button class="btn btn-outline-primary col-2" @onclick="ChangeTail">
-                @if (timer != null)
-                {
-                    <div class="spinner-border spinner-border-sm text-info" role="status"></div>
-                }
-                else
-                {
-                    <span class="fa fa-refresh fa-fw"></span>
-                }
-                Auto-refresh
+        <div class="row mb-3">
+            <div class="col-5">
+                <div class="input-group">
+                    <button class="btn btn-outline-primary" @onclick="ChangeTail">
+                        @if (timer != null)
+                        {
+                            <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+                        }
+                        else
+                        {
+                            <span class="fa fa-refresh fa-fw"></span>
+                        }
+                        Auto-refresh
 
-            </button>
+                    </button>
 
-            @*TODO: fix link *@
-            <a class="btn btn-outline-primary ms-1" href="@("/events/download?q="+Uri.EscapeDataString(this.query))" download="download">
-                <span class="fa fa-download fa-fw"></span>
-            </a>
+                    @*TODO: fix link *@
+                    <a class="btn btn-outline-primary ms-1" href="@("/events/download?q="+Uri.EscapeDataString(this.query))" download="download">
+                        <span class="fa fa-download fa-fw"></span>
+                    </a>
 
-            <PredefinedQueryBtn Context="@this.context" />
-
+                    <div class="ms-1">
+                        <PredefinedQueryBtn Context="@this.context" />
+                    </div>
+                </div>
+            </div>
             <div class="col-2">
             </div>
 
@@ -67,10 +72,10 @@
                 <CascadingValue Value="@context">
                     @foreach (LogInfo info in infos)
                     {
-                    <LogRow LogInfo="@info" @key="info.Id" />
+                        <LogRow LogInfo="@info" @key="info.Id" />
                     }
-            </CascadingValue>
-        </div>
+                </CascadingValue>
+            </div>
         }
     </div>
 </div>
