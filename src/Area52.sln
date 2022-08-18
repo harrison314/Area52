@@ -23,12 +23,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Area52.UnitTests", "tests\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Area52.RavenDbTests", "tests\Area52.RavenDbTests\Area52.RavenDbTests.csproj", "{BB93E3AE-EA0E-46F6-BE3C-B6463DE82957}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildProject", "..\build\BuildProject\BuildProject.csproj", "{CC630C7D-C643-46D5-B3F1-69F12FEDFBCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC630C7D-C643-46D5-B3F1-69F12FEDFBCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC630C7D-C643-46D5-B3F1-69F12FEDFBCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA4BBF07-3B26-4634-8C36-7E036739C295}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA4BBF07-3B26-4634-8C36-7E036739C295}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA4BBF07-3B26-4634-8C36-7E036739C295}.Release|Any CPU.ActiveCfg = Release|Any CPU

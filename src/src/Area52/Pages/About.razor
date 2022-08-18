@@ -16,6 +16,9 @@
             <dt class="col-sm-3">Version</dt>
             <dd class="col-sm-9">@(typeof(Program).Assembly.GetName().Version)</dd>
 
+             <dt class="col-sm-3">Commit</dt>
+            <dd class="col-sm-9">@(Area52.Infrastructure.App.InternalMetadata.GetAssemblyMetadata("GitCommit"))</dd>
+
             <dt class="col-sm-3">Repository</dt>
             <dd class="col-sm-9"><a href="https://github.com/harrison314/Area52" target="_blank">https://github.com/harrison314/Area52</a></dd>
 

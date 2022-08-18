@@ -46,4 +46,7 @@
     <Folder Include="wwwroot\images\logo\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyMetadata Include="GitCommit" Value="$(GitCommit)" />
+  </ItemGroup>
 </Project>

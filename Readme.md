@@ -28,6 +28,16 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
 - [MongoDb](https://www.mongodb.com/) as alternative storage and indexing engine
 - [Bootstrap 5](https://getbootstrap.com/) and [Font Awesome 4](https://fontawesome.com/v4/icons/)
 
+## Build
+Area52 use [Nuke](https://nuke.build/) as build automation.
+
+For build run in powershell:
+```
+&dotnet tool restore
+.\build.ps1 --Configuration Release
+```
+
+
 ## Future work
 - [ ] More efective read CLEF log from request
 - [ ] Autehntification
