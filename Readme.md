@@ -16,9 +16,9 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
   - logical operator,
   - and more...
 
-![Area 51 Screen](doc/Screen1.jpg)
-
 ![Area 51 Screen](doc/Screen2.jpg)
+
+Moore screenshots [doc/Readme.md](doc/Readme.md).
 
 ## Technology
 - [Dotnet 6.0](https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6)
@@ -41,7 +41,7 @@ For build run in powershell:
 ## Future work
 - [ ] More efective read CLEF log from request
 - [ ] Autehntification
-  - [ ] Predefined queries
+  - [x] Predefined queries
   - [x] Distributed data protection provider
   - [ ] API keys for log input with management
 - [ ] Graph and alerts as subsriptions
