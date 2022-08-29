@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Area52.Ufo
 {
@@ -9,7 +10,20 @@ namespace Area52.Ufo
     {
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Verbose()
+          .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
+          .Enrich.FromLogContext()
+          .WriteTo.Console()
+          .CreateBootstrapLogger();
+
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                  .ReadFrom.Configuration(context.Configuration)
+                  .ReadFrom.Services(services)
+                  .Enrich.FromLogContext()
+                  .WriteTo.Console());
+
             builder.Services.Configure<UfoSetup>(builder.Configuration.GetSection(nameof(UfoSetup)));
             builder.Services.Configure<FolderWatchSetup>(builder.Configuration.GetSection(nameof(FolderWatchSetup)));
             builder.Services.Configure<SyslogSetup>(builder.Configuration.GetSection(nameof(SyslogSetup)));
