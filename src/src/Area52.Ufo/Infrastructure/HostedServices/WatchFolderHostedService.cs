@@ -34,18 +34,30 @@ public class WatchFolderHostedService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
+            await Task.Delay(500, stoppingToken);
+
             FolderWatchSetup localSetup = this.setup.Value;
             string[] paths = this.GetFiles(localSetup);
+            if (paths.Length == 0)
+            {
+                continue;
+            }
+
             StringBuilder sb = new StringBuilder(500 * 1024);
 
             foreach (string orgLogFilePath in paths)
             {
                 try
                 {
+                    if (stoppingToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
                     string newPath = this.MooveLogFile(localSetup, orgLogFilePath);
                     await this.SendFileContent(newPath, sb, stoppingToken);
 
-                    this.RemoveFile(newPath);
+                    await this.RemoveFile(newPath, stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -126,10 +138,33 @@ public class WatchFolderHostedService : BackgroundService
         return newPath;
     }
 
-    private void RemoveFile(string newLogPath)
+    private async Task RemoveFile(string newLogPath, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to RemoveFile with newLogPath {newLogPath}.");
-        File.Delete(newLogPath);
+        this.logger.LogTrace("Entering to RemoveFile with newLogPath {newLogPath}.", newLogPath);
+
+        for (int i = 1; i < int.MaxValue; i++)
+        {
+            try
+            {
+                File.Delete(newLogPath);
+                cancellationToken.ThrowIfCancellationRequested();
+                break;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                throw;
+            }
+            catch (IOException ex)
+            {
+                if (i > 4)
+                {
+                    throw;
+                }
+
+                this.logger.LogWarning(ex, "Retry problem with delete file {newLogPath}.", newLogPath);
+                await Task.Delay(100 * i, cancellationToken);
+            }
+        }
 
         this.logger.LogDebug("Removed newLogPath {newLogPath}.", newLogPath);
     }
