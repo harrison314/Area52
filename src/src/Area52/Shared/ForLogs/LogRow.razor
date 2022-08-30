@@ -46,12 +46,15 @@
                                 </Content>
                             </BSDropdown>
 
-                            <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="this.CopyLogFormatedMessage">
+                            <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copyMessage", 0)" OnClick="this.CopyLogFormatedMessage">
                                 <span class="fa fa-copy"></span>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="this.CopyAsJson">
+                            </BSButton>
+                            <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("copyMessage", 0)">Copy message</BSTooltip>
+
+                            <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copyAsJson", 0)" OnClick="this.CopyAsJson">
                                 <span class="fa fa-code"></span>
-                            </button>
+                            </BSButton>
+                            <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("copyAsJson", 0)">Copy as JSON</BSTooltip>
                         </div>
                     </div>
                 </div>
@@ -78,37 +81,47 @@
                             <td><LogLevelBadge Level="@this.LogInfo.Level" /></td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch("Level", entity.Level, "is"))">
-                                        <span class="fa fa-plus"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow("Level", entity.Level, "is"))">
-                                        <span class="fa fa-exchange"></span>
-                                    </button>
 
-                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch("LevelNumeric", entity.LevelNumeric, ">="))">
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("pluslog", 0)" OnClick="@(_=>this.AddToSearch("Level", entity.Level, "is"))">
+                                        <span class="fa fa-plus"></span>
+                                    </BSButton>
+                                    <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("pluslog", 0)">Add to query</BSTooltip>
+
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exchangelog", 0)" OnClick="@(_=>SerachNow("Level", entity.Level, "is"))">
+                                        <span class="fa fa-exchange"></span>
+                                    </BSButton>
+                                    <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exchangelog", 0)">Replace query</BSTooltip>
+                                  
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("addminlog", 0)" OnClick="@(_=>this.AddToSearch("LevelNumeric", entity.LevelNumeric, ">="))">
                                         <span class="fa fa-chevron-right"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow("LevelNumeric", entity.LevelNumeric, ">="))">
+                                    </BSButton>
+                                    <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("addminlog", 0)">Add minimal level</BSTooltip>
+
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exminlog", 0)" OnClick="@(_=>SerachNow("LevelNumeric", entity.LevelNumeric, ">="))">
                                         <span class="fa fa-play"></span>
-                                    </button>
+                                    </BSButton>
+                                    <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exminlog", 0)">Replace minimal level</BSTooltip>
                                 </div>
                             </td>
                         </tr>
-                        @for (int i=0;i<this.entity.Properties.Length;i++)
+                        @for (int i = 0; i < this.entity.Properties.Length; i++)
                         {
-                           var attr = this.entity.Properties[i];
+                            var attr = this.entity.Properties[i];
 
                             <tr @key="@i">
                                 <td>@attr.Name</td>
                                 <td>@attr.GetValueString()</td>
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>this.AddToSearch(attr))">
+                                        <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("plus", i)" OnClick="@(_=>this.AddToSearch(attr))">
                                             <span class="fa fa-plus"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary small" @onclick="@(_=>SerachNow(attr))">
+                                        </BSButton>
+                                        <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("plus", i)">Add to query</BSTooltip>
+
+                                        <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exchange", i)" OnClick="@(_=>SerachNow(attr))">
                                             <span class="fa fa-exchange"></span>
-                                        </button>
+                                        </BSButton>
+                                        <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exchange", i)">Replace query</BSTooltip>
                                     </div>
                                 </td>
                             </tr>
@@ -124,6 +137,7 @@
     private bool showDetails = false;
     private LogEntity? entity = null;
     private string? errorMessage = null;
+    private string targetPrefix = Guid.NewGuid().ToString("D");
 
     [Parameter]
     [EditorRequired]
@@ -138,7 +152,7 @@
     {
         get;
         set;
-    }= null!;
+    } = null!;
 
     private async Task ToggleShowDetails()
     {
@@ -245,10 +259,15 @@
         System.Diagnostics.Debug.Assert(this.entity is not null);
         string json = System.Text.Json.JsonSerializer.Serialize<LogEntity>(this.entity,
         new System.Text.Json.JsonSerializerOptions()
-        {
-            WriteIndented = true
-        });
+            {
+                WriteIndented = true
+            });
 
-        await this.CopyText(json,"Copy log as JSON to clipboard.");
+        await this.CopyText(json, "Copy log as JSON to clipboard.");
+    }
+
+    private string CreateTargetString(string name, int key)
+    {
+        return string.Concat(this.targetPrefix, "_", name, "_", key.ToString());
     }
 }
