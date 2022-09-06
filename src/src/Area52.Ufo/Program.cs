@@ -36,6 +36,17 @@ namespace Area52.Ufo
                 builder.Services.AddHostedService<Infrastructure.HostedServices.WatchFolderHostedService>();
             }
 
+            if (builder.Configuration.GetValue<bool>("SyslogSetup:Enabled", false))
+            {
+                builder.Services.AddHostedService<Infrastructure.HostedServices.SyslogHostedService>();
+            }
+
+            if (builder.Configuration.GetValue<bool>("SyslogSetup:Enabled", false) /*Other conditions */)
+            {
+                builder.Services.AddSingleton<Services.Contracts.IBatchClefQeueu, Services.Implementation.BatchClefQeueu>();
+                builder.Services.AddHostedService<Infrastructure.HostedServices.SendingHostedService>();
+            }
+
             builder.Services.AddHealthChecks(); //TODO: Add Health Checks
 
             WebApplication app = builder.Build();

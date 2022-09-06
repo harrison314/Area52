@@ -10,12 +10,6 @@ public class SyslogSetup
         init;
     }
 
-    public SyslogProtocol Protocol
-    {
-        get;
-        init;
-    }
-
     public string Host
     {
         get;
