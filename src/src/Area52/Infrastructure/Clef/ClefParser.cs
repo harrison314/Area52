@@ -53,7 +53,9 @@ public static class ClefParser
                             break;
 
                         case "@i":
-                            entry.EventId = jsonReader.GetInt64();
+                            entry.EventId = (jsonReader.TokenType == System.Text.Json.JsonTokenType.Null)
+                                ? default
+                                : jsonReader.GetInt64();
                             break;
 
                         case "@r":
