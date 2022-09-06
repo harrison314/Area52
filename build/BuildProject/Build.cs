@@ -92,8 +92,35 @@ class Build : NukeBuild
             DeleteDirectory(publishPath);
         });
 
+    Target BuildArea52Ufo => _ => _
+       .DependsOn(Clean)
+       .Executes(() =>
+       {
+           var projectFile = RootDirectory / "src" / "src" / "Area52.Ufo" / "Area52.Ufo.csproj";
+           var publishPath = RootDirectory / "src" / "src" / "Area52.Ufo" / "bin" / "publish";
+
+           DotNetBuild(s => s
+              .SetProjectFile(projectFile)
+              .AddProperty("GitCommit", Repository.Commit)
+              .SetConfiguration(Configuration)
+          );
+
+           DotNetPublish(s => s
+              .SetProject(projectFile)
+              .AddProperty("GitCommit", Repository.Commit)
+              .SetConfiguration(Configuration)
+              .SetOutput(publishPath)
+          );
+
+           Nuke.Common.IO.CompressionTasks.CompressZip(publishPath,
+               ArtifactsDirectory / "Area52.Ufo.zip");
+
+           DeleteDirectory(publishPath);
+       });
+
     Target Compile => _ => _
         .DependsOn(BuildArea52)
+        .DependsOn(BuildArea52Ufo)
         .DependsOn(BuildArea52Tool)
         .Executes(() =>
         {
