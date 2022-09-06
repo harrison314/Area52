@@ -1,7 +1,10 @@
-﻿using Area52.Ufo.Services.Configuration;
+﻿using System;
+using Area52.Ufo.Services.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
 
 namespace Area52.Ufo
@@ -17,12 +20,24 @@ namespace Area52.Ufo
           .WriteTo.Console()
           .CreateBootstrapLogger();
 
-            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            WebApplicationOptions webApplicationOptions = new WebApplicationOptions()
+            {
+                Args = args,
+                ContentRootPath = WindowsServiceHelpers.IsWindowsService()
+                                     ? AppContext.BaseDirectory : default
+            };
+
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(webApplicationOptions);
             builder.Host.UseSerilog((context, services, configuration) => configuration
                   .ReadFrom.Configuration(context.Configuration)
                   .ReadFrom.Services(services)
                   .Enrich.FromLogContext()
                   .WriteTo.Console());
+
+            builder.Host.UseWindowsService(serviceOptions =>
+            {
+                serviceOptions.ServiceName = builder.Configuration.GetValue<string?>("WindowsServiceName", null);
+            });
 
             builder.Services.Configure<UfoSetup>(builder.Configuration.GetSection(nameof(UfoSetup)));
             builder.Services.Configure<FolderWatchSetup>(builder.Configuration.GetSection(nameof(FolderWatchSetup)));
