@@ -123,17 +123,17 @@ public class SyslogHostedService : IHostedService, IDisposable
                 Level = this.TranslateLevel(e.Item.Severity)
             };
 
-            clefObject.Properties.TryAdd("Application", e.Item.Header.AppName);
-            clefObject.Properties.TryAdd("HostName", e.Item.Header.HostName);
+            clefObject.Properties.TryAdd("Application", new ClefValue(e.Item.Header.AppName));
+            clefObject.Properties.TryAdd("HostName", new ClefValue(e.Item.Header.HostName));
 
             if (e.Item.Header.ProcId != null && int.TryParse(e.Item.Header.ProcId, out int procId))
             {
-                clefObject.Properties.TryAdd("ProcId", procId);
+                clefObject.Properties.TryAdd("ProcId", new ClefValue(procId));
             }
 
             foreach (NameValuePair item in e.Item.ExtractedTuples)
             {
-                clefObject.Properties.TryAdd(item.Name, item.Value);
+                clefObject.Properties.TryAdd(item.Name, ClefValue.FromObject(item.Value));
             }
 
             this.ApplyConfigProperties(clefObject.Properties);
@@ -158,14 +158,14 @@ public class SyslogHostedService : IHostedService, IDisposable
                 }
                 else
                 {
-                    properties[addProperty.Name] = addProperty.Value;
+                    properties[addProperty.Name] = ClefValue.FromObject(addProperty.Value);
                 }
             }
             else
             {
                 if (addProperty.Value != null && !properties.ContainsKey(addProperty.Name))
                 {
-                    properties.Add(addProperty.Name, addProperty.Value);
+                    properties.Add(addProperty.Name, ClefValue.FromObject(addProperty.Value));
                 }
             }
         }

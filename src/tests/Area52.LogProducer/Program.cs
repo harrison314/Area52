@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Area52.LogProducer.Data;
 using Serilog;
@@ -13,6 +13,7 @@ public class Program
         Log.Logger = new LoggerConfiguration()
            .MinimumLevel.Verbose()
            .WriteTo.Seq("https://localhost:7142/")
+           //.WriteTo.UdpSyslog("127.0.0.1", 514, format: Serilog.Sinks.Syslog.SyslogFormat.RFC5424,facility: Serilog.Sinks.Syslog.Facility.Local4)
            .CreateLogger();
 
         var builder = WebApplication.CreateBuilder(args);
