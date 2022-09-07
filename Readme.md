@@ -15,7 +15,7 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
   - serach by time,
   - logical operator,
   - and more...
-- _Area52.Ufo_ is service for abducing logs in files and from Syslog (UDP by RFC 5424) into _Area52_
+- _Area52.Ufo_ is service for abducing logs from text files and from Syslog (UDP by _RFC 5424_) into _Area52_
 
 ![Area 51 Screen](doc/Screen2.jpg)
 
