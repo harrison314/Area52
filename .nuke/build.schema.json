@@ -74,6 +74,7 @@
             "enum": [
               "BuildArea52",
               "BuildArea52Tool",
+              "BuildArea52Ufo",
               "Clean",
               "Compile"
             ]
@@ -87,6 +88,7 @@
             "enum": [
               "BuildArea52",
               "BuildArea52Tool",
+              "BuildArea52Ufo",
               "Clean",
               "Compile"
             ]

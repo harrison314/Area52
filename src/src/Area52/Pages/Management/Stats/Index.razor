@@ -1,0 +1,66 @@
+﻿@page "/Management/Stats"
+@using Area52.Shared.ForManagement
+@using Area52.Services.Contracts.Statistics
+@inject IFastStatisticsServices FastStatisticsServices
+
+<PageTitle>Stats</PageTitle>
+
+<LeftMenu Title="Stats">
+
+    @if (this.stats == null)
+    {
+        <LoadingIndicator />
+    }
+    else
+    {
+        <h2>Basic stats</h2>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Backend Type</td>
+                    <td>@this.stats.BackendType</td>
+                </tr>
+                <tr>
+                    <td>Total logs count</td>
+                    <td>@this.stats.TotalLogCount</td>
+                </tr>
+                <tr>
+                    <td>Time series count</td>
+                    <td>@this.stats.TimeSeriesCount</td>
+                </tr>
+                <tr>
+                    <td>New logs per last hour</td>
+                    <td>@this.stats.NewLogsPerLastHour</td>
+                </tr>
+                <tr>
+                    <td>New errors per last hour</td>
+                    <td>@this.stats.ErrorsInLastHour</td>
+                </tr>
+                <tr>
+                    <td>Critical logs in last day</td>
+                    <td>@this.stats.CriticalInLastDay</td>
+                </tr>
+                <tr>
+                    <td>Database response time</td>
+                    <td>@this.stats.ResponseTime</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</LeftMenu>
+
+@code {
+    private BaseStatistics? stats = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Yield();
+        this.stats = await this.FastStatisticsServices.GetBaseStatistics(CancellationToken.None);
+    }
+}
