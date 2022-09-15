@@ -161,8 +161,9 @@ public class TimeSeriesBackgroundService : BackgroundService
         return new AndNode(timeCondition, query);
     }
 
-    private Task RemoveOldData(TimeSpan timeSpan, CancellationToken stoppingToken)
+    private async Task RemoveOldData(TimeSpan timeSpan, CancellationToken stoppingToken)
     {
-        throw new NotImplementedException("Remove old data in time-series is not implemented.");
+        //throw new NotImplementedException("Remove old data in time-series is not implemented.");
+        await this.timeSeriesService.DeleteOldData(DateTime.UtcNow - timeSpan, stoppingToken);
     }
 }

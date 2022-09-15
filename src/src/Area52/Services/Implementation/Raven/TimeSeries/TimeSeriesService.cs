@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Area52.Services.Contracts.TimeSeries;
 using Area52.Services.Implementation.Raven.Indexes;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Operations.TimeSeries;
 using Raven.Client.Documents.Queries.TimeSeries;
 
 namespace Area52.Services.Implementation.Raven.TimeSeries;
@@ -157,6 +158,44 @@ public class TimeSeriesService : ITimeSeriesService
         finally
         {
             this.logger.LogDebug("Exiting to ExecuteQuery with DefinitionId {DefinitionId}.", request.DefinitionId);
+        }
+    }
+
+    public async Task DeleteOldData(DateTime olderDate, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to DeleteOldData with olderDate {olderDate}.", olderDate);
+
+        try
+        {
+            using var session = this.documentStore.OpenAsyncSession();
+            List<string> tsd = await session.Query<TimeSerieDefinition>()
+                .Select(t => t.Id)
+                .ToListAsync(cancellationToken);
+
+            foreach (string timeSerieDefinitionId in tsd)
+            {
+                this.logger.LogTrace("Sending delete command to time series definition with id {timeSerieDefinitionId}.", timeSerieDefinitionId);
+                TimeSeriesOperation removeEntries = new TimeSeriesOperation()
+                {
+                    Name = TimeSeriesConstants.TsName
+                };
+
+                removeEntries.Delete(new TimeSeriesOperation.DeleteOperation()
+                {
+                    From = null,
+                    To = olderDate
+                });
+
+                TimeSeriesBatchOperation removeEntriesBatch = new TimeSeriesBatchOperation(timeSerieDefinitionId, removeEntries);
+                await this.documentStore.Operations.SendAsync(removeEntriesBatch, token: cancellationToken);
+
+                this.logger.LogDebug("Send delete command to time series definition with id {timeSerieDefinitionId} older to {olderDate}.", timeSerieDefinitionId, olderDate);
+            }
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Unexpected error in DeleteOldData method with olderDate {olderDate}.", olderDate);
+            throw;
         }
     }
 }

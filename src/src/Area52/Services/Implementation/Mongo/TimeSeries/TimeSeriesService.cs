@@ -63,7 +63,7 @@ public class TimeSeriesService : ITimeSeriesService
             ObjectId objectId = new ObjectId(id);
 
             using IAsyncCursor<MongoTimeSerieDefinition> cursor = await collection.FindAsync(t => t.Id == objectId, null, cancellationToken);
-            MongoTimeSerieDefinition definition =await cursor.SingleAsync(cancellationToken);
+            MongoTimeSerieDefinition definition = await cursor.SingleAsync(cancellationToken);
 
             return new TimeSeriesDefinitionUnit(definition.Id.ToString(),
                 definition.Name,
@@ -270,5 +270,23 @@ public class TimeSeriesService : ITimeSeriesService
         }
 
         throw new NotSupportedException($"Bson value {value} is not supported.");
+    }
+
+    public async Task DeleteOldData(DateTime olderDate, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to DeleteOldData with olderDate {olderDate}.", olderDate);
+
+        try
+        {
+            IMongoCollection<MongoTimeSerieItem> collection = this.mongoDatabase.GetCollection<MongoTimeSerieItem>(CollectionNames.MongoTimeSeriesItems);
+
+            FilterDefinition<MongoTimeSerieItem> filter = Builders<MongoTimeSerieItem>.Filter.Lt(t => t.Timestamp, olderDate);
+            await collection.DeleteManyAsync(filter, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Unexpected error in DeleteOldData method with olderDate {olderDate}.", olderDate);
+            throw;
+        }
     }
 }

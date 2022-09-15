@@ -16,4 +16,7 @@ public interface ITimeSeriesService
     Task ConfirmWriting(string definitionId, LastExecutionInfo lastExecutionInfo, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<TimeSeriesItem>> ExecuteQuery(TimeSeriesQueryRequest request, CancellationToken cancellationToken);
+
+    Task DeleteOldData(DateTime olderDate, CancellationToken cancellationToken);
+
 }
