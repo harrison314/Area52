@@ -55,7 +55,7 @@ For build run in powershell:
 
 ## Getting logs into Area 52
 It is possible to use libraries for SEQ.
-For example for _Serilog_:
+_Serilog_ example:
 
 ```
 dotnet package add Serilog.Sinks.Seq
@@ -68,6 +68,29 @@ Log.Logger = new LoggerConfiguration()
    .MinimumLevel.Verbose()
    .WriteTo.Seq("http://localhost:7142")
    .CreateLogger();
+```
+
+_NLog_ example:
+```
+dotnet package add NLog.Targets.Seq
+```
+
+Add to _NLog.config_:
+```xml
+<extensions>
+    <add assembly="NLog.Targets.Seq"/>
+</extensions>
+```
+
+```xml
+<targets>
+   <target name="seq" xsi:type="BufferingWrapper" bufferSize="1000" flushTimeout="2000">
+     <target xsi:type="Seq" serverUrl="http://localhost:5341" apiKey="" />
+   </target>
+</targets>
+<rules>
+  <logger name="*" minlevel="Info" writeTo="seq" />
+</rules>
 ```
 
 ## Copyright
