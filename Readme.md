@@ -85,13 +85,15 @@ Add to _NLog.config_:
 ```xml
 <targets>
    <target name="seq" xsi:type="BufferingWrapper" bufferSize="1000" flushTimeout="2000">
-     <target xsi:type="Seq" serverUrl="http://localhost:5341" apiKey="" />
+     <target xsi:type="Seq" serverUrl="http://localhost:7142" apiKey="" />
    </target>
 </targets>
 <rules>
   <logger name="*" minlevel="Info" writeTo="seq" />
 </rules>
 ```
+
+For log into file see [doc/FileLogging.md](doc/FileLogging.md).
 
 ## Copyright
 Copyright (c) 2022 harrison314
