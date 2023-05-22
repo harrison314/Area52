@@ -80,7 +80,7 @@ Example configs for logging into files (and reading files using `Area52.Ufo` or 
 		<attribute name="@x" layout="${exception:format=tostring}" />
 		<attribute name="@i" layout="${event-properties:item=EventId}" />
 		<attribute name="Application" layout="Area52App" />
-		<attribute name="MachineNmae" layout="${machinename}" />
+		<attribute name="MachineName" layout="${machinename}" />
 		<attribute name="ProcessId" layout="${processid}" />
         <attribute name="AppVersion" layout="${assembly-version}" />
         <attribute name="SourceContext" layout="${logger}" />
