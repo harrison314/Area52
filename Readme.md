@@ -38,7 +38,6 @@ For build run in powershell:
 .\build.ps1 --Configuration Release
 ```
 
-
 ## Future work
 - [ ] More efective read CLEF log from request
 - [ ] Autehntification
@@ -52,6 +51,7 @@ For build run in powershell:
 - [x] Implements healthchecks
 - [x] Try implement using MongoDb
 - [x] Dashboard
+- [ ] Local query history (button for clear query)
 
 ## Getting logs into Area 52
 It is possible to use libraries for SEQ.
@@ -96,4 +96,4 @@ Add to _NLog.config_:
 For log into file see [doc/FileLogging.md](doc/FileLogging.md).
 
 ## Copyright
-Copyright (c) 2022 harrison314
+Copyright (c) 2023 harrison314
