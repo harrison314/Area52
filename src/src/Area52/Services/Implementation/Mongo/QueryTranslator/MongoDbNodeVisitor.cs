@@ -232,7 +232,7 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
             (_, _) => new BsonDocument("$or", new BsonArray() { leftCtx.Value, rightCtx.Value }),
         };
 
-        this.ctxStack.Push(new BsonCtxNode(expression, QueryNodeType.And));
+        this.ctxStack.Push(new BsonCtxNode(expression, QueryNodeType.Or));
     }
 
     protected override void VisitInternal(BetweenNode node)
