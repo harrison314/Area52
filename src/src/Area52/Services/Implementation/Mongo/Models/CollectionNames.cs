@@ -14,4 +14,6 @@ public static class CollectionNames
     public const string MongoTimeSeriesDefinition = "TimeSeriesDefinition";
     public const string MongoTimeSeriesItems = "TimeSeriesItems";
     public const string MongoUserPrefernce = "UserPrefernce";
+    public const string MongoApiKeySettingsModel = "ApiKeySettingsModel";
+    public const string MongoApiKeyModel = "ApiKeyModel";
 }

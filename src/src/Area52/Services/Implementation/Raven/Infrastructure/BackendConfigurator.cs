@@ -79,6 +79,7 @@ public class BackendConfigurator : IBackendConfigurator
         }
 
         services.AddSingleton<Contracts.IUserPrefernceServices, UserPrefernceServices>();
+        services.AddSingleton<Contracts.IApiKeyServices, ApiKeyServices>();
 
         services.AddSingleton<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
     }

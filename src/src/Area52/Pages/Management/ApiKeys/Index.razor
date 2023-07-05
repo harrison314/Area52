@@ -1,0 +1,180 @@
+﻿@page "/Management/ApiKeys"
+@using Area52.Shared.ForManagement
+@using Area52.Services.Contracts
+@inject IApiKeyServices ApiKeyServices
+@inject Microsoft.JSInterop.IJSRuntime JsRuntime
+@inject IBlazorStrap BlazorStrap
+
+<PageTitle>Api Keys</PageTitle>
+
+<LeftMenu Title="Api Keys">
+
+    @if (this.settings == null || this.keys == null)
+    {
+        <LoadingIndicator />
+    }
+    else
+    {
+        <div class="row">
+            <div class="col">
+                <h2>Settings</h2>
+
+                <div>
+                    @if (this.settings.IsEnabled)
+                    {
+                        <p class="float-start">Check Api keys in http input is enabled.</p>
+                        <button type="button" class="btn btn-outline-danger btn-sm float-end" @onclick="DisableApiKeys">
+                            <span class="fa fa-check-square-o fa-fw"></span> Disable Api keys
+                        </button>
+                    }
+                    else
+                    {
+                        <p class="float-start">Check Api keys in http input is disabled (this settings accept all request).</p>
+                        <button type="button" class="btn btn-outline-primary btn-sm float-end" @onclick="EnableApiKeys">
+                            <span class="fa fa-square-o fa-fw"></span> Enable Api keys
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>Keys</h2>
+                <p>Api keys, in input use as HTTP header <code>X-Seq-ApiKey</code>.</p>
+
+                <table class="table table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Key</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ApiKeyData data in this.keys)
+                        {
+                            <tr @key="data.Id">
+                                <td>@data.Name</td>
+                                <td>@data.Key</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="@(_=>this.CopyKey(data))">
+                                        <span class="fa fa-copy"></span>
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary"
+                                    @onclick="@(e=>this.DeleteKey(data))">
+                                        <span class="fa fa-remove"></span>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+                <div class="row g-3 align-items-center">
+
+                    <div class="col-3">
+                        <input type="text" class="form-control" autocomplete="off" placeholder="Name" @bind="this.name" />
+                    </div>
+                    <div class="col-8">
+                        <input type="text" class="form-control" autocomplete="off" placeholder="Key or empty field" @bind="this.key" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="button"
+                                class="btn btn-sm btn-success"
+                        @onclick="this.StoreNewApiKey">
+                            <span class="fa fa-save"></span>
+                            Store
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+
+</LeftMenu>
+
+@code {
+    private ApiKeySettings? settings = null;
+    private IReadOnlyList<ApiKeyData>? keys = null;
+
+    private string name = string.Empty;
+    private string key = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Yield();
+        this.settings = await this.ApiKeyServices.GetSettings(default);
+        this.keys = await this.ApiKeyServices.ListApiKeys(default);
+    }
+
+    private async Task DisableApiKeys()
+    {
+        this.settings = null;
+        await Task.Yield();
+
+        await this.ApiKeyServices.StoreSettings(new ApiKeySettings(false), default);
+        this.settings = await this.ApiKeyServices.GetSettings(default);
+    }
+
+    private async Task EnableApiKeys()
+    {
+        this.settings = null;
+        await Task.Yield();
+
+        await this.ApiKeyServices.StoreSettings(new ApiKeySettings(true), default);
+        this.settings = await this.ApiKeyServices.GetSettings(default);
+    }
+
+    private async Task CopyKey(ApiKeyData data)
+    {
+        await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", data.Key);
+        this.BlazorStrap.Toaster.Add("Copy", $"Copy key {data.Name}.", o =>
+        {
+            o.CloseAfter = 1000;
+            o.Color = BSColor.Info;
+            o.Toast = Toast.Default;
+        });
+    }
+
+    private async Task DeleteKey(ApiKeyData data)
+    {
+        this.keys = null;
+        await Task.Yield();
+
+        await this.ApiKeyServices.Delete(data.Id, default);
+        this.keys = await this.ApiKeyServices.ListApiKeys(default);
+    }
+
+    public async Task StoreNewApiKey()
+    {
+        if (!this.IsDataValid())
+        {
+            return;
+        }
+
+        this.keys = null;
+        await Task.Yield();
+
+        _ = await this.ApiKeyServices.Create(this.name.Trim(), this.key?.Trim(), default);
+
+        this.name = string.Empty;
+        this.key = string.Empty;
+        this.keys = await this.ApiKeyServices.ListApiKeys(default);
+    }
+
+    private bool IsDataValid()
+    {
+        if (string.IsNullOrWhiteSpace(this.name))
+        {
+            return false;
+        }
+
+        return true;
+    }
+}

@@ -44,6 +44,7 @@ namespace Area52
             builder.Services.AddServerSideBlazor();
             builder.Services.AddBlazorStrap();
 
+            builder.Services.AddMemoryCache();
 
             if (featureManagement.IsFeatureEnabled(FeatureNames.BackgroundProcessing))
             {

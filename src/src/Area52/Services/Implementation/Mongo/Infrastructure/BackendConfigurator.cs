@@ -61,6 +61,7 @@ public class BackendConfigurator : IBackendConfigurator
 
         services.AddTransient<Contracts.Statistics.IFastStatisticsServices>(this.RegisterCachedFastStatisticServices);
         services.AddTransient<Contracts.IUserPrefernceServices, UserPrefernceServices>();
+        services.AddTransient<Contracts.IApiKeyServices, ApiKeyServices>();
     }
 
     public void AddHealthChecks(IHealthChecksBuilder healthChecksBuilder)

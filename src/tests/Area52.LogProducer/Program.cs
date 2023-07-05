@@ -12,7 +12,7 @@ public class Program
 
         Log.Logger = new LoggerConfiguration()
            .MinimumLevel.Verbose()
-           .WriteTo.Seq("https://localhost:7142/")
+           .WriteTo.Seq("https://localhost:7142/", apiKey: null)
            //.WriteTo.UdpSyslog("127.0.0.1", 514, format: Serilog.Sinks.Syslog.SyslogFormat.RFC5424,facility: Serilog.Sinks.Syslog.Facility.Local4)
            .CreateLogger();
 

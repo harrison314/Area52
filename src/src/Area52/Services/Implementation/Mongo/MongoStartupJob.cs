@@ -171,5 +171,9 @@ public class MongoStartupJob : IStartupJob
                Background = false,
                Name = "MongoUserPrefernce_IX"
            }));
+
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoApiKeySettingsModel, null, cancellationToken);
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoApiKeyModel, null, cancellationToken);
+
     }
 }
