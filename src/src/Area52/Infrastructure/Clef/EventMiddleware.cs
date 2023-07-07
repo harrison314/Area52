@@ -53,9 +53,7 @@ public class EventMiddleware
                         if (encodedLen >= buffer.Length)
                         {
                             ArrayPool<byte>.Shared.Return(buffer, false);
-                            int reuested = Encoding.UTF8.GetByteCount(line);
-                            buffer = ArrayPool<byte>.Shared.Rent(reuested);
-                            encodedLen = Encoding.UTF8.GetBytes(line, buffer); //TODO: remove
+                            buffer = ArrayPool<byte>.Shared.Rent(encodedLen);
                         }
 
                         encodedLen = Encoding.UTF8.GetBytes(line, buffer);
