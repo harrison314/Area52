@@ -43,7 +43,7 @@ For build run in powershell:
 - [ ] Autehntification
   - [x] Predefined queries
   - [x] Distributed data protection provider
-  - [ ] API keys for log input with management
+  - [x] API keys for log input with management
 - [ ] Graph and alerts as subsriptions
   - [x] Time series graphs
   - [ ] Alerts
