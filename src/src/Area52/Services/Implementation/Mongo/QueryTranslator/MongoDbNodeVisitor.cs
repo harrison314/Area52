@@ -43,12 +43,19 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
             PropertyNode propertyNode = (PropertyNode)node.Left;
             StringValueNode strNode = (StringValueNode)node.Right;
 
-            string? specialName = strNode.Value switch
+            if (propertyNode.Name == nameof(LogEntity.Level))
+            {
+                BsonDocument levelExperssion = new BsonDocument("LevelLower", new BsonDocument("$eq", strNode.Value.ToLowerInvariant()));
+                this.ctxStack.Push(new BsonCtxNode(levelExperssion, QueryNodeType.Other));
+                return;
+            }
+
+            string? specialName = propertyNode.Name switch
             {
                 nameof(LogEntity.Timestamp) => "TimestampIndex.Sortable",
                 nameof(LogEntity.Message) => "Message",
                 nameof(LogEntity.Exception) => "Exception",
-                nameof(LogEntity.Level) => "Level",
+                //nameof(LogEntity.Level) => "Level",
                 nameof(LogEntity.MessageTemplate) => "MessageTemplate",
                 _ => null
             };

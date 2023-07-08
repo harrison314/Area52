@@ -114,6 +114,17 @@ public class MongoStartupJob : IStartupJob
         await collection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoLogEntity>(
             new BsonDocumentIndexKeysDefinition<Models.MongoLogEntity>(new MongoDB.Bson.BsonDocument()
             {
+                {"LevelLower",1 },
+            }),
+            new CreateIndexOptions()
+            {
+                Background = true,
+                Name = "LogEntitys_LevelLower_IX"
+            }));
+
+        await collection.Indexes.CreateOneAsync(new CreateIndexModel<Models.MongoLogEntity>(
+            new BsonDocumentIndexKeysDefinition<Models.MongoLogEntity>(new MongoDB.Bson.BsonDocument()
+            {
                 {"LevelNumeric",1 },
             }),
             new CreateIndexOptions()
@@ -151,7 +162,7 @@ public class MongoStartupJob : IStartupJob
                Name = "MongoTimeSerieDefinition_IX"
            }));
 
-        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSeriesItems, 
+        await this.mongoDatabase.CreateCollectionAsync(CollectionNames.MongoTimeSeriesItems,
             new CreateCollectionOptions<Models.MongoTimeSerieItem>()
             {
                 TimeSeriesOptions = new TimeSeriesOptions(nameof(Models.MongoTimeSerieItem.Timestamp), new Optional<string>(nameof(Models.MongoTimeSerieItem.Meta))),

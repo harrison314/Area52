@@ -62,6 +62,12 @@ public class MongoLogEntity
         set;
     }
 
+    public string LevelLower
+    {
+        get;
+        set;
+    }
+
     public int LevelNumeric
     {
         get;

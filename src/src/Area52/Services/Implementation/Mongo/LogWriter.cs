@@ -46,6 +46,7 @@ public class LogWriter : ILogWriter
                                    entity.Message,
                                    entity.Exception),
                 Level = entity.Level,
+                LevelLower = entity.Level.ToLowerInvariant(),
                 LevelNumeric = entity.LevelNumeric,
                 Message = entity.Message,
                 MessageTemplate = entity.MessageTemplate,
