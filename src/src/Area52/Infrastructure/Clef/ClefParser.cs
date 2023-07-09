@@ -83,6 +83,14 @@ public static class ClefParser
                             (LogEntityProperty newProp, bool addProperty) = GetInnerProperty(propName, ref jsonReader);
                             if (addProperty)
                             {
+                                if (arrayIndex >= tmpArray.Length)
+                                {
+                                    LogEntityProperty[] newArray = ArrayPool<LogEntityProperty>.Shared.Rent(tmpArray.Length + 32);
+                                    tmpArray.CopyTo(newArray.AsSpan());
+                                    ArrayPool<LogEntityProperty>.Shared.Return(tmpArray, true);
+                                    tmpArray = newArray;
+                                }
+
                                 tmpArray[arrayIndex] = newProp;
                                 arrayIndex++;
                             }
@@ -182,14 +190,14 @@ public static class ClefParser
             return;
         }
 
-        LogLevel level = char.ToLower(entry.Level[0]) switch
+        LogLevel level = entry.Level[0] switch
         {
-            'd' => LogLevel.Debug,
-            'v' or 't' => LogLevel.Trace,
-            'e' => LogLevel.Error,
-            'i' => LogLevel.Information,
-            'w' => LogLevel.Warning,
-            'f' or 'c' => LogLevel.Critical,
+            'd' or 'D' => LogLevel.Debug,
+            'v' or 't' or 'V' or 'T' => LogLevel.Trace,
+            'e' or 'E' => LogLevel.Error,
+            'i' or 'I' => LogLevel.Information,
+            'w' or 'W' => LogLevel.Warning,
+            'f' or 'c' or 'F' or 'C' => LogLevel.Critical,
             _ => LogLevel.None
         };
 
