@@ -78,7 +78,7 @@ Example configs for logging into files (and reading files using `Area52.Ufo` or 
 		<attribute name="@mt" layout="${message:raw=true}" />
 		<attribute name="@m" layout="${message}" />
 		<attribute name="@x" layout="${exception:format=tostring}" />
-		<attribute name="@i" layout="${event-properties:item=EventId}" />
+		<attribute name="@i" layout="${event-properties:item=EventId}" encode="false" />
 		<attribute name="Application" layout="Area52App" />
 		<attribute name="MachineName" layout="${machinename}" />
 		<attribute name="ProcessId" layout="${processid}" />
@@ -88,3 +88,5 @@ Example configs for logging into files (and reading files using `Area52.Ufo` or 
 	</layout>
 </target>
 ```
+
+For number attributes use `encode="false"`.
