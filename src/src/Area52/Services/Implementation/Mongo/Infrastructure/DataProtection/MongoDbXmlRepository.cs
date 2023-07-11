@@ -43,7 +43,7 @@ public class MongoDbXmlRepository : IXmlRepository
 
         DateTime utcNow = DateTime.UtcNow;
         IMongoCollection<DataProtectionKey> collection = this.mongoDatabase.GetCollection<DataProtectionKey>(CollectionNames.DataProtectionKeys);
-        List<string>? result = collection.AsQueryable().Where(t => t.Expiration == null || t.Expiration < utcNow).Select(t => t.Xml).ToList();
+        List<string> result = collection.AsQueryable().Where(t => t.Expiration == null || t.Expiration > utcNow).Select(t => t.Xml).ToList();
        
         List<XElement> xmlList = new List<XElement>(result.Count);
         xmlList.AddRange(result.Select(t => XElement.Parse(t)));
