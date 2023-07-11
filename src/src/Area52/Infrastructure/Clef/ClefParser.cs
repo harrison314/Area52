@@ -53,9 +53,14 @@ public static class ClefParser
                             break;
 
                         case "@i":
-                            entry.EventId = (jsonReader.TokenType == System.Text.Json.JsonTokenType.Null)
-                                ? default
-                                : jsonReader.GetInt64();
+                            entry.EventId = jsonReader.TokenType switch
+                            {
+                                System.Text.Json.JsonTokenType.Null => null,
+                                System.Text.Json.JsonTokenType.String => jsonReader.GetString(),
+                                System.Text.Json.JsonTokenType.Number => jsonReader.GetInt64().ToString(),
+                                _ => throw new InvalidProgramException("Unsuported type of property @i. Must by string or number.") //TODO: other exception
+                            };
+
                             break;
 
                         case "@r":
@@ -147,10 +152,10 @@ public static class ClefParser
         writer.WriteStringValue(entity.Level);
         await writer.FlushAsync();
 
-        if (entity.EventId.HasValue)
+        if (entity.EventId != null)
         {
             writer.WritePropertyName("@i");
-            writer.WriteNumberValue(entity.EventId.Value);
+            writer.WriteStringValue(entity.EventId);
         }
 
         if (entity.Exception != null)
@@ -173,7 +178,7 @@ public static class ClefParser
             }
             else
             {
-                throw new InvalidProgramException("LogEntityProperty has invalid value.");
+                throw new InvalidProgramException("LogEntityProperty has invalid value."); //TODO: other exception
             }
         }
 

@@ -24,6 +24,8 @@ public class ClefParserTests
     [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':[1,2,3]}")]
     [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{}}")]
     [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{'foo':'bar'}}")]
+    [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{'foo':'bar'},'@i':145}")]
+    [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{'foo':'bar'},'@i':'a145'}")]
     public void ClefParser_Read_Success(string logLine)
     {
         string jsonLine = logLine.Replace('\'', '"');
@@ -38,7 +40,7 @@ public class ClefParserTests
     {
         Services.Contracts.LogEntity entry = new Services.Contracts.LogEntity()
         {
-            EventId = 4589,
+            EventId = "4589",
             Exception = "Exception",
             Level = "Info",
             LevelNumeric = 3,

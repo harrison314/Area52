@@ -43,7 +43,8 @@ public class ClefObject
     }
 
     [JsonPropertyName("@i")]
-    public long? EventId
+    [JsonConverter(typeof(NumberOrTextConvertor))]
+    public string? EventId
     {
         get;
         set;

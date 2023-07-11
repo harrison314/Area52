@@ -80,7 +80,7 @@ public class MongoLogEntity
         set;
     }
 
-    public long? EventId
+    public string? EventId
     {
         get;
         set;

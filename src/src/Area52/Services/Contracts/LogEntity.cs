@@ -38,7 +38,7 @@ public class LogEntity
         set;
     }
 
-    public long? EventId
+    public string? EventId
     {
         get;
         set;
