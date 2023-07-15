@@ -90,7 +90,6 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
             }
         }
 
-
         return 0;
     }
 

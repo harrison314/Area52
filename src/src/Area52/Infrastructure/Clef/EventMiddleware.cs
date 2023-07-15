@@ -1,7 +1,11 @@
 ﻿using Area52.Services.Configuration;
 using Area52.Services.Contracts;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Buffers;
+using System.IO.Pipelines;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Area52.Infrastructure.Clef;
@@ -36,57 +40,109 @@ public class EventMiddleware
                 return;
             }
 
-            string? line = null;
             int? maxErrors = this.area52Setup.Value.MaxErrorInClefBatch;
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
+            BufferBuilder buffer = new BufferBuilder(2048);
             try
             {
-                // TODO: Optimize
-                using TextReader tr = new StreamReader(httpContext.Request.Body, System.Text.Encoding.UTF8);
-                List<LogEntity> list = new List<LogEntity>();
                 int errorCounter = 0;
-                while ((line = await tr.ReadLineAsync()) != null)
+                var reader = httpContext.Request.BodyReader;
+                List<LogEntity> list = new List<LogEntity>();
+                while (!httpContext.RequestAborted.IsCancellationRequested)
                 {
-                    try
-                    {
-                        int encodedLen = Encoding.UTF8.GetByteCount(line);
-                        if (encodedLen >= buffer.Length)
-                        {
-                            ArrayPool<byte>.Shared.Return(buffer, false);
-                            buffer = ArrayPool<byte>.Shared.Rent(encodedLen);
-                        }
+                    ReadResult result = await reader.ReadAsync(httpContext.RequestAborted);
+                    ReadOnlySequence<byte> resultBuffer = result.Buffer;
 
-                        encodedLen = Encoding.UTF8.GetBytes(line, buffer);
-                        list.Add(ClefParser.Read(buffer.AsSpan(0, encodedLen)));
+                    while (this.TryReadLine(ref resultBuffer, ref buffer))
+                    {
+                        if (!buffer.IsEmpty())
+                        {
+                            this.ParseLine(list, maxErrors, ref buffer, ref errorCounter);
+                        }
                     }
-                    catch (InvalidOperationException ex)
-                    {
-                        this.logger.LogWarning(ex, "Problem with single line {line}", line);
-                        errorCounter++;
 
-                        if (maxErrors.HasValue && errorCounter > maxErrors.Value)
+                    reader.AdvanceTo(result.Buffer.End);
+
+                    if (result.IsCompleted)
+                    {
+                        if (!buffer.IsEmpty())
                         {
-                            this.logger.LogDebug("Error in this batch more than maximum limit {maximumLimit}.", maxErrors.Value);
-                            throw;
+                            this.ParseLine(list, maxErrors, ref buffer, ref errorCounter);
                         }
+
+                        break;
                     }
                 }
 
+                await reader.CompleteAsync();
+
                 await this.logWriter.Write(list);
+
                 httpContext.Response.StatusCode = 201;
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Problem with line {line}", line);
+                this.logger.LogError(ex, "Problem with line.");
                 httpContext.Response.StatusCode = 500;
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(buffer, false);
+                buffer.Dispose();
             }
             return;
         }
 
         await this.next(httpContext);
+    }
+
+    private void ParseLine(List<LogEntity> logs, int? maxErrors, ref BufferBuilder bufferBuilder, ref int errorCounter)
+    {
+        try
+        {
+            logs.Add(ClefParser.Read(bufferBuilder.AsSpan()));
+            bufferBuilder.Clear();
+        }
+        catch (InvalidOperationException ex)
+        {
+            this.logger.LogWarning(ex, "Problem with single line {line}", this.EncodeLastLine(ref bufferBuilder));
+            bufferBuilder.Clear();
+            errorCounter++;
+
+            if (maxErrors.HasValue && errorCounter > maxErrors.Value)
+            {
+                this.logger.LogDebug("Error in this batch more than maximum limit {maximumLimit}.", maxErrors.Value);
+                throw;
+            }
+        }
+    }
+
+    private string EncodeLastLine(ref BufferBuilder bufferBuilder)
+    {
+        try
+        {
+            return Encoding.UTF8.GetString(bufferBuilder.AsSpan());
+        }
+        catch (Exception innerEx)
+        {
+            this.logger.LogDebug(innerEx, "Error during tranlate line to string.");
+            return Convert.ToBase64String(bufferBuilder.AsSpan());
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private bool TryReadLine(ref ReadOnlySequence<byte> buffer, ref BufferBuilder bufferBuilder)
+    {
+        var reader = new SequenceReader<byte>(buffer);
+        if (reader.TryReadTo(sequence: out var putBuffer, BinaryHelper.NewLine))
+        {
+            bufferBuilder.Append(ref putBuffer);
+            buffer = buffer.Slice(reader.Position);
+
+            return true;
+        }
+        else
+        {
+            bufferBuilder.Append(ref buffer);
+            return false;
+        }
     }
 }
