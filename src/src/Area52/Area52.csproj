@@ -23,14 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.17.1" />
-    <PackageReference Include="MongoDB.Driver.GridFS" Version="2.17.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
+    <PackageReference Include="MongoDB.Driver.GridFS" Version="2.20.0" />
     <PackageReference Include="Piglet" Version="1.5.0" />
-    <PackageReference Include="RavenDB.Client" Version="5.4.2" />
+    <PackageReference Include="RavenDB.Client" Version="5.4.107" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="Blazor-ApexCharts" Version="0.9.13-beta" />
-    <PackageReference Include="BlazorStrap" Version="5.0.106" />
+    <PackageReference Include="Blazor-ApexCharts" Version="0.9.21-beta" />
+    <PackageReference Include="BlazorStrap" Version="5.1.102.51923" />
+    <PackageReference Include="BlazorStrap.V5" Version="5.1.102.51723" />
   </ItemGroup>
 
   <ItemGroup>
