@@ -8,7 +8,7 @@ namespace Area52.Services.Configuration;
 
 public class Area52Setup
 {
-    public int MaxLogShow
+    public LogViewSetup LogView
     {
         get;
         init;
@@ -28,6 +28,7 @@ public class Area52Setup
 
     public Area52Setup()
     {
+        this.LogView = null!;
         this.Features = null!;
     }
 }

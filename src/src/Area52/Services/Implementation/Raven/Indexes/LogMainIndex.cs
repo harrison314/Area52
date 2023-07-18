@@ -30,6 +30,12 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
             init;
         }
 
+        public DateTime TimestampDateOnly
+        {
+            get;
+            set;
+        }
+
         public string Message
         {
             get;
@@ -70,6 +76,7 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                                //Level = log.Level,
                                LevelNumeric = log.LevelNumeric,
                                Timestamp = log.Timestamp,
+                               TimestampDateOnly = log.Timestamp.Date.Date,
                                Message = log.Message,
                                Exception = log.Exception,
 

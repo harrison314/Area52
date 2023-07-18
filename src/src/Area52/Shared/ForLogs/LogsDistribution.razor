@@ -1,0 +1,120 @@
+﻿@using ApexCharts;
+@using Area52.Services.Contracts;
+@inject ILogDistributionServices LogDistributionServices
+
+<div class="card border-primary mb-3">
+    <div class="card-content">
+        <div class="card-body">
+
+            @if (this.isInLoading)
+            {
+                <h6>Logs distribution</h6>
+                <LoadingIndicator />
+            }
+
+            @if (this.items != null)
+            {
+                <ApexChart TItem="LogsDistributionItem"
+                           Title=""
+                           Options="@options"
+                           Height="250"
+                           OnDataPointSelection="@this.DataPointSelected"
+                @ref="chart">
+
+                    <ApexPointSeries TItem="LogsDistributionItem"
+                                     Items="@(this.items!)"
+                                     Name="Count"
+                                     SeriesType="SeriesType.Bar"
+                                     XValue="@(e => e.Time)"
+                                     YValue="@(e => e.Count)"
+                                     OrderBy="e=>e.X"
+                                     Stroke="@(new SeriesStroke() { Width = 1, Color = "#0d6efd" })" />
+                </ApexChart>
+            }
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isInLoading = true;
+    private IReadOnlyList<LogsDistributionItem>? items = null;
+    private TimeSpan itemTimeInteval = TimeSpan.Zero;
+    private ApexChart<LogsDistributionItem> chart = null!;
+    private ApexChartOptions<LogsDistributionItem> options = new ApexChartOptions<LogsDistributionItem>()
+        {
+            Chart = new Chart()
+            {
+                Zoom = new Zoom()
+                {
+                    Enabled = false
+                },
+                Animations = new Animations()
+                {
+                    Easing = Easing.Linear,
+                    DynamicAnimation = new DynamicAnimation()
+                    {
+                        Enabled = false
+                    }
+                }
+            },
+            Xaxis = new XAxis()
+            {
+                Type = XAxisType.Datetime,
+                Labels = new XAxisLabels()
+                {
+                    DatetimeFormatter = new DatetimeFormatter()
+                    {
+                        Year = "yyyy",
+                        Month = "MMM yyyy",
+                        Day = "dd MMM yyyy",
+                        Hour = "HH:mm",
+                        Minute = "mm"
+                    },
+                    Show = true,
+                    Rotate = 45.0,
+                    RotateAlways = false
+                }
+            }
+        };
+
+    [Parameter, EditorRequired]
+    public string Query
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public SearchControlContext Context
+    {
+        get;
+        set;
+    } = null!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.isInLoading = true;
+        this.items = null;
+        await Task.Yield();
+        try
+        {
+            Services.Contracts.LogsDistribution logsDistributionData = await LogDistributionServices.GetLogsDistribution(this.Query);
+            this.items = logsDistributionData.Items;
+            this.itemTimeInteval = logsDistributionData.SliceInterval;
+        }
+        finally
+        {
+            this.isInLoading = false;
+        }
+    }
+
+    private Task DataPointSelected(SelectedData<LogsDistributionItem> e)
+    {
+        DateTime startTime = (DateTime)e.DataPoint.X;
+        TimeSpan halfInterval = this.itemTimeInteval / 2;
+
+        this.Context.AddToQuery(new DateTimeOffset(startTime.Add(halfInterval)), (int)halfInterval.TotalSeconds, true);
+        return Task.CompletedTask;
+    }
+}

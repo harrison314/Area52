@@ -70,6 +70,7 @@ public class BackendConfigurator : IBackendConfigurator
         services.AddSingleton<Contracts.ILogReader, LogReader>();
         services.AddSingleton<Contracts.ILogWriter, LogWriter>();
         services.AddSingleton<Contracts.ILogManager, LogManager>();
+        services.AddSingleton<Contracts.ILogDistributionServices, LogDistributionServices>();
         services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
 
         if (this.featureManagement.IsFeatureEnabled(FeatureNames.TimeSeries))

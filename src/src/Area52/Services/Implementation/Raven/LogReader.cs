@@ -53,7 +53,7 @@ public class LogReader : ILogReader
             IAsyncRawDocumentQuery<LogInfo> request = session.Advanced.AsyncRawQuery<LogInfo>(reqlQuery.Query);
             reqlQuery.SetParameters(request);
             request.NoTracking();
-            request.Take(this.area52Setup.Value.MaxLogShow);
+            request.Take(this.area52Setup.Value.LogView.MaxLogShow);
             request.Statistics(out QueryStatistics stats);
             List<LogInfo> result = await request.ToListAsync();
 

@@ -63,7 +63,7 @@ public class LogReader : ILogReader
             IMongoCollection<MongoLogEntity> collection = this.mongoDatabase.GetCollection<MongoLogEntity>(CollectionNames.LogEntities);
             using var cursor = await collection.FindAsync<LogInfo>(findCriteria, new FindOptions<MongoLogEntity, LogInfo>()
             {
-                Limit = this.area52Setup.Value.MaxLogShow,
+                Limit = this.area52Setup.Value.LogView.MaxLogShow,
                 Sort = new BsonDocument("TimestampIndex.Utc", -1),
                 Projection = new BsonDocument()
             {

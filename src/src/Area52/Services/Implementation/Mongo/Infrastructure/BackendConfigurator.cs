@@ -50,6 +50,7 @@ public class BackendConfigurator : IBackendConfigurator
     {
         services.AddSingleton<Contracts.ILogWriter, LogWriter>();
         services.AddSingleton<Contracts.ILogReader, LogReader>();
+        services.AddSingleton<Contracts.ILogDistributionServices, LogDistributionServices>();
         services.AddTransient<Contracts.ILogManager, LogManager>();
         services.AddTransient<Contracts.IDistributedLocker, MongoDbDistributedLocker>();
 

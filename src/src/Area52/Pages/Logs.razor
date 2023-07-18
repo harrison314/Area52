@@ -13,12 +13,13 @@
         <LogQueryInput @bind-Value="query" IsReadonly="@(timer != null)" OnSearch="@(_=>this.ReadLogs(false))" />
 
         <div class="row mb-3">
-            <div class="col-5">
+            <div class="col-6">
                 <div class="input-group">
-                    <button class="btn btn-outline-primary" @onclick="ChangeTail">
+                    <button class="btn btn-outline-primary" @onclick="ChangeTail" type="button">
                         @if (timer != null)
                         {
-                            <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+                            @*<div class="spinner-border spinner-border-sm text-info" role="status"></div>*@
+                            <span class="fa fa-refresh fa-spin fa-fw"></span>
                         }
                         else
                         {
@@ -32,12 +33,24 @@
                         <span class="fa fa-download fa-fw"></span>
                     </a>
 
+                    <button class="btn btn-outline-primary ms-1" type="button" disabled="@(timer != null || infos == null)" @onclick="@(_ => this.showDistribution =! this.showDistribution)">
+                        @if (this.showDistribution)
+                        {
+                            <span class="fa fa-bar-chart fa-fw fa-inverse bg-primary" aria-hidden="true"></span>
+                        }
+                        else
+                        {
+                            <span class="fa fa-bar-chart fa-fw" aria-hidden="true"></span>
+                        }
+                        <span class="d-none d-sm-inline">Distribution</span>
+                    </button>
+
                     <div class="ms-1">
                         <PredefinedQueryBtn Context="@this.context" />
                     </div>
                 </div>
             </div>
-            <div class="col-2">
+            <div class="col-1">
             </div>
 
             <div class="col-5 small">
@@ -54,13 +67,23 @@
             @errorMessage
         </div>
 
-        <hr />
+        
     </div>
 </div>
 
+@if (this.showDistribution)
+{
+    <div class="row">
+        <div class="col">
+            <LogsDistribution Query="@this.query" Context="@this.context" />
+        </div>
+    </div>
+}
 
 <div class="row">
     <div class="col">
+        <hr class="mt-0" />
+
         @if (this.isInLoading && timer == null)
         {
             <LoadingIndicator />
@@ -90,6 +113,8 @@
     private string queryTime = string.Empty;
     private long totalCount = 0;
     private bool isInLoading = false;
+    private bool showDistribution = false;
+    private string queryDistribution = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,6 +125,7 @@
     private async Task ReadLogs(bool clearBefore)
     {
         this.isInLoading = true;
+        this.showDistribution = false;
         try
         {
             this.errorMessage = string.Empty;
@@ -125,6 +151,8 @@
             {
                 this.queryTime = $"{queryDuration.TotalMilliseconds:N2} ms";
             }
+
+            this.queryDistribution = this.query;
         }
         catch (Exception ex)
         {
@@ -170,6 +198,7 @@
         if (this.timer == null)
         {
             this.timer = new Timer(_ => ReadLogs(false).ContinueWith(_ => this.InvokeAsync(() => this.StateHasChanged())), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+            this.showDistribution = false;
         }
         else
         {
