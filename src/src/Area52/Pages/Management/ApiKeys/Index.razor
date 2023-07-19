@@ -99,12 +99,16 @@
 
 </LeftMenu>
 
+<ConfirmDialog @ref="confirmDialog" />
+
 @code {
+    private ConfirmDialog confirmDialog = default!;
     private ApiKeySettings? settings = null;
     private IReadOnlyList<ApiKeyData>? keys = null;
 
     private string name = string.Empty;
     private string key = string.Empty;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,20 +119,30 @@
 
     private async Task DisableApiKeys()
     {
-        this.settings = null;
-        await Task.Yield();
+        bool? confirmed = await this.confirmDialog.Confirm("Disable API keys", "Do you really want to disable the use of API keys?");
 
-        await this.ApiKeyServices.StoreSettings(new ApiKeySettings(false), default);
-        this.settings = await this.ApiKeyServices.GetSettings(default);
+        if (confirmed.HasValue && confirmed.Value)
+        {
+            this.settings = null;
+            await Task.Yield();
+
+            await this.ApiKeyServices.StoreSettings(new ApiKeySettings(false), default);
+            this.settings = await this.ApiKeyServices.GetSettings(default);
+        }
     }
 
     private async Task EnableApiKeys()
     {
-        this.settings = null;
-        await Task.Yield();
+        bool? confirmed = await this.confirmDialog.Confirm("Enable API keys", "Do you really want to enable the use of API keys?");
 
-        await this.ApiKeyServices.StoreSettings(new ApiKeySettings(true), default);
-        this.settings = await this.ApiKeyServices.GetSettings(default);
+        if (confirmed.HasValue && confirmed.Value)
+        {
+            this.settings = null;
+            await Task.Yield();
+
+            await this.ApiKeyServices.StoreSettings(new ApiKeySettings(true), default);
+            this.settings = await this.ApiKeyServices.GetSettings(default);
+        }
     }
 
     private async Task CopyKey(ApiKeyData data)
@@ -144,11 +158,16 @@
 
     private async Task DeleteKey(ApiKeyData data)
     {
-        this.keys = null;
-        await Task.Yield();
+        bool? confirmed = await this.confirmDialog.Confirm("Delete API key", $"Are you sure you want to delete the {data.Name} API key?");
 
-        await this.ApiKeyServices.Delete(data.Id, default);
-        this.keys = await this.ApiKeyServices.ListApiKeys(default);
+        if (confirmed.HasValue && confirmed.Value)
+        {
+            this.keys = null;
+            await Task.Yield();
+
+            await this.ApiKeyServices.Delete(data.Id, default);
+            this.keys = await this.ApiKeyServices.ListApiKeys(default);
+        }
     }
 
     public async Task StoreNewApiKey()

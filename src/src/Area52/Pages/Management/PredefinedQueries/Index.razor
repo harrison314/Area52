@@ -66,7 +66,10 @@
     }
 </LeftMenu>
 
+<ConfirmDialog @ref="confirmDialog" />
+
 @code {
+    private ConfirmDialog confirmDialog = default!;
     private IReadOnlyList<SturedQuery>? queries = null;
     private string name = string.Empty;
     private string query = string.Empty;
@@ -88,7 +91,7 @@
 
         await this.UserPrefernceServices.SaveQueries(localQueries, default);
 
-        
+
         this.queries = await this.UserPrefernceServices.GetQueries(default);
         this.name = string.Empty;
         this.query = string.Empty;
@@ -96,11 +99,17 @@
 
     private async Task DeleteQuery(int index)
     {
-        List<SturedQuery> localQueries = new List<SturedQuery>(this.queries!);
-        localQueries.RemoveAt(index);
+        string queryName = (this.queries != null) ? this.queries[index].Name : string.Empty;
+        bool? confirmed = await this.confirmDialog.Confirm("Delete query", $"Do you really want to delete query {queryName}?");
 
-        await this.UserPrefernceServices.SaveQueries(localQueries, default);
-        this.queries = await this.UserPrefernceServices.GetQueries(default);
+        if (confirmed.HasValue && confirmed.Value)
+        {
+            List<SturedQuery> localQueries = new List<SturedQuery>(this.queries!);
+            localQueries.RemoveAt(index);
+
+            await this.UserPrefernceServices.SaveQueries(localQueries, default);
+            this.queries = await this.UserPrefernceServices.GetQueries(default);
+        }
     }
 
     private bool IsDataValid()

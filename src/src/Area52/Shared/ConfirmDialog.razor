@@ -1,0 +1,56 @@
+﻿@implements IAsyncDisposable
+
+<BSModal IsStaticBackdrop="false" DataId="modal-dialog" @ref="myModal" OnHide="@(_=>this.SetResult(null))">
+    <Header>
+        <span class="fa fa-question fa-fw" aria-hidden="true"></span>
+        @this.modalTitle
+    </Header>
+    <Content>@this.modalQuestion</Content>
+    <Footer Context="modal">
+        <BSButton MarginStart="Margins.Auto" Color="BSColor.Primary" OnClick="@(_=>this.SetResult(true))">Yes</BSButton>
+        <BSButton Color="BSColor.Secondary" OnClick="@(_=>this.SetResult(false))">No</BSButton>
+    </Footer>
+</BSModal>
+
+@code {
+    private BSModal myModal = default!;
+    private string modalTitle = string.Empty;
+    private string modalQuestion = string.Empty;
+    private TaskCompletionSource<bool?>? tcs = null;
+
+    public async Task<bool?> Confirm(string title, string question)
+    {
+        this.tcs = new TaskCompletionSource<bool?>();
+        try
+        {
+            this.modalTitle = title;
+            this.modalQuestion = question;
+            await this.myModal.ShowAsync();
+
+            return await this.tcs.Task;
+        }
+        finally
+        {
+            this.tcs = null;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        this.tcs?.TrySetResult(null);
+        if (this.myModal.Shown)
+        {
+            await this.myModal.HideAsync();
+        }
+    }
+
+    private async Task SetResult(bool? result)
+    {
+        this.tcs?.TrySetResult(result);
+
+        if (result.HasValue)
+        {
+            await this.myModal.HideAsync();
+        }
+    }
+}
