@@ -5,6 +5,7 @@
 @implements IDisposable
 @inject ILogReader LogReader
 @inject ILogger<Logs> Logger
+@inject NavigationManager Navigation
 
 <PageTitle>Logs</PageTitle>
 
@@ -67,7 +68,7 @@
             @errorMessage
         </div>
 
-        
+
     </div>
 </div>
 
@@ -116,6 +117,14 @@
     private bool showDistribution = false;
     private string queryDistribution = string.Empty;
 
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "q")]
+    public string? Q
+    {
+        get => this.query;
+        set => this.query = value ?? string.Empty;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         context.OnQueryChange += this.Handler;
@@ -152,6 +161,7 @@
                 this.queryTime = $"{queryDuration.TotalMilliseconds:N2} ms";
             }
 
+            this.UpdateBrowserUrl();
             this.queryDistribution = this.query;
         }
         catch (Exception ex)
@@ -210,5 +220,17 @@
     public void Dispose()
     {
         this.timer?.Dispose();
+    }
+
+    private void UpdateBrowserUrl()
+    {
+        if (string.IsNullOrWhiteSpace(this.query))
+        {
+            this.Navigation.NavigateTo("/Logs", false, true);
+        }
+        else
+        {
+            this.Navigation.NavigateTo($"/Logs?q={Uri.EscapeDataString(this.query)}", false, true);
+        }
     }
 }
