@@ -224,13 +224,7 @@
 
     private void UpdateBrowserUrl()
     {
-        if (string.IsNullOrWhiteSpace(this.query))
-        {
-            this.Navigation.NavigateTo("/Logs", false, true);
-        }
-        else
-        {
-            this.Navigation.NavigateTo($"/Logs?q={Uri.EscapeDataString(this.query)}", false, true);
-        }
+        string q = string.IsNullOrWhiteSpace(this.query) ? "/Logs" : $"/Logs?q={Uri.EscapeDataString(this.query)}";
+        this.Navigation.NavigateTo(q, false, false);
     }
 }
