@@ -36,6 +36,7 @@ public class Parser
 
         factor.AddProduction(atomExpr).SetReduceFunction(p => p[0]);
 
+        atomExpr.AddProduction("logid", "(", stringTerminal, ")").SetReduceFunction(p => new LogIdNode((StringValueNode)p[2]));
 
         atomExpr.AddProduction(propertyTerminal, "is", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[2], false));
         atomExpr.AddProduction(propertyTerminal, "==", valueExpr).SetReduceFunction(p => new EqNode(p[0], p[2], false));
@@ -60,8 +61,8 @@ public class Parser
         atomExpr.AddProduction(propertyTerminal, "between", valueExpr, @"and", valueExpr).SetReduceFunction(p => new BetweenNode(p[0], p[2], p[4]));
         atomExpr.AddProduction(stringTerminal).SetReduceFunction(p => new SearchNode(p[0]));
 
-        arrayExpr.AddProduction(arrayExpr, ",", stringTerminal).SetReduceFunction(p => ((ArrayNode)p[0]).Add(p[2]));
-        arrayExpr.AddProduction(stringTerminal).SetReduceFunction(p => new ArrayNode().Add(p[0]));
+        arrayExpr.AddProduction(arrayExpr, ",", valueExpr).SetReduceFunction(p => ((ArrayNode)p[0]).Add(p[2]));
+        arrayExpr.AddProduction(valueExpr).SetReduceFunction(p => new ArrayNode().Add(p[0]));
         arrayExpr.AddProduction().SetReduceFunction(_ => new ArrayNode());
 
 

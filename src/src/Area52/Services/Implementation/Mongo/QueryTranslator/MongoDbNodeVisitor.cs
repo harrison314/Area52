@@ -292,6 +292,14 @@ internal class MongoDbNodeVisitor : AstNodeVisitor
         this.ctxStack.Push(new BsonCtxNode(expression, QueryNodeType.Other));
     }
 
+    protected override void VisitInternal(LogIdNode node)
+    {
+        ObjectId objectId = ObjectId.Parse(node.Id.Value);
+        BsonDocument expression = new BsonDocument("_id", objectId);
+
+        this.ctxStack.Push(new BsonCtxNode(expression, QueryNodeType.Other));
+    }
+
     private void PushExists(PropertyNode node)
     {
         string queryPropertyName = node.Name;

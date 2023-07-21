@@ -42,6 +42,9 @@ internal abstract class AstNodeVisitor
             case InNode inNode:
                 this.VisitInternal(inNode);
                 break;
+            case LogIdNode logIdNode:
+                this.VisitInternal(logIdNode);
+                break;
             case LtNode ltNode:
                 this.VisitInternal(ltNode);
                 break;
@@ -184,5 +187,10 @@ internal abstract class AstNodeVisitor
     protected virtual void VisitInternal(StringValueNode node)
     {
         // NOP
+    }
+
+    protected virtual void VisitInternal(LogIdNode node)
+    {
+        this.Visit(node.Id);
     }
 }

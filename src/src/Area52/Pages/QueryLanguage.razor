@@ -27,11 +27,11 @@
                     <td><code>Property != 'value'</code></td>
                     <td></td>
                 </tr>
-                @*<tr>
+                <tr>
                     <td><code>Property is cs &quot;value&quot;</code></td>
                     <td></td>
                     <td>Case sensitive match.</td>
-                </tr>*@
+                </tr>
                 <tr>
                     <td><code>Property &lt; &quot;value&quot;</code></td>
                     <td><code>Property &lt; 12.52</code></td>
@@ -76,6 +76,21 @@
                     <td><code>Property endsWith &quot;value&quot;</code></td>
                     <td></td>
                     <td></td>
+                </tr>
+                <tr>
+                    <td><code>Property in { &quot;value&quot;, &quot;value2&quot;, &quot;value3&quot; }</code></td>
+                    <td><code>Property is &quot;value&quot; or Property is &quot;value2&quot; or Property is &quot;value3&quot;</code></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><code>Timestamp &gt; datetime(&quot;2022-06-01&quot;)</code></td>
+                    <td><code>Timestamp &gt; &quot;2022-06-01T00:00:00.0000000Z&quot;</code></td>
+                    <td><code>datetime</code> format diferent date and datetime string to canonical format</td>
+                </tr>
+                <tr>
+                    <td><code>logid(&quot;internal_log_id&quot;)</code></td>
+                    <td></td>
+                    <td>Find log using internal identifier.</td>
                 </tr>
             </tbody>
         </table>

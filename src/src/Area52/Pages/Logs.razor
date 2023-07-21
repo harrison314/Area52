@@ -95,7 +95,7 @@
                 <CascadingValue Value="@context">
                     @foreach (LogInfo info in infos)
                     {
-                        <LogRow LogInfo="@info" @key="info.Id" />
+                        <LogRow LogInfo="@info" LogId="@info.Id" @key="info.Id" />
                     }
                 </CascadingValue>
             </div>

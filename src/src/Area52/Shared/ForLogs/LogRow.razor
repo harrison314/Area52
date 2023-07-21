@@ -46,6 +46,11 @@
                                 </Content>
                             </BSDropdown>
 
+                             <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copyId", 0)" OnClick="this.CopyLogId">
+                                <span class="fa fa-link"></span>
+                            </BSButton>
+                            <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("copyId", 0)">Copy log ID query</BSTooltip>
+
                             <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copyMessage", 0)" OnClick="this.CopyLogFormatedMessage">
                                 <span class="fa fa-copy"></span>
                             </BSButton>
@@ -142,6 +147,14 @@
     [Parameter]
     [EditorRequired]
     public LogInfo LogInfo
+    {
+        get;
+        set;
+    } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public string LogId
     {
         get;
         set;
@@ -245,6 +258,12 @@
             o.Color = BSColor.Info;
             o.Toast = Toast.Default;
         });
+    }
+
+    private async Task CopyLogId()
+    {
+        System.Diagnostics.Debug.Assert(this.LogId is not null);
+        await this.CopyText($"logid(\"{this.LogId.Replace("'", "\\'").Replace("\n", "\\n")}\")", $"Copy log ID query for {this.LogId}.");
     }
 
     private async Task CopyLogFormatedMessage()

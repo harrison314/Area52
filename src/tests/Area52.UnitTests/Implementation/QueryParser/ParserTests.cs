@@ -58,6 +58,9 @@ public class ParserTests
     [InlineData("Timestamp > -45.56")]
     [InlineData("Applicaton search 'Area52'")]
     [InlineData("Property is cs 'value'")]
+    [InlineData("logid('abfgdthxyya')")]
+    [InlineData("logid(\"LogEvent/1459-B\")")]
+    [InlineData("logid(\"LogEvent/1459-B\") or logid(\"LogEvent/1489-B\")")]
     public void Parser_SimpleParse_SpecialCases(string query)
     {
         IAstNode astNode = Parser.SimpleParse(query);
