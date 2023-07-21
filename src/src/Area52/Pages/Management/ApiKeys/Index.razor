@@ -59,13 +59,13 @@
                                 <td>@data.Key</td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="@(_=>this.CopyKey(data))">
-                                        <span class="fa fa-copy"></span>
+                                        <span class="fa fa-copy fa-fw"></span>
                                     </button>
 
                                     <button type="button"
                                             class="btn btn-sm btn-outline-secondary"
                                     @onclick="@(e=>this.DeleteKey(data))">
-                                        <span class="fa fa-remove"></span>
+                                        <span class="fa fa-remove fa-fw"></span>
                                         Delete
                                     </button>
                                 </td>
@@ -87,7 +87,7 @@
                         <button type="button"
                                 class="btn btn-sm btn-success"
                         @onclick="this.StoreNewApiKey">
-                            <span class="fa fa-save"></span>
+                            <span class="fa fa-save fa-fw"></span>
                             Store
                         </button>
                     </div>

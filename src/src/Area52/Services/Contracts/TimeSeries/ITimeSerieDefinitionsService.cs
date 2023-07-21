@@ -8,5 +8,7 @@ public interface ITimeSerieDefinitionsService
 
     Task<TimeSerieDefinition> FindById(string id);
 
+    Task Delete(string id);
+
     void CheckQuery(string query);
 }

@@ -2,6 +2,7 @@
 @using Area52.Services.Contracts.TimeSeries
 @using Area52.Shared.ForManagement
 @inject ITimeSerieDefinitionsService TimeSerieDefinitionsService
+@inject NavigationManager Navigation
 
 <PageTitle>Detail of time series definition</PageTitle>
 
@@ -12,6 +13,12 @@
     }
     else
     {
+        <div>
+            <button type="button" class="btn btn-sm btn-outline-secondary float-end" @onclick="DeleteTs">
+                <span class="fa fa-remove fa-fw"></span> Remove
+            </button>
+        </div>
+
         <table class="table">
             <tbody>
                 <tr>
@@ -25,12 +32,12 @@
                 <tr>
                     <th scope="row" class="col-2">Query</th>
                     <td class="text-break col-10">
-                        <pre>@model.Query</pre>
+                        <pre class="pre-wwrap">@model.Query</pre>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row" class="col-2">Value Field Name</th>
-                    <td class="text-break col-10">@(model.ValueFieldName??"1.0")</td>
+                    <td class="text-break col-10">@(model.ValueFieldName ?? "1.0")</td>
                 </tr>
                 <tr>
                     <th scope="row" class="col-2">Tag Field Name</th>
@@ -54,8 +61,11 @@
 
 </LeftMenu>
 
+<ConfirmDialog @ref="confirmDialog" />
+
 @code {
     private TimeSerieDefinition? model = null;
+    private ConfirmDialog confirmDialog = default!;
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "id")]
@@ -75,6 +85,17 @@
 
     protected override async Task OnParametersSetAsync()
     {
-         this.model = await this.TimeSerieDefinitionsService.FindById(this.Id!);
+        this.model = await this.TimeSerieDefinitionsService.FindById(this.Id!);
+    }
+
+    private async Task DeleteTs()
+    {
+        bool? confirmed = await this.confirmDialog.Confirm("Remove time serie", "Do you really want to remove this time serie?");
+
+        if (confirmed.HasValue && confirmed.Value)
+        {
+            await this.TimeSerieDefinitionsService.Delete(this.Id!);
+            this.Navigation.NavigateTo("/Management/Tsa/List");
+        }
     }
 }

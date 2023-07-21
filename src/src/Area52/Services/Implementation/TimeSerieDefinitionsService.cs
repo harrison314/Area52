@@ -48,6 +48,11 @@ public class TimeSerieDefinitionsService : ITimeSerieDefinitionsService
         return this.repository.Create(timeSerieDefinition);
     }
 
+    public async Task Delete(string id)
+    {
+        await this.repository.Delete(id);
+    }
+
     public Task<TimeSerieDefinition> FindById(string id)
     {
         return this.repository.FindById(id);

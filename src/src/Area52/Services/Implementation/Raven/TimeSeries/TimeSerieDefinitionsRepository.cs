@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Area52.Services.Contracts;
 using Area52.Services.Contracts.TimeSeries;
 using Raven.Client.Documents;
 
@@ -35,6 +36,32 @@ public class TimeSerieDefinitionsRepository : ITimeSerieDefinitionsRepository
         catch (Exception ex)
         {
             this.logger.LogError(ex, "Unexpected error in Create method.");
+            throw;
+        }
+    }
+
+    public async Task Delete(string id)
+    {
+        this.logger.LogTrace("Entering to Delete with id {id}.", id);
+
+        try
+        {
+            using var session = this.documentStore.OpenAsyncSession();
+            TimeSerieDefinition definition = await session.LoadAsync<TimeSerieDefinition>(id);
+            if (definition == null)
+            {
+                this.logger.LogError("Time series definition with id {id} not found.", id);
+                throw new Area52Exception($"Time series definition with id {id} not found.");
+            }
+
+            session.Delete(definition);
+
+            await session.SaveChangesAsync();
+            this.logger.LogInformation("Removed TimeSeries with id {id}, name {tsName}.", id, definition.Name);
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Unexpected error in Delete method with id {id}.", id);
             throw;
         }
     }

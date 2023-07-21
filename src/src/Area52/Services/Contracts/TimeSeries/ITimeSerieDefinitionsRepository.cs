@@ -7,4 +7,6 @@ public interface ITimeSerieDefinitionsRepository
     Task<IReadOnlyList<TimeSerieDefinitionInfo>> FindDefinictions();
 
     Task<TimeSerieDefinition> FindById(string id);
+
+    Task Delete(string id);
 }

@@ -29,20 +29,18 @@
                             @this.queries[index].Name
                         </td>
                         <td>
-                            <pre>@this.queries[index].Query</pre>
+                            <pre class="pre-wwrap">@this.queries[index].Query</pre>
                         </td>
                         <td>
                             <button type="button"
                             class="btn btn-sm btn-outline-secondary"
                             @onclick="@(e=>this.DeleteQuery(index))">
-                                <span class="fa fa-remove"></span>
+                                <span class="fa fa-remove fa-fw"></span>
                                 Delete
                             </button>
                         </td>
                     </tr>
                 }
-
-
             </tbody>
         </table>
 
@@ -58,7 +56,7 @@
                 <button type="button"
                     class="btn btn-sm btn-success"
                     @onclick="this.StoreNewQuery">
-                    <span class="fa fa-save"></span>
+                    <span class="fa fa-save fa-fw"></span>
                     Store
                 </button>
             </div>

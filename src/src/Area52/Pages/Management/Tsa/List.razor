@@ -34,7 +34,10 @@
                         <td>@this.FormatDescription(info.Description)</td>
                         <td>
                             <NavLink class="btn btn-outline-primary btn-sm"
-                             href="@($"/Management/Tsa/Detail?id={Uri.EscapeDataString(info.Id)}")">Detail</NavLink>
+                             href="@($"/Management/Tsa/Detail?id={Uri.EscapeDataString(info.Id)}")">
+                             <span class="fa fa-long-arrow-right fa-fw"></span>
+                             Detail
+                         </NavLink>
                         </td>
                     </tr>
                 }
