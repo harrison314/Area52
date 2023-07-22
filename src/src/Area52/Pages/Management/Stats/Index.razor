@@ -28,7 +28,7 @@
                 </tr>
                 <tr>
                     <td>Total logs count</td>
-                    <td>@this.stats.TotalLogCount</td>
+                    <td>@this.stats.TotalLogCount.FormatLargeNumber()</td>
                 </tr>
                 <tr>
                     <td>Time series count</td>
@@ -36,15 +36,15 @@
                 </tr>
                 <tr>
                     <td>New logs per last hour</td>
-                    <td>@this.stats.NewLogsPerLastHour</td>
+                    <td>@this.stats.NewLogsPerLastHour.FormatLargeNumber()</td>
                 </tr>
                 <tr>
                     <td>New errors per last hour</td>
-                    <td>@this.stats.ErrorsInLastHour</td>
+                    <td>@this.stats.ErrorsInLastHour.FormatLargeNumber()</td>
                 </tr>
                 <tr>
                     <td>Critical logs in last day</td>
-                    <td>@this.stats.CriticalInLastDay</td>
+                    <td>@this.stats.CriticalInLastDay.FormatLargeNumber()</td>
                 </tr>
                 <tr>
                     <td>Database response time</td>

@@ -4,6 +4,7 @@
 @inject ILogReader LogReader
 @inject Microsoft.JSInterop.IJSRuntime JsRuntime
 @inject IBlazorStrap BlazorStrap
+@inject NavigationManager Navigation
 @inject ILogger<LogRow> Logger
 
 <div class="row @(this.showDetails? "bg-light":string.Empty)">
@@ -33,7 +34,7 @@
                             <BSDropdown>
                                 <Toggler>
                                     <BSToggle IsButton="true" Color="BSColor.Primary" IsOutlined="true" Size="Size.Small">
-                                        <span class="fa fa-arrows-v"></span>&nbsp;
+                                        <span class="fa fa-arrows-v"></span>&ThinSpace;
                                     </BSToggle>
                                 </Toggler>
                                 <Content>
@@ -46,10 +47,18 @@
                                 </Content>
                             </BSDropdown>
 
-                             <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copyId", 0)" OnClick="this.CopyLogId">
-                                <span class="fa fa-link"></span>
-                            </BSButton>
-                            <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("copyId", 0)">Copy log ID query</BSTooltip>
+                            <BSDropdown>
+                                <Toggler>
+                                    <BSToggle IsButton="true" Color="BSColor.Primary" IsOutlined="true" Size="Size.Small">
+                                        <span class="fa fa-link"></span>&ThinSpace;
+                                    </BSToggle>
+                                </Toggler>
+                                <Content>
+                                    <BSDropdownItem @onclick="@this.SelectByLogId">Select this log</BSDropdownItem>
+                                    <BSDropdownItem @onclick="@this.CopyLogId">Copy log ID query</BSDropdownItem>
+                                    <BSDropdownItem @onclick="@this.CopyLogUrl">Copy log URL</BSDropdownItem>
+                                </Content>
+                            </BSDropdown>
 
                             <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copyMessage", 0)" OnClick="this.CopyLogFormatedMessage">
                                 <span class="fa fa-copy"></span>
@@ -96,7 +105,7 @@
                                         <span class="fa fa-exchange"></span>
                                     </BSButton>
                                     <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exchangelog", 0)">Replace query</BSTooltip>
-                                  
+
                                     <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("addminlog", 0)" OnClick="@(_=>this.AddToSearch("LevelNumeric", entity.LevelNumeric, ">="))">
                                         <span class="fa fa-chevron-right"></span>
                                     </BSButton>
@@ -263,7 +272,26 @@
     private async Task CopyLogId()
     {
         System.Diagnostics.Debug.Assert(this.LogId is not null);
-        await this.CopyText($"logid(\"{this.LogId.Replace("'", "\\'").Replace("\n", "\\n")}\")", $"Copy log ID query for {this.LogId}.");
+        string query = $"logid(\"{this.LogId.Replace("'", "\\'").Replace("\n", "\\n")}\")";
+        await this.CopyText(query, $"Copy log ID query for {this.LogId}.");
+    }
+
+    private async Task CopyLogUrl()
+    {
+        System.Diagnostics.Debug.Assert(this.LogId is not null);
+        string query = $"logid(\"{this.LogId.Replace("'", "\\'").Replace("\n", "\\n")}\")";
+
+        Uri uri = this.Navigation.ToAbsoluteUri($"/Logs?q={Uri.EscapeDataString(query)}");
+        await this.CopyText(uri.ToString(), $"Copy URL for log {this.LogId}.");
+    }
+
+    private Task SelectByLogId()
+    {
+        System.Diagnostics.Debug.Assert(this.LogId is not null);
+        string query = $"logid(\"{this.LogId.Replace("'", "\\'").Replace("\n", "\\n")}\")";
+
+        this.Context.SearchNow(query);
+        return Task.CompletedTask;
     }
 
     private async Task CopyLogFormatedMessage()

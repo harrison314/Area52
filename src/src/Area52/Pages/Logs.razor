@@ -19,7 +19,6 @@
                     <button class="btn btn-outline-primary" @onclick="ChangeTail" type="button">
                         @if (timer != null)
                         {
-                            @*<div class="spinner-border spinner-border-sm text-info" role="status"></div>*@
                             <span class="fa fa-refresh fa-spin fa-fw"></span>
                         }
                         else
@@ -59,7 +58,7 @@
                 {
                     <span><b>Last query:</b> @this.lastUpdate</span>
                     <span><b>Duration:</b> @this.queryTime</span>
-                    <span><b>Total count:</b> @this.totalCount</span>
+                    <span><b>Total count:</b> @this.totalCount.FormatLargeNumber()</span>
                 }
             </div>
         </div>

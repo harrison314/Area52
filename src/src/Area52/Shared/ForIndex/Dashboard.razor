@@ -122,22 +122,22 @@ else
     {
         if (number < 10_000)
         {
-            return number.ToString();
+            return number.FormatLargeNumber();
         }
 
         if (number < 10_000_000)
         {
             number = (long)Math.Round(number / 1_000.0);
-            return $"{number}K";
+            return $"{number.FormatLargeNumber()}K";
         }
 
         if (number < 10_000_000_000)
         {
             number = (long)Math.Round(number / 1_000_000.0);
-            return $"{number}M";
+            return $"{number.FormatLargeNumber()}M";
         }
 
         number = (long)Math.Round(number / 1_000_000_000.0);
-        return $"{number}G";
+        return $"{number.FormatLargeNumber()}G";
     }
 }
