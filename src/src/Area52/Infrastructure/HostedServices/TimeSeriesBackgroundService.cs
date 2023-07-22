@@ -103,8 +103,13 @@ public class TimeSeriesBackgroundService : BackgroundService
             return 1.0;
         }
 
-        return logEntity.Properties.Where(t => t.Name == valueFieldName && t.Valued.HasValue)
-              .Select(t => t.Valued ?? 1.0)
+        return logEntity.Properties.Where(t => t.Name == valueFieldName)
+              .Select(t =>
+              {
+                  if (t.Valued.HasValue) return t.Valued.Value;
+                  if (t.Values != null && double.TryParse(t.Values, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double result)) return result;
+                  return 1.0;
+              })
               .FirstOrDefault(1.0);
     }
 

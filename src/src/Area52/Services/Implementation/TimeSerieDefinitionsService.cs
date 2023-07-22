@@ -80,4 +80,9 @@ internal class TimeSeriesDefinitionCheckVisitor : QueryParser.AstNodeVisitor
 
         base.VisitInternal(node);
     }
+
+    protected override void VisitInternal(LogIdNode node)
+    {
+        throw new Area52QueryException($"Operator logid is not allowed in this query.");
+    }
 }
