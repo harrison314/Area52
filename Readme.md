@@ -39,7 +39,7 @@ For build run in powershell:
 ```
 
 ## Future work
-- [ ] More efective read CLEF log from request
+- [x] More efective read CLEF log from request
 - [ ] Autehntification
   - [x] Predefined queries
   - [x] Distributed data protection provider
@@ -51,7 +51,7 @@ For build run in powershell:
 - [x] Implements healthchecks
 - [x] Try implement using MongoDb
 - [x] Dashboard
-- [ ] Local query history (button for clear query)
+- [x] Local query history - in URL
 
 ## Getting logs into Area 52
 It is possible to use libraries for SEQ.
