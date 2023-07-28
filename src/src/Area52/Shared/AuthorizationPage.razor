@@ -1,5 +1,28 @@
-﻿<h1>Authentication Failure!</h1>
-<p>You're not signed in.</p>
+﻿<div class="row">
+    <div class="col-5">
+        <h3>Login</h3>
+        <p class="mb-4">
+            Login to Area52.
+        </p>
+
+        <form>
+            <div class="form-group first">
+                <label>Username</label>
+                <input type="text" class="form-control" />
+            </div>
+
+            <div class="form-group last mb-3">
+                <label>Password</label>
+                <input type="password" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-block btn-success pull-right">
+                <span class="fa fa-sign-in fa-fw"></span>
+                Log In
+            </button>
+        </form>
+    </div>
+</div>
 
 @code {
     // TODO: implemet auhorization form
