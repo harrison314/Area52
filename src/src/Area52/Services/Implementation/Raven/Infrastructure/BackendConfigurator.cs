@@ -13,8 +13,10 @@ using Microsoft.Extensions.Options;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Microsoft.AspNetCore.Identity;
-using Raven.Client.Documents;
-using Raven.Client.Documents.Session;
+using Mcrio.AspNetCore.Identity.On.RavenDb.Model.User;
+using Mcrio.AspNetCore.Identity.On.RavenDb.Model.Role;
+using Mcrio.AspNetCore.Identity.On.RavenDb.Stores;
+using Mcrio.AspNetCore.Identity.On.RavenDb;
 
 namespace Area52.Services.Implementation.Raven.Infrastructure;
 
@@ -122,13 +124,5 @@ public class BackendConfigurator : IBackendConfigurator
     .AddDefaultTokenProviders();
 
         builder.Services.AddTransient<Services.Contracts.IUserServices, UserService>();
-    }
-
-    private void RegisvicesInternal(IServiceCollection services)
-    {
-        services.AddTransient<Contracts.ILogReader, LogReader>();
-        services.AddSingleton<Contracts.ILogWriter, LogWriter>();
-        services.AddSingleton<Contracts.ILogManager, LogManager>();
-        services.AddSingleton<Contracts.IDistributedLocker, DistributedLocker>();
     }
 }

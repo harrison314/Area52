@@ -9,12 +9,9 @@ using Area52.Services.Contracts.Statistics;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Area52.Services.Configuration;
 using AspNetCore.Identity.Mongo;
 using AspNetCore.Identity.Mongo.Model;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 
 namespace Area52.Services.Implementation.Mongo.Infrastructure;
 
@@ -96,15 +93,13 @@ public class BackendConfigurator : IBackendConfigurator
 
     public void ConfigureIdentity(WebApplicationBuilder builder, Action<IdentityOptions> identityOptions)
     {
-        if (this.setup == null)
-        {
-            throw new InvalidOperationException();
-        }
-
+        MongoDbSetup setup = new MongoDbSetup();
+        builder.Configuration.GetSection("MongoDbSetup").Bind(setup);
+       
         builder.Services.AddIdentity<MongoUser<string>, MongoRole<string>>(identityOptions)
         .AddMongoDbStores<MongoUser<string>, MongoRole<string>, string>(mongo =>
         {
-            mongo.ConnectionString = this.BuildConnectionString(this.setup);
+            mongo.ConnectionString = this.BuildConnectionString(setup);
             mongo.MigrationCollection = "_IdentityMigrations";
             mongo.UsersCollection = "IdentityUsers";
             mongo.RolesCollection = "IdentityRoles";
@@ -112,6 +107,12 @@ public class BackendConfigurator : IBackendConfigurator
         .AddDefaultTokenProviders();
 
         builder.Services.AddTransient<Contracts.IUserServices, UserService>();
+    }
+
+    private string BuildConnectionString(MongoDbSetup setup)
+    {
+        ReadOnlySpan<char> baseAdress = setup.Database.ConnectionString.AsSpan().TrimEnd('/');
+        return string.Concat(baseAdress, "/".AsSpan(), setup.Database.DatabaseName.AsSpan());
     }
 }
 
