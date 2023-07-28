@@ -28,6 +28,7 @@
                                      XValue="@(e => e.Time)"
                                      YValue="@(e => e.Count)"
                                      OrderBy="e=>e.X"
+                                     ShowDataLabels="false"
                                      Stroke="@(new SeriesStroke() { Width = 1, Color = "#0d6efd" })" />
                 </ApexChart>
             }
@@ -68,12 +69,12 @@
                         Year = "yyyy",
                         Month = "MMM yyyy",
                         Day = "dd MMM yyyy",
-                        Hour = "HH:mm",
-                        Minute = "mm"
+                        Hour = "HH dd MMM yyyy",
+                        Minute = "HH:mm dd MMM yyyy"
                     },
                     Show = true,
-                    Rotate = 45.0,
-                    RotateAlways = false
+                    Rotate = -45.0,
+                    RotateAlways = null
                 }
             }
         };

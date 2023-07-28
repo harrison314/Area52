@@ -168,7 +168,6 @@ public class TimeSeriesBackgroundService : BackgroundService
 
     private async Task RemoveOldData(TimeSpan timeSpan, CancellationToken stoppingToken)
     {
-        //throw new NotImplementedException("Remove old data in time-series is not implemented.");
         await this.timeSeriesService.DeleteOldData(DateTime.UtcNow - timeSpan, stoppingToken);
     }
 }

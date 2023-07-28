@@ -15,8 +15,11 @@ namespace Area52.Services.Implementation.Mongo;
 
 public class LogDistributionServices : ILogDistributionServices
 {
-    private const string MongoGroupByTimeUnitDay = "day";
-    private const string MongoGroupByTimeUnitHour = "hour";
+    private enum DistributionGranulation
+    {
+        Day,
+        Hour
+    }
 
     private readonly IMongoDatabase mongoDatabase;
     private readonly IOptions<Area52Setup> area52Setup;
@@ -67,19 +70,19 @@ public class LogDistributionServices : ILogDistributionServices
 
         if (timeDistance < logViewSetup.DistributionMaxHourTimeInterval)
         {
-            return await this.GetDaysDistribution(collection, ast, MongoGroupByTimeUnitHour, null);
+            return await this.GetDaysDistribution(collection, ast, DistributionGranulation.Hour, null);
         }
 
         if (timeDistance <= logViewSetup.DistributionMaxTimeInterval)
         {
-            return await this.GetDaysDistribution(collection, ast, MongoGroupByTimeUnitDay, null);
+            return await this.GetDaysDistribution(collection, ast, DistributionGranulation.Day, null);
         }
 
-        return await this.GetDaysDistribution(collection, ast, MongoGroupByTimeUnitDay, endDate.Value.Add(-logViewSetup.DistributionMaxTimeInterval));
+        return await this.GetDaysDistribution(collection, ast, DistributionGranulation.Day, endDate.Value.Add(-logViewSetup.DistributionMaxTimeInterval));
     }
 
     //TODO: $group is extreme slow
-    private async Task<LogsDistribution> GetDaysDistribution(IMongoCollection<MongoLogEntity> collection, IAstNode? astNode, string gorupBy, DateTime? newStartDate)
+    private async Task<LogsDistribution> GetDaysDistribution(IMongoCollection<MongoLogEntity> collection, IAstNode? astNode, DistributionGranulation distributionGranulation, DateTime? newStartDate)
     {
         this.logger.LogTrace("Enter to GetDaysDistribution.");
 
@@ -91,15 +94,17 @@ public class LogDistributionServices : ILogDistributionServices
             (false, false) => null,
         };
 
+        string timeGroupField = distributionGranulation switch
+        {
+            DistributionGranulation.Day => "$TimestampIndex.DateTruncateUnixTime",
+            DistributionGranulation.Hour => "$TimestampIndex.HourTruncateUnixTime",
+            _ => throw new InvalidProgramException($"Enum value {distributionGranulation} is not supported.")
+        };
+
         BsonDocument groupByDay = new BsonDocument()
         {
-            {"_id", new BsonDocument("$dateTrunc", new BsonDocument()
-                {
-                    {"date", "$TimestampIndex.Utc" },
-                    {"unit", gorupBy }
-                })
-            },
-            new BsonDocument("Count", new  BsonDocument("$count", new BsonDocument()))
+            {"_id", timeGroupField },
+            { "Count", new  BsonDocument("$count", new BsonDocument()) }
         };
 
         BsonDocument[] stages;
@@ -123,7 +128,6 @@ public class LogDistributionServices : ILogDistributionServices
             };
         }
 
-
         if (this.logger.IsEnabled(LogLevel.Debug))
         {
             this.logger.LogDebug("Translate input query in GetDaysDistribution to QRL {query}.", stages.ToJson());
@@ -134,7 +138,7 @@ public class LogDistributionServices : ILogDistributionServices
         {
             foreach (BsonDocument document in await cursor.ToListAsync(default))
             {
-                DateTime time = document["_id"].ToUniversalTime();
+                DateTime time = DateTimeOffset.FromUnixTimeSeconds( document["_id"].ToInt64()).UtcDateTime;
                 decimal value = this.ConvertBsonTDecimal(document["Count"]);
 
                 result.Add(new LogsDistributionItem(time, value));

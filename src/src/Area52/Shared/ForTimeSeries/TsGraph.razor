@@ -102,6 +102,24 @@
                         Speed = 500
                     }
                 }
+            },
+            Xaxis = new XAxis()
+            {
+                Type = XAxisType.Datetime,
+                Labels = new XAxisLabels()
+                {
+                    DatetimeFormatter = new DatetimeFormatter()
+                    {
+                        Year = "yyyy",
+                        Month = "MMM yyyy",
+                        Day = "dd MMM yyyy",
+                        Hour = "HH dd MMM yyyy",
+                        Minute = "HH:mm dd MMM yyyy"
+                    },
+                    Show = true,
+                    Rotate = -45.0,
+                    RotateAlways = null
+                }
             }
         };
 
@@ -110,11 +128,6 @@
     private SeriesType seriesType = SeriesType.Bar;
     private ShowGraphTime graphTime;
     private bool isInLoading = false;
-
-    //protected override async Task OnInitializedAsync()
-    //{
-
-    //}
 
     protected override async Task OnParametersSetAsync()
     {

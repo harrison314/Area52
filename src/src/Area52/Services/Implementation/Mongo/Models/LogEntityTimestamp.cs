@@ -17,6 +17,18 @@ public class LogEntityTimestamp
         set;
     }
 
+    public long DateTruncateUnixTime
+    {
+        get;
+        set;
+    }
+
+    public long HourTruncateUnixTime
+    {
+        get;
+        set;
+    }
+
     public LogEntityTimestamp()
     {
         this.Sortable = string.Empty;
@@ -26,5 +38,12 @@ public class LogEntityTimestamp
     {
         this.Utc = time.UtcDateTime;
         this.Sortable = time.ToString(FormatConstants.SortableDateTimeFormat);
+
+        const long secundPerHour = 60 * 60;
+        const long secundPerDay = secundPerHour * 24;
+
+        long unixTime = time.ToUnixTimeSeconds();
+        this.DateTruncateUnixTime = (unixTime / secundPerDay) * secundPerDay;
+        this.HourTruncateUnixTime = (unixTime / secundPerHour) * secundPerHour;
     }
 }
