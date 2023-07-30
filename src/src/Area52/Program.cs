@@ -13,6 +13,8 @@ namespace Area52
     {
         public static void Main(string[] args)
         {
+            Serilog.Debugging.SelfLog.Enable(Console.Error);
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
             .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
@@ -24,8 +26,7 @@ namespace Area52
             builder.Host.UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Configuration(context.Configuration)
                     .ReadFrom.Services(services)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console());
+                    .Enrich.FromLogContext());
 
 
             builder.Services.Configure<Services.Configuration.Area52Setup>(builder.Configuration.GetSection(nameof(Services.Configuration.Area52Setup)));
