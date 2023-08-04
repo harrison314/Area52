@@ -8,3 +8,14 @@
 .table .oi {
     font-size: .70rem;
 }
+
+.table {
+    table-layout: fixed;
+    max-width: 100%;
+}
+
+.table td, .table th {
+    padding-left: 0.5em;
+    word-wrap: break-word;
+}
+
