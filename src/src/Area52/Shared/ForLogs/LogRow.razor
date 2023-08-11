@@ -83,14 +83,14 @@
 
                 <table class="table table-sm">
                     <thead>
-                        <tr>
+                        <tr class="table-light">
                             <th>Property name</th>
                             <th>Value</th>
                             <th>Operation</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr @key="@("Level")">
+                        <tr @key="@("Level")" class="table-light">
                             <td>Level</td>
                             <td><LogLevelBadge Level="@this.LogInfo.Level" /></td>
                             <td>
@@ -122,7 +122,7 @@
                         {
                             var attr = this.entity.Properties[i];
 
-                            <tr @key="@i">
+                            <tr @key="@i" class="table-light">
                                 <td>@attr.Name</td>
                                 <td>@attr.GetValueString()</td>
                                 <td>
