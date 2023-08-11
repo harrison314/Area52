@@ -28,8 +28,8 @@ public class FastStatisticsServices : IFastStatisticsServices
         try
         {
             DateTimeOffset utcNow = DateTimeOffset.UtcNow;
-            DateTimeOffset lastHour = utcNow.AddHours(-1.0);
-            DateTimeOffset lastDay = utcNow.AddHours(-24.0);
+            DateTime lastHour = utcNow.AddHours(-1.0).DateTime;
+            DateTime lastDay = utcNow.AddHours(-24.0).DateTime;
             int errorLogLevel = (int)LogLevel.Error;
             int criticalLogLevel = (int)LogLevel.Critical;
 
