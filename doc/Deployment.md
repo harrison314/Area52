@@ -102,8 +102,6 @@ sudo systemctl enable area52
 sudo systemctl start area52
 ```
 
-!!tu pokracovat od sudo systemctl enable area52
-
 Create apache2 conf file `/etc/apache2/sites-enabled/area52.conf`
 ```
 <VirtualHost *:80>
@@ -113,10 +111,6 @@ Create apache2 conf file `/etc/apache2/sites-enabled/area52.conf`
   CustomLog ${APACHE_LOG_DIR}/area52-access.log common
       
   RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}s
-
-  ProxyPreserveHost     On
-  ProxyPass             / http://127.0.0.1:5080/
-  ProxyPassReverse      / http://127.0.0.1:5080/
 
   ProxyRequests       On
   ProxyPreserveHost   On
