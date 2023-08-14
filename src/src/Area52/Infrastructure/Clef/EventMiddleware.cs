@@ -75,13 +75,20 @@ public class EventMiddleware
 
                 await reader.CompleteAsync();
 
+                if (list.Count == 0)
+                {
+                    this.logger.LogError("Collection of valid lines is empty.");
+                    httpContext.Response.StatusCode = 500;
+                    return;
+                }
+
                 await this.logWriter.Write(list);
 
                 httpContext.Response.StatusCode = 201;
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Problem with line.");
+                this.logger.LogError(ex, "Problem with any line in input data. See inner exception.");
                 httpContext.Response.StatusCode = 500;
             }
             finally
@@ -101,9 +108,17 @@ public class EventMiddleware
             logs.Add(ClefParser.Read(bufferBuilder.AsSpan()));
             bufferBuilder.Clear();
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
-            this.logger.LogWarning(ex, "Problem with single line {line}", this.EncodeLastLine(ref bufferBuilder));
+            if (ex is ClefInvalidFormatException clefException)
+            {
+                this.logger.LogWarning(clefException, "Problem with single line. See exception.");
+            }
+            else
+            {
+                this.logger.LogWarning(ex, "Problem with single line {line}", this.EncodeLastLine(ref bufferBuilder));
+            }
+
             bufferBuilder.Clear();
             errorCounter++;
 

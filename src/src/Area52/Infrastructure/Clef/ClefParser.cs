@@ -58,7 +58,7 @@ public static class ClefParser
                                 System.Text.Json.JsonTokenType.Null => null,
                                 System.Text.Json.JsonTokenType.String => jsonReader.GetString(),
                                 System.Text.Json.JsonTokenType.Number => jsonReader.GetInt64().ToString(),
-                                _ => throw new InvalidProgramException("Unsuported type of property @i. Must by string or number.") //TODO: other exception
+                                _ => throw new ClefInvalidFormatException($"Unsuported type ({jsonReader.TokenType}) of property @i. Must by string or number. In line: '{Encoding.UTF8.GetString(line)}'")
                             };
 
                             break;
@@ -85,7 +85,7 @@ public static class ClefParser
                                 propName = propName[1..];
                             }
 
-                            (LogEntityProperty newProp, bool addProperty) = GetInnerProperty(propName, ref jsonReader);
+                            (LogEntityProperty newProp, bool addProperty) = GetInnerProperty(propName, ref jsonReader, line);
                             if (addProperty)
                             {
                                 if (arrayIndex >= tmpArray.Length)
@@ -178,7 +178,7 @@ public static class ClefParser
             }
             else
             {
-                throw new InvalidProgramException("LogEntityProperty has invalid value."); //TODO: other exception
+                throw new ClefInvalidFormatException("LogEntityProperty has invalid value.");
             }
         }
 
@@ -209,7 +209,7 @@ public static class ClefParser
         entry.LevelNumeric = (int)level;
     }
 
-    private static (LogEntityProperty prop, bool success) GetInnerProperty(string name, ref System.Text.Json.Utf8JsonReader jsonReader)
+    private static (LogEntityProperty prop, bool success) GetInnerProperty(string name, ref System.Text.Json.Utf8JsonReader jsonReader, ReadOnlySpan<byte> line)
     {
         if (jsonReader.TokenType == System.Text.Json.JsonTokenType.String)
         {
@@ -249,7 +249,7 @@ public static class ClefParser
             return (new LogEntityProperty(name, json ?? string.Empty), true);
         }
 
-        throw new InvalidProgramException($"Invalid token for read property {jsonReader.TokenType}.");
+        throw new ClefInvalidFormatException($"Invalid token for read property {name} of type {jsonReader.TokenType}. In line: '{Encoding.UTF8.GetString(line)}'");
     }
 
     private static void RenderMessage(LogEntity entry, string[]? renderes)
