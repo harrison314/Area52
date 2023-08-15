@@ -21,10 +21,14 @@ namespace Area52.Tool
                     .WithExample(new[] { "upload", "logFile.txt", "-u", "https://area52.local/", "--api-key", "XXXXXXXXXXXXXXXXX", "--batch-size", "250" });
 
                 config.AddCommand<Commands.WatchLogFileCommand>("watch")
-                    .WithDescription("Upload CLEF file to endpoint.")
+                    .WithDescription("Watch CLEF file and send logs to endpoint.")
                     .WithExample(new[] { "watch", "logFile.txt", "-u", "https://area52.local/" })
                     .WithExample(new[] { "watch", "logFile.txt", "-u", "https://area52.local/", "--api-key", "XXXXXXXXXXXXXXXXX", "--batch-size", "250" });
 
+                config.AddCommand<Commands.WatchLogFileCommand>("stdin")
+                    .WithDescription("Watch stdin and send logs to endpoint.")
+                    .WithExample(new[] { "stdin", "-u", "https://area52.local/" })
+                    .WithExample(new[] { "stdin", "-u", "https://area52.local/", "--api-key", "XXXXXXXXXXXXXXXXX", "--batch-size", "250" });
             });
 
             try
