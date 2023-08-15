@@ -30,7 +30,21 @@ public class ClefParserTests
     {
         string jsonLine = logLine.Replace('\'', '"');
         byte[] data = Encoding.UTF8.GetBytes(jsonLine);
-        Services.Contracts.LogEntity logEntry = ClefParser.Read(data);
+        Services.Contracts.LogEntity logEntry = ClefParser.Read(data, true);
+
+        Assert.NotNull(logEntry);
+    }
+
+    [Theory]
+    [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{'foo':'bar'},'@i':{'Id':145,'Name':'FooBar'}}")]
+    [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{'foo':'bar'},'@i':'a145'}")]
+    [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Hello, {User}','User':'nblumhardt'}")]
+    [InlineData("{'@t':'2016-06-07T03:44:57.8532799Z','@mt':'Data: {data}','data':{'foo':'bar'},'@i':145}")]
+    public void ClefParserNotStrict_Read_Success(string logLine)
+    {
+        string jsonLine = logLine.Replace('\'', '"');
+        byte[] data = Encoding.UTF8.GetBytes(jsonLine);
+        Services.Contracts.LogEntity logEntry = ClefParser.Read(data, false);
 
         Assert.NotNull(logEntry);
     }

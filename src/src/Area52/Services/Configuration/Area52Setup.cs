@@ -20,6 +20,12 @@ public class Area52Setup
         init;
     }
 
+    public bool StrictClefMode
+    {
+        get;
+        init;
+    }
+
     public Dictionary<string, bool> Features
     {
         get;

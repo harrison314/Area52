@@ -2,8 +2,10 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -12,11 +14,12 @@ namespace Area52.Infrastructure.Clef;
 // Format: https://docs.datalust.co/docs/posting-raw-events
 public static class ClefParser
 {
-    public static LogEntity Read(ReadOnlySpan<byte> line)
+    public static LogEntity Read(ReadOnlySpan<byte> line, bool strictParsing)
     {
         LogEntity entry = new LogEntity();
         entry.Level = "informational";
         string[]? renderings = null;
+        bool timestampPresent = false;
 
         System.Text.Json.Utf8JsonReader jsonReader = new System.Text.Json.Utf8JsonReader(line);
         LogEntityProperty[] tmpArray = ArrayPool<LogEntityProperty>.Shared.Rent(32);
@@ -34,6 +37,7 @@ public static class ClefParser
                     {
                         case "@t":
                             entry.Timestamp = jsonReader.GetDateTimeOffset().ToUniversalTime();
+                            timestampPresent = true;
                             break;
 
                         case "@m":
@@ -58,7 +62,8 @@ public static class ClefParser
                                 System.Text.Json.JsonTokenType.Null => null,
                                 System.Text.Json.JsonTokenType.String => jsonReader.GetString(),
                                 System.Text.Json.JsonTokenType.Number => jsonReader.GetInt64().ToString(),
-                                _ => throw new ClefInvalidFormatException($"Unsuported type ({jsonReader.TokenType}) of property @i. Must by string or number. In line: '{Encoding.UTF8.GetString(line)}'")
+                                _ when strictParsing => ThrowInvalidJsonInvalidEventId(jsonReader.TokenType, line),
+                                _ => null
                             };
 
                             break;
@@ -85,7 +90,7 @@ public static class ClefParser
                                 propName = propName[1..];
                             }
 
-                            (LogEntityProperty newProp, bool addProperty) = GetInnerProperty(propName, ref jsonReader, line);
+                            (LogEntityProperty newProp, bool addProperty) = GetInnerProperty(propName, ref jsonReader, line, strictParsing);
                             if (addProperty)
                             {
                                 if (arrayIndex >= tmpArray.Length)
@@ -124,12 +129,17 @@ public static class ClefParser
         }
 
         EnshureLoglevel(entry);
+        if (!timestampPresent)
+        {
+            ThrowInvalidJsonMissingTimestamp(line);
+        }
+
         return entry;
     }
 
     public static async Task Write(LogEntity entity, Stream stream)
     {
-        await using System.Text.Json.Utf8JsonWriter writer = new System.Text.Json.Utf8JsonWriter(stream, new System.Text.Json.JsonWriterOptions()
+        await using Utf8JsonWriter writer = new Utf8JsonWriter(stream, new System.Text.Json.JsonWriterOptions()
         {
             Indented = false
         });
@@ -209,7 +219,7 @@ public static class ClefParser
         entry.LevelNumeric = (int)level;
     }
 
-    private static (LogEntityProperty prop, bool success) GetInnerProperty(string name, ref System.Text.Json.Utf8JsonReader jsonReader, ReadOnlySpan<byte> line)
+    private static (LogEntityProperty prop, bool success) GetInnerProperty(string name, ref System.Text.Json.Utf8JsonReader jsonReader, ReadOnlySpan<byte> line, bool strictParsing)
     {
         if (jsonReader.TokenType == System.Text.Json.JsonTokenType.String)
         {
@@ -249,7 +259,12 @@ public static class ClefParser
             return (new LogEntityProperty(name, json ?? string.Empty), true);
         }
 
-        throw new ClefInvalidFormatException($"Invalid token for read property {name} of type {jsonReader.TokenType}. In line: '{Encoding.UTF8.GetString(line)}'");
+        if (strictParsing)
+        {
+            ThrowInvalidJsonInvalidTypeOfProperty(name, jsonReader.TokenType, line);
+        }
+
+        return (new LogEntityProperty(name, string.Empty), false);
     }
 
     private static void RenderMessage(LogEntity entry, string[]? renderes)
@@ -270,6 +285,36 @@ public static class ClefParser
             {
                 return renderes[index++];
             });
+        }
+    }
+
+    [DoesNotReturn]
+    private static void ThrowInvalidJsonMissingTimestamp(ReadOnlySpan<byte> line)
+    {
+        throw new ClefInvalidFormatException($"Invalid JSON missing timestamp '@t'. In line: '{SafeDecodeLine(line)}'");
+    }
+
+    [DoesNotReturn]
+    private static string? ThrowInvalidJsonInvalidEventId(JsonTokenType jsonTokenType, ReadOnlySpan<byte> line)
+    {
+        throw new ClefInvalidFormatException($"Unsuported type ({jsonTokenType}) of property @i. Must by string or number. In line: '{SafeDecodeLine(line)}'");
+    }
+
+    [DoesNotReturn]
+    private static void ThrowInvalidJsonInvalidTypeOfProperty(string name, JsonTokenType jsonTokenType, ReadOnlySpan<byte> line)
+    {
+        throw new ClefInvalidFormatException($"Invalid token for read property {name} of type {jsonTokenType}. In line: '{SafeDecodeLine(line)}'");
+    }
+
+    private static string SafeDecodeLine(ReadOnlySpan<byte> line)
+    {
+        try
+        {
+            return Encoding.UTF8.GetString(line);
+        }
+        catch (ArgumentException)
+        {
+            return string.Concat("hex:", Convert.ToHexString(line));
         }
     }
 }

@@ -38,6 +38,7 @@ public class EventStringMiddleware
 
             string? line = null;
             int? maxErrors = this.area52Setup.Value.MaxErrorInClefBatch;
+            bool strictClefMode = this.area52Setup.Value.StrictClefMode;
             byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
             try
             {
@@ -57,7 +58,7 @@ public class EventStringMiddleware
                         }
 
                         encodedLen = Encoding.UTF8.GetBytes(line, buffer);
-                        list.Add(ClefParser.Read(buffer.AsSpan(0, encodedLen)));
+                        list.Add(ClefParser.Read(buffer.AsSpan(0, encodedLen), strictClefMode));
                     }
                     catch (InvalidOperationException ex)
                     {

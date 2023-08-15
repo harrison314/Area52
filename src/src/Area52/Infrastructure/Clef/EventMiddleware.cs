@@ -41,6 +41,7 @@ public class EventMiddleware
             }
 
             int? maxErrors = this.area52Setup.Value.MaxErrorInClefBatch;
+            bool strictClefMode = this.area52Setup.Value.StrictClefMode;
             BufferBuilder buffer = new BufferBuilder(2048);
             try
             {
@@ -56,7 +57,7 @@ public class EventMiddleware
                     {
                         if (!buffer.IsEmpty())
                         {
-                            this.ParseLine(list, maxErrors, ref buffer, ref errorCounter);
+                            this.ParseLine(list, strictClefMode, maxErrors, ref buffer, ref errorCounter);
                         }
                     }
 
@@ -66,7 +67,7 @@ public class EventMiddleware
                     {
                         if (!buffer.IsEmpty())
                         {
-                            this.ParseLine(list, maxErrors, ref buffer, ref errorCounter);
+                            this.ParseLine(list, strictClefMode, maxErrors, ref buffer, ref errorCounter);
                         }
 
                         break;
@@ -75,7 +76,7 @@ public class EventMiddleware
 
                 await reader.CompleteAsync();
 
-                if (list.Count == 0)
+                if (errorCounter > 0 && list.Count == 0)
                 {
                     this.logger.LogError("Collection of valid lines is empty.");
                     httpContext.Response.StatusCode = 500;
@@ -101,11 +102,11 @@ public class EventMiddleware
         await this.next(httpContext);
     }
 
-    private void ParseLine(List<LogEntity> logs, int? maxErrors, ref BufferBuilder bufferBuilder, ref int errorCounter)
+    private void ParseLine(List<LogEntity> logs, bool strictClefMode, int? maxErrors, ref BufferBuilder bufferBuilder, ref int errorCounter)
     {
         try
         {
-            logs.Add(ClefParser.Read(bufferBuilder.AsSpan()));
+            logs.Add(ClefParser.Read(bufferBuilder.AsSpan(), strictClefMode));
             bufferBuilder.Clear();
         }
         catch (Exception ex)
