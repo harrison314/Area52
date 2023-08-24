@@ -2,8 +2,7 @@
 @using Area52.Shared.ForManagement
 @using Area52.Services.Contracts
 @inject IApiKeyServices ApiKeyServices
-@inject Microsoft.JSInterop.IJSRuntime JsRuntime
-@inject IBlazorStrap BlazorStrap
+@inject Area52.Shared.Services.FunctionalToaster FunctionalToaster
 
 <PageTitle>Api Keys</PageTitle>
 
@@ -58,7 +57,7 @@
                                 <td>@data.Name</td>
                                 <td>@data.Key</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="@(_=>this.CopyKey(data))">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="@(_ => this.FunctionalToaster.CopyToClipboard($"Copy key {data.Name}.", data.Key))">
                                         <span class="fa fa-copy fa-fw"></span>
                                     </button>
 
@@ -143,17 +142,6 @@
             await this.ApiKeyServices.StoreSettings(new ApiKeySettings(true), default);
             this.settings = await this.ApiKeyServices.GetSettings(default);
         }
-    }
-
-    private async Task CopyKey(ApiKeyData data)
-    {
-        await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", data.Key);
-        this.BlazorStrap.Toaster.Add("Copy", $"Copy key {data.Name}.", o =>
-        {
-            o.CloseAfter = 1000;
-            o.Color = BSColor.Info;
-            o.Toast = Toast.Default;
-        });
     }
 
     private async Task DeleteKey(ApiKeyData data)

@@ -78,6 +78,8 @@ namespace Area52
                 options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
             });
 
+            builder.Services.AddTransient<Area52.Shared.Services.FunctionalToaster>();
+
             var app = builder.Build();
 
             app.UseForwardedHeaders();

@@ -100,7 +100,7 @@
         await Task.Yield();
         try
         {
-            Services.Contracts.LogsDistribution logsDistributionData = await LogDistributionServices.GetLogsDistribution(this.Query);
+            Area52.Services.Contracts.LogsDistribution logsDistributionData = await LogDistributionServices.GetLogsDistribution(this.Query);
             this.items = logsDistributionData.Items;
             this.itemTimeInteval = logsDistributionData.SliceInterval;
         }
