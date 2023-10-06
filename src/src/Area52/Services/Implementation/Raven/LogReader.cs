@@ -59,10 +59,10 @@ public class LogReader : ILogReader
 
             this.logger.LogDebug("Executed query {query} with {resultsCount} results and {executionTimeMs} ms.",
                 query,
-                stats.LongTotalResults,
+                stats.TotalResults,
                 stats.DurationInMs);
 
-            return new ReadLastLogResult(result, stats.LongTotalResults);
+            return new ReadLastLogResult(result, stats.TotalResults);
         }
         catch (Exception ex)
         {
