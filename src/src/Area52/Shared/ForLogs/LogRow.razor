@@ -100,7 +100,7 @@
                                     </BSButton>
                                     <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("pluslog", 0)">Add to query</BSTooltip>
 
-                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exchangelog", 0)" OnClick="@(_=>SerachNow("Level", entity.Level, "is"))">
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exchangelog", 0)" OnClick="@(_=>this.SerachNow("Level", entity.Level, "is"))">
                                         <span class="fa fa-exchange"></span>
                                     </BSButton>
                                     <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exchangelog", 0)">Replace query</BSTooltip>
@@ -110,10 +110,15 @@
                                     </BSButton>
                                     <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("addminlog", 0)">Add minimal level</BSTooltip>
 
-                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exminlog", 0)" OnClick="@(_=>SerachNow("LevelNumeric", entity.LevelNumeric, ">="))">
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exminlog", 0)" OnClick="@(_=>this.SerachNow("LevelNumeric", entity.LevelNumeric, ">="))">
                                         <span class="fa fa-play"></span>
                                     </BSButton>
                                     <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exminlog", 0)">Replace minimal level</BSTooltip>
+
+                                    <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copydetail", 0)" OnClick="@(_=>this.CopyLevel(entity.Level))">
+                                        <span class="fa fa-copy"></span>
+                                    </BSButton>
+                                    <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("copydetail", 0)">Copy</BSTooltip>
                                 </div>
                             </td>
                         </tr>
@@ -131,10 +136,15 @@
                                         </BSButton>
                                         <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("plus", i)">Add to query</BSTooltip>
 
-                                        <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exchange", i)" OnClick="@(_=>SerachNow(attr))">
+                                        <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("exchange", i)" OnClick="@(_=>this.SerachNow(attr))">
                                             <span class="fa fa-exchange"></span>
                                         </BSButton>
                                         <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("exchange", i)">Replace query</BSTooltip>
+
+                                        <BSButton Size="@Size.Small" Color="@BSColor.Primary" IsOutlined="true" DataId="@this.CreateTargetString("copydetail", i)" OnClick="@(_=>this.CopyAttr(attr))">
+                                            <span class="fa fa-copy"></span>
+                                        </BSButton>
+                                        <BSTooltip Placement="Placement.Bottom" Target="@this.CreateTargetString("copydetail", i)">Copy</BSTooltip>
                                     </div>
                                 </td>
                             </tr>
@@ -303,5 +313,15 @@
     private string CreateTargetString(string name, int key)
     {
         return string.Concat(this.targetPrefix, "_", name, "_", key.ToString());
+    }
+
+    private async Task CopyAttr(LogEntityProperty property)
+    {
+        await this.FunctionalToaster.CopyToClipboard($"Copy value of property {property.Name}.", property.GetValueString());
+    }
+
+    private async Task CopyLevel(string level)
+    {
+        await this.FunctionalToaster.CopyToClipboard($"Copy value of property Level.", level);
     }
 }
