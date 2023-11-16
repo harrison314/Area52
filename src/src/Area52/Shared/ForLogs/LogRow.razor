@@ -9,8 +9,16 @@
 <div class="row @(this.showDetails? "bg-light":string.Empty)">
     <div class="col-2 pointer-cursor" @onclick="@ToggleShowDetails">@this.LogInfo.Timestamp.ToString(FormatConstants.ShowSortableDateTimeFormat)</div>
     <div class="col-1 pointer-cursor" @onclick="@ToggleShowDetails"><LogLevelBadge Level="@this.LogInfo.Level" /></div>
-    <div class="col-9 text-break">@this.LogInfo.Message</div>
+    @if (this.LogInfo.Message.Length < 220 || this.showDetails)
+    {
+        <div class="col-9 text-break">@this.LogInfo.Message</div>
+    }
+    else
+    {
+        <div class="col-9 text-break">@this.LogInfo.Message.Substring(0, 220) <span class="fa fa-level-down read-more-icon"></span></div>
+    }
 </div>
+
 
 @if (this.showDetails)
 {

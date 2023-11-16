@@ -17,3 +17,7 @@
 .table td, .table th {
     word-wrap: break-word;
 }
+
+.read-more-icon {
+    margin-left: 1em;
+}
