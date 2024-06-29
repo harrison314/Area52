@@ -3,16 +3,16 @@
 Experimental structured log collector with logs visualization
 inspired by [Seq](https://datalust.co/seq) and [ELK Stack](https://www.elastic.co/what-is/elk-stack).
 
-This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and serach engine.
+This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and search engine.
 
 > Everyone wants to know what's in _Area 51_. But no one asks about _Area 52_.
 
 ## Features
 - Log input endpoint compatibile wirh _Seq_ ([CLEF](https://docs.datalust.co/docs/posting-raw-events) logs format)
 - Custom query language (inspired by Rockstar language and SQL), supports:
-  - fulltext serach,
+  - fulltext search,
   - search by match property, comparison,
-  - serach by time,
+  - search by time,
   - logical operator,
   - and more...
 - _Area52.Ufo_ is service for abducing logs from text files and from Syslog (UDP by _RFC 5424_) into _Area52_
@@ -96,4 +96,4 @@ Add to _NLog.config_:
 For log into file see [doc/FileLogging.md](doc/FileLogging.md).
 
 ## Copyright
-Copyright (c) 2023 harrison314
+Copyright (c) 2024 harrison314
