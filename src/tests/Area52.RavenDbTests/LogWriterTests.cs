@@ -28,7 +28,7 @@ public class LogWriterTests : RavenTestDriver
         {
             new LogEntity()
             {
-                EventId = 1,
+                EventId = "1",
                 Exception = null,
                 Level = "Debug",
                 LevelNumeric = 1,

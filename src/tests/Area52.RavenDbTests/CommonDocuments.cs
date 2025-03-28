@@ -26,7 +26,7 @@ internal static class CommonDocuments
         {
             new LogEntity()
             {
-                EventId = 1,
+                EventId = "1",
                 Exception = null,
                 Level = "Debug",
                 LevelNumeric = 1,
@@ -42,7 +42,7 @@ internal static class CommonDocuments
             },
             new LogEntity()
             {
-                EventId = 1,
+                EventId = "1",
                 Exception = null,
                 Level = "Information",
                 LevelNumeric = 2,
@@ -58,7 +58,7 @@ internal static class CommonDocuments
             },
             new LogEntity()
             {
-                EventId = 1,
+                EventId = "1",
                 Exception = null,
                 Level = "Warning",
                 LevelNumeric = 3,
@@ -75,7 +75,7 @@ internal static class CommonDocuments
             },
             new LogEntity()
             {
-                EventId = 1,
+                EventId = "1",
                 Exception = null,
                 Level = "Debug",
                 LevelNumeric = 1,

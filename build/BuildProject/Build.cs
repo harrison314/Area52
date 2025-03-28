@@ -7,9 +7,6 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
@@ -33,10 +30,10 @@ class Build : NukeBuild
     Target Clean => _ => _
         .Executes(() =>
         {
-            GlobDirectories(SourceDirectory, "**/bin", "**/obj").ForEach(DeleteDirectory);
-            GlobDirectories(RootDirectory / "test", "**/bin", "**/obj").ForEach(DeleteDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(t => t.DeleteDirectory());
+            RootDirectory.GlobDirectories("test", "**/bin", "**/obj").ForEach(t => t.DeleteDirectory());
 
-            EnsureCleanDirectory(ArtifactsDirectory);
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target BuildArea52 => _ => _
@@ -59,11 +56,11 @@ class Build : NukeBuild
                .SetOutput(publishPath)
            );
 
-            Nuke.Common.IO.CompressionTasks.CompressZip(publishPath,
+            publishPath.ZipTo(
                 ArtifactsDirectory / "Area52.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json");
 
-            DeleteDirectory(publishPath);
+            publishPath.DeleteDirectory();
         });
 
     Target BuildArea52Tool => _ => _
@@ -86,10 +83,9 @@ class Build : NukeBuild
                .SetOutput(publishPath)
            );
 
-            Nuke.Common.IO.CompressionTasks.CompressZip(publishPath,
-                ArtifactsDirectory / "Area52.Tool.zip");
+            publishPath.ZipTo(ArtifactsDirectory / "Area52.Tool.zip");
 
-            DeleteDirectory(publishPath);
+            publishPath.DeleteDirectory();
         });
 
     Target BuildArea52Ufo => _ => _
@@ -112,10 +108,9 @@ class Build : NukeBuild
               .SetOutput(publishPath)
           );
 
-           Nuke.Common.IO.CompressionTasks.CompressZip(publishPath,
-               ArtifactsDirectory / "Area52.Ufo.zip");
+           publishPath.ZipTo(ArtifactsDirectory / "Area52.Ufo.zip");
 
-           DeleteDirectory(publishPath);
+           publishPath.DeleteDirectory();
        });
 
     Target Compile => _ => _
@@ -124,6 +119,6 @@ class Build : NukeBuild
         .DependsOn(BuildArea52Tool)
         .Executes(() =>
         {
-            
+
         });
 }

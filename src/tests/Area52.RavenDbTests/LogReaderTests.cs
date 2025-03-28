@@ -89,7 +89,10 @@ public class LogReaderTests : RavenTestDriver
     {
         return Options.Create(new Area52Setup()
         {
-            MaxLogShow = 150
+            LogView = new LogViewSetup()
+            {
+                MaxLogShow = 150
+            }
         });
     }
 }
