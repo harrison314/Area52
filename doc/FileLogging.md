@@ -89,4 +89,31 @@ Example configs for logging into files (and reading files using `Area52.Ufo` or 
 </target>
 ```
 
+## NLog 6 with NLog.Targets.Network
+
+```xml
+<target name="networkTarget" xsi:type="Network" address="http://area52.local/api/events/raw?clef" newLine="true">
+	<layout xsi:type="JsonLayout" 
+			includeEventProperties="true" 
+			includeGdc="true" 
+			includeAllProperties="true" 
+			includeMdlc="true"  
+			excludeProperties=""
+			suppressSpaces="true">
+		<attribute name="@t" layout="${date:format=o}" />
+		<attribute name="@l" layout="${level}"/>
+		<attribute name="@mt" layout="${message:raw=true}" />
+		<attribute name="@m" layout="${message}" />
+		<attribute name="@x" layout="${exception:format=tostring}" />
+		<attribute name="@i" layout="${event-properties:item=EventId}" encode="false" />
+		<attribute name="Application" layout="Area52App" />
+		<attribute name="MachineName" layout="${machinename}" />
+		<attribute name="ProcessId" layout="${processid}" />
+        <attribute name="AppVersion" layout="${assembly-version}" />
+        <attribute name="SourceContext" layout="${logger}" />
+        <!-- other -->
+	</layout>
+</target>
+```
+
 For number attributes use `encode="false"`.
