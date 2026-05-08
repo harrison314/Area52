@@ -63,7 +63,7 @@ public class MongoDbDistributedLocker : IDistributedLocker
         }
         catch (MongoWriteException ex) // E11000 
         {
-            if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            if (ex.WriteError.Category == MongoDB.Driver.ServerErrorCategory.DuplicateKey)
                 return false;
 
             throw;

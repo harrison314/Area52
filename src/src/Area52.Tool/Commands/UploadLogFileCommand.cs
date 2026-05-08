@@ -59,7 +59,7 @@ public class UploadLogFileCommand : AsyncCommand<UploadLogFileCommand.Settings>
 
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, UploadLogFileCommand.Settings settings)
+    protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         foreach (string path in settings.FilePaths)
         {

@@ -80,12 +80,12 @@ public class LogMainIndex : AbstractIndexCreationTask<LogEntity>
                                Message = log.Message,
                                Exception = log.Exception,
 
-                               LogFullText = string.Concat(log.Timestamp.ToString("s"),
+                               LogFullText = string.Concat(values:new string?[]{log.Timestamp.ToString("s"),
                                    " ",
                                    log.Level,
                                    " ",
                                    log.Message,
-                                   log.Exception),
+                                   log.Exception }),
                                _Exact = log.Properties.Where(t => t.Values != null).Select(t => this.CreateField(t.Name, t.Values, new CreateFieldOptions()
                                {
                                    Indexing = FieldIndexing.Exact,

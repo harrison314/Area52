@@ -66,7 +66,7 @@ public class WatchLogFileCommand : AsyncCommand<WatchLogFileCommand.Settings>
         this.canceled = false;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, WatchLogFileCommand.Settings settings)
+    protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         AnsiConsole.MarkupLine("Watch file [green]{0}[/]", settings.FilePath.EscapeMarkup());
 

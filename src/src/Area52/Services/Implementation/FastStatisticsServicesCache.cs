@@ -19,30 +19,51 @@ public class FastStatisticsServicesCache : IFastStatisticsServices
         this.memoryCache = memoryCache;
     }
 
-    public Task<BaseStatistics> GetBaseStatistics(CancellationToken cancellationToken)
+    public async Task<BaseStatistics> GetBaseStatistics(CancellationToken cancellationToken)
     {
-        return this.memoryCache.GetOrCreateAsync("IFastStatisticsServices:GetBaseStatistics", (entry) =>
+        BaseStatistics? baseStatistics = await this.memoryCache.GetOrCreateAsync("IFastStatisticsServices:GetBaseStatistics", (entry) =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2.0);
             return this.parent.GetBaseStatistics(CancellationToken.None);
         });
+
+        if (baseStatistics == null)
+        {
+            throw new InvalidOperationException("Can not crated IFastStatisticsServices:GetBaseStatistics");
+        }
+
+        return baseStatistics;
     }
 
-    public Task<IReadOnlyList<ApplicationShare>> GetApplicationsDistribution(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ApplicationShare>> GetApplicationsDistribution(CancellationToken cancellationToken)
     {
-        return this.memoryCache.GetOrCreateAsync("IFastStatisticsServices:GetApplicationsDistribution", (entry) =>
+        IReadOnlyList<ApplicationShare>? applicationShares = await this.memoryCache.GetOrCreateAsync("IFastStatisticsServices:GetApplicationsDistribution", (entry) =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5.0);
             return this.parent.GetApplicationsDistribution(CancellationToken.None);
         });
+
+        if (applicationShares == null)
+        {
+            throw new InvalidOperationException("Can not crated IFastStatisticsServices:GetApplicationsDistribution");
+        }
+
+        return applicationShares;
     }
 
-    public Task<IReadOnlyList<LogShare>> GetLevelsDistribution(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<LogShare>> GetLevelsDistribution(CancellationToken cancellationToken)
     {
-        return this.memoryCache.GetOrCreateAsync("IFastStatisticsServices:GetLevelsDistribution", (entry) =>
+        IReadOnlyList<LogShare>? levelDistributiobs = await this.memoryCache.GetOrCreateAsync("IFastStatisticsServices:GetLevelsDistribution", (entry) =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5.0);
             return this.parent.GetLevelsDistribution(CancellationToken.None);
         });
+
+        if (levelDistributiobs == null)
+        {
+            throw new InvalidOperationException("Can not crated IFastStatisticsServices:GetLevelsDistribution");
+        }
+
+        return levelDistributiobs;
     }
 }

@@ -22,8 +22,8 @@ This project uses [RavenDb](https://ravendb.net/) or MongoDb as a log store and 
 Moore screenshots [doc/Readme.md](doc/Readme.md).
 
 ## Technology
-- [Dotnet 6.0](https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6)
-- [Blazor server](https://docs.microsoft.com/en-us/aspnet/core/blazor/hosting-models?view=aspnetcore-6.0)
+- [Dotnet 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+- [Blazor server](https://docs.microsoft.com/en-us/aspnet/core/blazor/hosting-models?view=aspnetcore-10.0)
 - [Piglet](https://www.nuget.org/packages/Piglet/) as query parser
 - [RavenDb](https://ravendb.net/) as primary storage and indexing engine
 - [MongoDb](https://www.mongodb.com/) as alternative storage and indexing engine

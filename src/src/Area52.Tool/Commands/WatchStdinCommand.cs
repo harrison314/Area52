@@ -56,7 +56,7 @@ public class WatchStdinCommand : AsyncCommand<WatchStdinCommand.Settings>
         this.canceled = false;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, WatchStdinCommand.Settings settings)
+    protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         AnsiConsole.MarkupLine("Watch file STDIN");
 

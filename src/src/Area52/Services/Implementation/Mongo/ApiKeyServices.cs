@@ -160,10 +160,10 @@ public class ApiKeyServices : IApiKeyServices
     {
         this.logger.LogTrace("Entering to VerifyApiKey");
 
-        CacheKeysObject cacheKeysObject;
-
+        CacheKeysObject? cacheKeysObject;
         if (this.memoryCache.TryGetValue<CacheKeysObject>(CacheName, out cacheKeysObject))
         {
+            System.Diagnostics.Debug.Assert(cacheKeysObject is not null);
             return cacheKeysObject.ContainsKey(key);
         }
 
@@ -175,6 +175,7 @@ public class ApiKeyServices : IApiKeyServices
             return keys;
         });
 
+        System.Diagnostics.Debug.Assert(cacheKeysObject is not null);
         return cacheKeysObject.ContainsKey(key);
 
         //TODO: Check Api key in database?

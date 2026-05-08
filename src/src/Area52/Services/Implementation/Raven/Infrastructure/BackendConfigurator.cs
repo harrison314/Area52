@@ -46,7 +46,7 @@ public class BackendConfigurator : IBackendConfigurator
 
             if (!string.IsNullOrEmpty(settings.Database.CertPath))
             {
-                store.Certificate = new X509Certificate2(settings.Database.CertPath, settings.Database.CertPass);
+                store.Certificate = X509CertificateLoader.LoadPkcs12FromFile(settings.Database.CertPath, settings.Database.CertPass);
             }
 
             store.Initialize();

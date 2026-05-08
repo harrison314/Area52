@@ -17,7 +17,7 @@ internal class ClefHttpResult : IResult
     {
         httpContext.Response.StatusCode = 200;
         httpContext.Response.Headers.ContentType = new Microsoft.Extensions.Primitives.StringValues("application/octet-stream");
-        httpContext.Response.Headers.Add("Content-Disposition", "Attachment;FileName=Export.txt");
+        httpContext.Response.Headers.Append("Content-Disposition", "Attachment;FileName=Export.txt");
 
         await foreach(LogEntity entry in this.entityStream)
         {
