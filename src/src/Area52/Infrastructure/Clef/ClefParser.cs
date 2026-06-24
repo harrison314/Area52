@@ -41,7 +41,7 @@ public static class ClefParser
                             break;
 
                         case "@m":
-                            entry.Message = jsonReader.GetString()!;
+                            entry.Message = jsonReader.GetString()??string.Empty;
                             break;
 
                         case "@mt":
@@ -53,7 +53,7 @@ public static class ClefParser
                             break;
 
                         case "@x":
-                            entry.Exception = jsonReader.GetString()!;
+                            entry.Exception = jsonReader.GetString();
                             break;
 
                         case "@i":

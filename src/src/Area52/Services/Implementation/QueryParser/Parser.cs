@@ -1,4 +1,5 @@
-﻿using Area52.Services.Implementation.QueryParser.Nodes;
+﻿using Area52.Services.Contracts;
+using Area52.Services.Implementation.QueryParser.Nodes;
 using Piglet.Parser;
 using Piglet.Parser.Configuration;
 
@@ -6,6 +7,8 @@ namespace Area52.Services.Implementation.QueryParser;
 
 public class Parser
 {
+    const int MaxQueryLength = 10000;
+
     private static IParser<IAstNode> nodeParser = CreateParser();
     private static IParser<IAstNode> CreateParser()
     {
@@ -84,6 +87,7 @@ public class Parser
     {
         if (input == null) throw new ArgumentNullException(nameof(input));
         if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Input value can not by only whitespace.", nameof(input));
+        if (input.Length > MaxQueryLength) throw new Area52QueryException($"Query exceeds maximum length of {MaxQueryLength}");
 
         try
         {

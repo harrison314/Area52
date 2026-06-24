@@ -20,6 +20,12 @@ public class Area52Setup
         init;
     }
 
+    public long ? MaxClefLineSizeInBytes
+    {
+        get;
+        init;
+    }
+
     public bool StrictClefMode
     {
         get;

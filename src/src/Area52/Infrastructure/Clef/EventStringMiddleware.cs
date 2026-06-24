@@ -53,6 +53,18 @@ public class EventStringMiddleware
                         int encodedLen = Encoding.UTF8.GetByteCount(line);
                         if (encodedLen >= buffer.Length)
                         {
+                            if (this.area52Setup.Value.MaxClefLineSizeInBytes.HasValue && encodedLen > this.area52Setup.Value.MaxClefLineSizeInBytes.Value)
+                            {
+                                this.logger.LogWarning("Clef line size in bytes {lineSize} is more than maximum allowed {maxSize}. Line will be skipped.", encodedLen, this.area52Setup.Value.MaxClefLineSizeInBytes.Value);
+                                errorCounter++;
+                                if (maxErrors.HasValue && errorCounter > maxErrors.Value)
+                                {
+                                    this.logger.LogDebug("Error in this batch more than maximum limit {maximumLimit}.", maxErrors.Value);
+                                    throw new InvalidOperationException($"Clef line size in bytes {encodedLen} is more than maximum allowed {this.area52Setup.Value.MaxClefLineSizeInBytes.Value}. Line will be skipped.");
+                                }
+                                continue;
+                            }
+
                             ArrayPool<byte>.Shared.Return(buffer, false);
                             buffer = ArrayPool<byte>.Shared.Rent(encodedLen);
                         }
