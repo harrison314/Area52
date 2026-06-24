@@ -45,6 +45,8 @@ public class ParserTests
     [InlineData("Property is 'value1' or Property is 'value2'")]
     [InlineData("Property is 'value1' || Property is 'value2'")]
     [InlineData("RequestId is '0HMJ3E0UJPORG:00000007' and (Exception is not null or Level is 'Error')")]
+    [InlineData("Property-1 is 'value'")]
+    [InlineData("[Property-1] is 'value'")]
     public void Parser_SimpleParse_ParseExamples(string query)
     {
         IAstNode astNode = Parser.SimpleParse(query);

@@ -14,7 +14,7 @@ public class Parser
         ITerminal<IAstNode> stringTerminal = configurator.CreateTerminal("\"([^\"]+|\\\\\")*\"|'([^']+|\\\\')*'", ParseString);
         ITerminal<IAstNode> nullTerminal = configurator.CreateTerminal("null", _ => new NullValueNode());
         ITerminal<IAstNode> numberTerminal = configurator.CreateTerminal("-?[0-9]+(\\.[0-9]+)?", ParseNumber);
-        ITerminal<IAstNode> propertyTerminal = configurator.CreateTerminal("[0-9a-zA-Z_]+|\\[[0-9a-zA-Z_ ]+\\]", ParseProperty);
+        ITerminal<IAstNode> propertyTerminal = configurator.CreateTerminal("[0-9a-zA-Z_][0-9a-zA-Z_-]*|\\[[0-9a-zA-Z_ ][0-9a-zA-Z_ -]*\\]", ParseProperty);
 
         INonTerminal<IAstNode> expr = configurator.CreateNonTerminal();
         INonTerminal<IAstNode> term = configurator.CreateNonTerminal();
