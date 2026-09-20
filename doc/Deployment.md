@@ -1,11 +1,11 @@
 # Deployment
 
 # Deployment on Ubuntu with MongoDB
-Deployment and install on _Ubuntu Server 22.04_ with MongoDb.
+Deployment and install on _Ubuntu Server 26.04_ with MongoDb.
 
 Install prerequisites and .NET: 
 ```
-sudo apt-get install -y aspnetcore-runtime-6.0
+sudo apt-get install -y aspnetcore-runtime-10.0
 sudo apt-get install -y unzip
 ```
 
